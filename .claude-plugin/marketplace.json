@@ -1,0 +1,20 @@
+{
+  "name": "toolbox",
+  "owner": {
+    "name": "schpet"
+  },
+  "description": "Toolbox of Claude Code plugins",
+  "version": "0.1.0",
+  "plugins": [
+    {
+      "name": "jj-vcs",
+      "description": "Jujutsu (jj) version control documentation and workflows",
+      "version": "0.1.0",
+      "author": {
+        "name": "schpet"
+      },
+      "homepage": "https://github.com/schpet/toolbox",
+      "source": "./plugins/jj-vcs"
+    }
+  ]
+}

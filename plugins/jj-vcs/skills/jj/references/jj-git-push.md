@@ -1,0 +1,160 @@
+# NAME
+
+jj-git-push - Push to a Git remote
+
+# SYNOPSIS
+
+**jj git push** \[**\--remote**\] \[**-b**\|**\--bookmark**\] \[**\--all**\] \[**\--tracked**\] \[**\--deleted**\] \[**\--allow-empty-description**\] \[**\--allow-private**\] \[**-r**\|**\--revisions**\] \[**-c**\|**\--change**\] \[**\--named**\] \[**\--dry-run**\] \[**-R**\|**\--repository**\] \[**\--ignore-working-copy**\] \[**\--ignore-immutable**\] \[**\--at-operation**\] \[**\--debug**\] \[**\--color**\] \[**\--quiet**\] \[**\--no-pager**\] \[**\--config**\] \[**\--config-file**\] \[**-h**\|**\--help**\]
+
+# DESCRIPTION
+
+Push to a Git remote
+
+By default, pushes tracking bookmarks pointing to \`remote_bookmarks(remote=\<remote\>)..@\`. Use \`\--bookmark\` to push specific bookmarks. Use \`\--all\` to push all bookmarks. Use \`\--change\` to generate bookmark names based on the change IDs of specific commits.
+
+Unlike in Git, the remote to push to is not derived from the tracked remote bookmarks. Use \`\--remote\` to select the remote Git repository by name. There is no option to push to multiple remotes.
+
+Before the command actually moves, creates, or deletes a remote bookmark, it makes several \[safety checks\]. If there is a problem, you may need to run \`jj git fetch \--remote \<remote name\>\` and/or resolve some \[bookmark conflicts\].
+
+\[safety checks\]: https://docs.jj-vcs.dev/latest/bookmarks/#pushing-bookmarks-safety-checks
+
+\[bookmark conflicts\]: https://docs.jj-vcs.dev/latest/bookmarks/#conflicts
+
+# OPTIONS
+
+**\--remote** *\<REMOTE\>*
+
+:   The remote to push to (only named remotes are supported)
+
+    This defaults to the \`git.push\` setting. If that is not configured, and if there are multiple remotes, the remote named \"origin\" will be used.
+
+**-b**, **\--bookmark** *\<BOOKMARK\>*
+
+:   Push only this bookmark, or bookmarks matching a pattern (can be repeated)
+
+    By default, the specified name matches exactly. Use \`glob:\` prefix to select bookmarks by \[wildcard pattern\].
+
+    \[wildcard pattern\]: https://docs.jj-vcs.dev/latest/revsets#string-patterns
+
+**\--all**
+
+:   Push all bookmarks (including new bookmarks)
+
+**\--tracked**
+
+:   Push all tracked bookmarks
+
+    This usually means that the bookmark was already pushed to or fetched from the \[relevant remote\].
+
+    \[relevant remote\]: https://docs.jj-vcs.dev/latest/bookmarks#remotes-and-tracked-bookmarks
+
+**\--deleted**
+
+:   Push all deleted bookmarks
+
+    Only tracked bookmarks can be successfully deleted on the remote. A warning will be printed if any untracked bookmarks on the remote correspond to missing local bookmarks.
+
+**\--allow-empty-description**
+
+:   Allow pushing commits with empty descriptions
+
+**\--allow-private**
+
+:   Allow pushing commits that are private
+
+    The set of private commits can be configured by the \`git.private-commits\` setting. The default is \`none()\`, meaning all commits are eligible to be pushed.
+
+**-r**, **\--revisions** *\<REVSETS\>*
+
+:   Push bookmarks pointing to these commits (can be repeated)
+
+**-c**, **\--change** *\<REVSETS\>*
+
+:   Push this commit by creating a bookmark (can be repeated)
+
+    The created bookmark will be tracked automatically. Use the \`templates.git_push_bookmark\` setting to customize the generated bookmark name. The default is \`\"push-\" ++ change_id.short()\`.
+
+**\--named** *\<NAME=REVISION\>*
+
+:   Specify a new bookmark name and a revision to push under that name, e.g. \--named myfeature=@
+
+    Automatically tracks the bookmark if it is new.
+
+**\--dry-run**
+
+:   Only display what will change on the remote
+
+**-h**, **\--help**
+
+:   Print help (see a summary with -h)
+
+# GLOBAL OPTIONS
+
+**-R**, **\--repository** *\<REPOSITORY\>*
+
+:   Path to repository to operate on
+
+    By default, Jujutsu searches for the closest .jj/ directory in an ancestor of the current working directory.
+
+**\--ignore-working-copy**
+
+:   Dont snapshot the working copy, and dont update it
+
+    By default, Jujutsu snapshots the working copy at the beginning of every command. The working copy is also updated at the end of the command, if the command modified the working-copy commit (\`@\`). If you want to avoid snapshotting the working copy and instead see a possibly stale working-copy commit, you can use \`\--ignore-working-copy\`. This may be useful e.g. in a command prompt, especially if you have another process that commits the working copy.
+
+    Loading the repository at a specific operation with \`\--at-operation\` implies \`\--ignore-working-copy\`.
+
+**\--ignore-immutable**
+
+:   Allow rewriting immutable commits
+
+    By default, Jujutsu prevents rewriting commits in the configured set of immutable commits. This option disables that check and lets you rewrite any commit but the root commit.
+
+    This option only affects the check. It does not affect the \`immutable_heads()\` revset or the \`immutable\` template keyword.
+
+**\--at-operation** *\<AT_OPERATION\>*
+
+:   Operation to load the repo at
+
+    Operation to load the repo at. By default, Jujutsu loads the repo at the most recent operation, or at the merge of the divergent operations if any.
+
+    You can use \`\--at-op=\<operation ID\>\` to see what the repo looked like at an earlier operation. For example \`jj \--at-op=\<operation ID\> st\` will show you what \`jj st\` would have shown you when the given operation had just finished. \`\--at-op=@\` is pretty much the same as the default except that divergent operations will never be merged.
+
+    Use \`jj op log\` to find the operation ID you want. Any unambiguous prefix of the operation ID is enough.
+
+    When loading the repo at an earlier operation, the working copy will be ignored, as if \`\--ignore-working-copy\` had been specified.
+
+    It is possible to run mutating commands when loading the repo at an earlier operation. Doing that is equivalent to having run concurrent commands starting at the earlier operation. Theres rarely a reason to do that, but it is possible.
+
+**\--debug**
+
+:   Enable debug logging
+
+**\--color** *\<WHEN\>*
+
+:   When to colorize output\
+
+    \
+    \[*possible values:* always, never, debug, auto\]
+
+**\--quiet**
+
+:   Silence non-primary command output
+
+    For example, \`jj file list\` will still list files, but it wont tell you if the working copy was snapshotted or if descendants were rebased.
+
+    Warnings and errors will still be printed.
+
+**\--no-pager**
+
+:   Disable the pager
+
+**\--config** *\<NAME=VALUE\>*
+
+:   Additional configuration options (can be repeated)
+
+    The name should be specified as TOML dotted keys. The value should be specified as a TOML expression. If string value isnt enclosed by any TOML constructs (such as array notation), quotes can be omitted.
+
+**\--config-file** *\<PATH\>*
+
+:   Additional configuration files (can be repeated)

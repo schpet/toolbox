@@ -12,6 +12,22 @@ Jujutsu (jj) version control documentation and workflows.
 - In-depth topic guides (revsets, templates, filesets, etc.)
 - Agent usage patterns for structured JSON output
 
+### changelog
+
+Manage project changelogs following the [Keep a Changelog](https://keepachangelog.com) format.
+
+- Add entries: `changelog add --type added "feature description"`
+- Release versions: `changelog release patch`
+- Review git commits: `changelog review`
+
+### svbump
+
+Read and write semantic versions in config files (JSON, TOML, YAML).
+
+- Read versions: `svbump read version package.json`
+- Bump versions: `svbump write patch version package.json`
+- Preview changes: `svbump preview minor version deno.json`
+
 ## Installation
 
 ### Add the marketplace
@@ -29,8 +45,9 @@ claude plugin marketplace add schpet/toolbox
 ### Install plugins
 
 ```bash
-# Install jj-vcs
 claude plugin install jj-vcs@toolbox
+claude plugin install changelog@toolbox
+claude plugin install svbump@toolbox
 ```
 
 Restart Claude Code after installation.
@@ -39,6 +56,8 @@ Restart Claude Code after installation.
 
 ```bash
 claude plugin install jj-vcs@toolbox
+claude plugin install changelog@toolbox
+claude plugin install svbump@toolbox
 ```
 
 ## Local development

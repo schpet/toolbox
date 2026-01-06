@@ -1,0 +1,9 @@
+{
+  "name": "changelog",
+  "description": "Manage project changelogs following the Keep a Changelog format",
+  "version": "0.1.0",
+  "author": {
+    "name": "schpet"
+  },
+  "homepage": "https://github.com/schpet/toolbox"
+}

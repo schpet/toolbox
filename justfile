@@ -10,18 +10,26 @@ generate-jj-docs:
 # Remove local plugin installation
 claude-remove-local:
     -claude plugin remove jj-vcs@toolbox
+    -claude plugin remove changelog@toolbox
+    -claude plugin remove svbump@toolbox
     -claude plugin marketplace remove toolbox
 
 # Install plugin from local directory
 claude-install-local:
     claude plugin marketplace add ./
     claude plugin install jj-vcs@toolbox
+    claude plugin install changelog@toolbox
+    claude plugin install svbump@toolbox
 
-# Update plugin (reinstall)
+# Update plugins (reinstall)
 claude-update:
     claude plugin install jj-vcs@toolbox
+    claude plugin install changelog@toolbox
+    claude plugin install svbump@toolbox
 
-# Install plugin from GitHub
+# Install plugins from GitHub
 claude-install-github:
     claude plugin marketplace add schpet/toolbox
     claude plugin install jj-vcs@toolbox
+    claude plugin install changelog@toolbox
+    claude plugin install svbump@toolbox

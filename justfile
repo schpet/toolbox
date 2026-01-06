@@ -27,6 +27,19 @@ claude-update:
     claude plugin install changelog@toolbox
     claude plugin install svbump@toolbox
 
+# Bump all plugin versions to latest changelog version
+bump-versions:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    VERSION=$(changelog version latest)
+    echo "Bumping all versions to: $VERSION"
+    svbump write "$VERSION" version .claude-plugin/marketplace.json
+    jq --arg v "$VERSION" '.plugins |= map(.version = $v)' .claude-plugin/marketplace.json > .claude-plugin/marketplace.json.tmp && mv .claude-plugin/marketplace.json.tmp .claude-plugin/marketplace.json
+    for plugin_json in plugins/*/.claude-plugin/plugin.json; do
+        svbump write "$VERSION" version "$plugin_json"
+    done
+    echo "Done!"
+
 # Install plugins from GitHub
 claude-install-github:
     claude plugin marketplace add schpet/toolbox

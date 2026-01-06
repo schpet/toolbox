@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-01-05
+
+### Changed
+
+- regenerate jj skill.md with leaner content
+
 ## [0.1.1] - 2026-01-05
 
 ### Changed
@@ -10,6 +16,7 @@
 
 ## [0.1.0] - 2026-01-05
 
-[Unreleased]: https://github.com/schpet/toolbox/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/schpet/toolbox/compare/v0.1.2...HEAD
+[0.1.2]: https://github.com/schpet/toolbox/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/schpet/toolbox/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/schpet/toolbox/releases/tag/v0.1.0

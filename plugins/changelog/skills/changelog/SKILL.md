@@ -5,7 +5,8 @@ description: Manage project changelogs following the Keep a Changelog format. Th
 
 # Changelog CLI
 
-A command line tool for managing changelogs following the [Keep a Changelog](https://keepachangelog.com) format.
+A command line tool for managing changelogs following the
+[Keep a Changelog](https://keepachangelog.com) format.
 
 ## Adding Entries
 
@@ -16,6 +17,7 @@ changelog add --type <TYPE> <DESCRIPTION>
 ```
 
 **Change types:**
+
 - `added` (alias: `a`) - New features
 - `changed` (alias: `c`) - Changes in existing functionality
 - `deprecated` (alias: `d`) - Soon-to-be removed features
@@ -25,16 +27,20 @@ changelog add --type <TYPE> <DESCRIPTION>
 
 **Entry Style Guide:**
 
-*Voice & Tense:*
+_Voice & Tense:_
+
 - Use present tense to describe new behavior: "X now supports Y"
 - Use past tense for removals/fixes: "Fixed X", "X has been removed"
-- Describe the state, don't command: "Commands now accept..." not "Make commands accept..."
+- Describe the state, don't command: "Commands now accept..." not "Make commands
+  accept..."
 
-*Formatting:*
+_Formatting:_
+
 - Description should be lowercase (except proper nouns)
 - Keep descriptions concise but informative
 
 **Examples:**
+
 ```
 changelog add --type added "commands now accept multiple arguments"
 changelog add --type fixed "login bug that prevented oauth flow"
@@ -43,6 +49,7 @@ changelog add --type removed "deprecated v1 api endpoints have been removed"
 ```
 
 To add an entry to a specific version instead of Unreleased:
+
 ```
 changelog add --type fixed --version 1.0.1 "critical security patch"
 ```
@@ -72,7 +79,9 @@ To interactively review git commits and add them to the changelog:
 changelog review
 ```
 
-This opens an interactive selection interface similar to `git rebase -i`. Commits with conventional commit prefixes (`feat:`, `fix:`) are pre-selected. After selection, an editor opens to categorize and reword entries.
+This opens an interactive selection interface similar to `git rebase -i`.
+Commits with conventional commit prefixes (`feat:`, `fix:`) are pre-selected.
+After selection, an editor opens to categorize and reword entries.
 
 ## Version Information
 
@@ -109,4 +118,6 @@ changelog completions fish
 
 ## Integration Notes
 
-Do not manually edit CHANGELOG.md when the changelog CLI is available. Use `changelog add` to add entries programmatically, ensuring proper formatting and structure.
+Do not manually edit CHANGELOG.md when the changelog CLI is available. Use
+`changelog add` to add entries programmatically, ensuring proper formatting and
+structure.

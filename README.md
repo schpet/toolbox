@@ -14,7 +14,8 @@ Jujutsu (jj) version control documentation and workflows.
 
 ### changelog
 
-Manage project changelogs following the [Keep a Changelog](https://keepachangelog.com) format.
+Manage project changelogs following the
+[Keep a Changelog](https://keepachangelog.com) format.
 
 - Add entries: `changelog add --type added "feature description"`
 - Release versions: `changelog release patch`
@@ -33,11 +34,13 @@ Read and write semantic versions in config files (JSON, TOML, YAML).
 ### Add the marketplace
 
 From Claude Code:
+
 ```
 /plugin marketplace add schpet/toolbox
 ```
 
 From bash:
+
 ```bash
 claude plugin marketplace add schpet/toolbox
 ```

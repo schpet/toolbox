@@ -24,6 +24,7 @@ svbump read <SELECTOR> <FILE>
 ```
 
 **Examples:**
+
 ```sh
 svbump read version package.json
 svbump read package.version Cargo.toml
@@ -39,12 +40,14 @@ svbump write <LEVEL> <SELECTOR> <FILE>
 ```
 
 **Level options:**
+
 - `major` - Bump major version (1.0.0 -> 2.0.0)
 - `minor` - Bump minor version (1.0.0 -> 1.1.0)
 - `patch` - Bump patch version (1.0.0 -> 1.0.1)
 - `X.Y.Z` - Set specific version (must be higher than current)
 
 **Examples:**
+
 ```sh
 # Bump patch version
 svbump write patch version package.json
@@ -68,6 +71,7 @@ svbump preview <LEVEL> <SELECTOR> <FILE>
 ```
 
 **Example:**
+
 ```sh
 svbump preview minor version package.json
 # Outputs: 1.1.0 (without modifying the file)

@@ -1,6 +1,6 @@
 #!/usr/bin/env -S deno run --allow-run --allow-read --allow-write
 
-import { join, basename, dirname } from "jsr:@std/path";
+import { basename, dirname, join } from "jsr:@std/path";
 
 const SCRIPT_DIR = dirname(new URL(import.meta.url).pathname);
 const REPO_ROOT = join(SCRIPT_DIR, "..");
@@ -8,7 +8,9 @@ const SKILL_DIR = join(REPO_ROOT, "skills", "jj");
 const SKILL_DOCS_DIR = join(SKILL_DIR, "references");
 const SKILL_MD = join(SKILL_DIR, "SKILL.md");
 
-async function run(cmd: string[]): Promise<{ success: boolean; stdout: string; stderr: string }> {
+async function run(
+  cmd: string[],
+): Promise<{ success: boolean; stdout: string; stderr: string }> {
   const command = new Deno.Command(cmd[0], {
     args: cmd.slice(1),
     stdout: "piped",
@@ -45,8 +47,21 @@ async function getJjVersion(): Promise<string> {
   return result.success ? result.stdout.split("\n")[0] : "unknown";
 }
 
-async function convertManpage(manpage: string, outputFile: string): Promise<boolean> {
-  const result = await run(["pandoc", "-f", "man", "-t", "markdown", "--wrap=none", manpage, "-o", outputFile]);
+async function convertManpage(
+  manpage: string,
+  outputFile: string,
+): Promise<boolean> {
+  const result = await run([
+    "pandoc",
+    "-f",
+    "man",
+    "-t",
+    "markdown",
+    "--wrap=none",
+    manpage,
+    "-o",
+    outputFile,
+  ]);
   return result.success;
 }
 
@@ -76,9 +91,20 @@ function capitalize(str: string): string {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-const HELP_TOPICS = ["bookmarks", "config", "filesets", "glossary", "revsets", "templates", "tutorial"] as const;
+const HELP_TOPICS = [
+  "bookmarks",
+  "config",
+  "filesets",
+  "glossary",
+  "revsets",
+  "templates",
+  "tutorial",
+] as const;
 
-async function generateHelpTopic(topic: string, outputFile: string): Promise<boolean> {
+async function generateHelpTopic(
+  topic: string,
+  outputFile: string,
+): Promise<boolean> {
   const result = await run(["jj", "help", "-k", topic]);
   if (!result.success) {
     return false;
@@ -89,7 +115,11 @@ async function generateHelpTopic(topic: string, outputFile: string): Promise<boo
   return true;
 }
 
-function generateSkillMd(commands: string[], helpTopics: string[], jjVersion: string): string {
+function generateSkillMd(
+  commands: string[],
+  helpTopics: string[],
+  jjVersion: string,
+): string {
   const lines: string[] = [];
 
   // Header
@@ -244,11 +274,17 @@ async function main() {
   // Generate SKILL.md
   console.log("Generating SKILL.md...");
   const jjVersion = await getJjVersion();
-  const skillContent = generateSkillMd(commands.sort(), generatedTopics, jjVersion);
+  const skillContent = generateSkillMd(
+    commands.sort(),
+    generatedTopics,
+    jjVersion,
+  );
   await Deno.writeTextFile(SKILL_MD, skillContent);
 
   const totalFiles = commands.length + generatedTopics.length;
-  console.log(`Done! Generated ${totalFiles} markdown files in ${SKILL_DOCS_DIR}`);
+  console.log(
+    `Done! Generated ${totalFiles} markdown files in ${SKILL_DOCS_DIR}`,
+  );
   console.log(`Updated ${SKILL_MD}`);
 }
 

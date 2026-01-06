@@ -5,16 +5,6 @@ description: Jujutsu (jj) version control workflows and commands. Use this skill
 
 # Jujutsu (jj) Version Control
 
-Jujutsu is a Git-compatible version control system with first-class support for working copy changes, anonymous branches, and operation history.
-
-## When to Use
-
-- Managing jj changes and revisions
-- Squashing, splitting, or reorganizing commits
-- Working with bookmarks (jj's equivalent of git branches)
-- Rebasing and editing commit history
-- Understanding jj-specific concepts and commands
-
 ## Agent Usage
 
 When reading data from jj, always use `--ignore-working-copy` to avoid snapshotting the working copy (which is slow and unnecessary for read operations).

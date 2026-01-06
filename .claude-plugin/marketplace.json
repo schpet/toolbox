@@ -4,12 +4,12 @@
     "name": "schpet"
   },
   "description": "Toolbox of Claude Code plugins",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "plugins": [
     {
       "name": "jj-vcs",
       "description": "Jujutsu (jj) version control documentation and workflows",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "author": {
         "name": "schpet"
       },
@@ -19,7 +19,7 @@
     {
       "name": "changelog",
       "description": "Manage project changelogs following the Keep a Changelog format",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "author": {
         "name": "schpet"
       },
@@ -29,7 +29,7 @@
     {
       "name": "svbump",
       "description": "Read and write semantic versions in config files (JSON, TOML, YAML)",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "author": {
         "name": "schpet"
       },

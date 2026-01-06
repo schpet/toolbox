@@ -1,7 +1,7 @@
 {
   "name": "svbump",
   "description": "Read and write semantic versions in config files (JSON, TOML, YAML)",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": {
     "name": "schpet"
   },

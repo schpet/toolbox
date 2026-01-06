@@ -209,3 +209,7 @@ Documentation generated from jj manpages. For details on any command, read the c
 
 ---
 *Generated from jj manpages (jj 0.36.0)*
+
+## License
+
+The content in the `references/` directory is derived from the [jj (Jujutsu) project](https://github.com/jj-vcs/jj) and is licensed under the [Apache License 2.0](https://github.com/jj-vcs/jj/blob/main/LICENSE).

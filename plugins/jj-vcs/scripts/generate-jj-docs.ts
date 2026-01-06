@@ -178,7 +178,12 @@ Documentation generated from jj manpages. For details on any command, read the c
 
   // Footer
   lines.push(`---
-*Generated from jj manpages (${jjVersion})*`);
+*Generated from jj manpages (${jjVersion})*
+
+## License
+
+The content in the \`references/\` directory is derived from the [jj (Jujutsu) project](https://github.com/jj-vcs/jj) and is licensed under the [Apache License 2.0](https://github.com/jj-vcs/jj/blob/main/LICENSE).
+`);
 
   return lines.join("\n");
 }

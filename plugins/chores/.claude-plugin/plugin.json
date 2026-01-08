@@ -1,0 +1,8 @@
+{
+  "name": "chores",
+  "description": "Jujutsu repository maintenance and cleanup utilities",
+  "version": "0.1.0",
+  "author": {
+    "name": "schpet"
+  }
+}

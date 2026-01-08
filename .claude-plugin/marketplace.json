@@ -35,6 +35,16 @@
       },
       "homepage": "https://github.com/schpet/toolbox",
       "source": "./plugins/svbump"
+    },
+    {
+      "name": "chores",
+      "description": "Jujutsu repository maintenance and Apple container utilities",
+      "version": "0.1.2",
+      "author": {
+        "name": "schpet"
+      },
+      "homepage": "https://github.com/schpet/toolbox",
+      "source": "./plugins/chores"
     }
   ]
 }

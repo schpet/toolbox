@@ -12,6 +12,7 @@ claude-remove-local:
     -claude plugin remove jj-vcs@toolbox
     -claude plugin remove changelog@toolbox
     -claude plugin remove svbump@toolbox
+    -claude plugin remove chores@toolbox
     -claude plugin marketplace remove toolbox
 
 # Install plugin from local directory
@@ -20,12 +21,14 @@ claude-install-local:
     claude plugin install jj-vcs@toolbox
     claude plugin install changelog@toolbox
     claude plugin install svbump@toolbox
+    claude plugin install chores@toolbox
 
 # Update plugins (reinstall)
 claude-update:
     claude plugin install jj-vcs@toolbox
     claude plugin install changelog@toolbox
     claude plugin install svbump@toolbox
+    claude plugin install chores@toolbox
 
 # Bump all plugin versions to latest changelog version
 bump-versions:
@@ -46,3 +49,4 @@ claude-install-github:
     claude plugin install jj-vcs@toolbox
     claude plugin install changelog@toolbox
     claude plugin install svbump@toolbox
+    claude plugin install chores@toolbox

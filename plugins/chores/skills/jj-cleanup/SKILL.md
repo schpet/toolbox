@@ -1,9 +1,9 @@
 ---
-name: chores
+name: jj-cleanup
 description: Repository maintenance utilities for jujutsu (jj). This skill should be used when cleaning up a jj repository, removing empty commits, or managing commits that lack descriptions.
 ---
 
-# JJ Chores
+# JJ Cleanup
 
 ## Overview
 

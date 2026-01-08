@@ -2,7 +2,7 @@
 description: Clean up jj repository by removing empty commits and handling commits without descriptions
 ---
 
-# JJ Repository Chores
+# JJ Cleanup
 
 Perform repository maintenance tasks for jujutsu (jj) repositories.
 

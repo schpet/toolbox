@@ -50,3 +50,18 @@ claude-install-github:
     claude plugin install changelog@toolbox
     claude plugin install svbump@toolbox
     claude plugin install chores@toolbox
+
+# Symlink plugins to cache for dev (changes picked up on restart, no reinstall)
+claude-symlink-dev:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    VERSION=$(changelog version latest)
+    CACHE_DIR="$HOME/.claude/plugins/cache/toolbox"
+    PLUGINS_DIR="$(pwd)/plugins"
+    rm -rf "$CACHE_DIR"
+    for plugin in changelog chores jj-vcs svbump; do
+        mkdir -p "$CACHE_DIR/$plugin"
+        ln -s "$PLUGINS_DIR/$plugin" "$CACHE_DIR/$plugin/$VERSION"
+        echo "Symlinked $plugin -> $VERSION"
+    done
+    echo "Done! Restart Claude to pick up changes."

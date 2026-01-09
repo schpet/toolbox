@@ -2,6 +2,15 @@
 
 ## [Unreleased]
 
+## [0.1.3] - 2026-01-09
+
+### Added
+
+- apple-container skill for using Apple's native container runtime instead of Docker on macOS
+- speccer plugin for distilling rough ideas into structured project specs
+- /jj command documentation for jj-vcs plugin
+- claude-symlink-dev recipe for local plugin development
+
 ## [0.1.2] - 2026-01-05
 
 ### Changed
@@ -16,7 +25,8 @@
 
 ## [0.1.0] - 2026-01-05
 
-[Unreleased]: https://github.com/schpet/toolbox/compare/v0.1.2...HEAD
+[Unreleased]: https://github.com/schpet/toolbox/compare/v0.1.3...HEAD
+[0.1.3]: https://github.com/schpet/toolbox/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/schpet/toolbox/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/schpet/toolbox/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/schpet/toolbox/releases/tag/v0.1.0

@@ -45,6 +45,16 @@
       },
       "homepage": "https://github.com/schpet/toolbox",
       "source": "./plugins/chores"
+    },
+    {
+      "name": "speccer",
+      "description": "Distill rough ideas into structured project specs with issues",
+      "version": "0.1.0",
+      "author": {
+        "name": "schpet"
+      },
+      "homepage": "https://github.com/schpet/toolbox",
+      "source": "./plugins/speccer"
     }
   ]
 }

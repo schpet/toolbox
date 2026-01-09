@@ -13,6 +13,7 @@ claude-remove-local:
     -claude plugin remove changelog@toolbox
     -claude plugin remove svbump@toolbox
     -claude plugin remove chores@toolbox
+    -claude plugin remove speccer@toolbox
     -claude plugin marketplace remove toolbox
 
 # Install plugin from local directory
@@ -22,6 +23,7 @@ claude-install-local:
     claude plugin install changelog@toolbox
     claude plugin install svbump@toolbox
     claude plugin install chores@toolbox
+    claude plugin install speccer@toolbox
 
 # Update plugins (reinstall)
 claude-update:
@@ -29,6 +31,7 @@ claude-update:
     claude plugin install changelog@toolbox
     claude plugin install svbump@toolbox
     claude plugin install chores@toolbox
+    claude plugin install speccer@toolbox
 
 # Bump all plugin versions to latest changelog version
 bump-versions:
@@ -50,6 +53,7 @@ claude-install-github:
     claude plugin install changelog@toolbox
     claude plugin install svbump@toolbox
     claude plugin install chores@toolbox
+    claude plugin install speccer@toolbox
 
 # Symlink plugins to cache for dev (changes picked up on restart, no reinstall)
 claude-symlink-dev:
@@ -59,7 +63,7 @@ claude-symlink-dev:
     CACHE_DIR="$HOME/.claude/plugins/cache/toolbox"
     PLUGINS_DIR="$(pwd)/plugins"
     rm -rf "$CACHE_DIR"
-    for plugin in changelog chores jj-vcs svbump; do
+    for plugin in changelog chores jj-vcs svbump speccer; do
         mkdir -p "$CACHE_DIR/$plugin"
         ln -s "$PLUGINS_DIR/$plugin" "$CACHE_DIR/$plugin/$VERSION"
         echo "Symlinked $plugin -> $VERSION"

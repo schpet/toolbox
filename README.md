@@ -4,30 +4,13 @@ a dumping ground for teaching the llm new tricks.
 
 ## Plugins
 
-### jj-vcs
-
-Jujutsu (jj) version control documentation and workflows.
-
-- Complete command reference from jj manpages (110 commands)
-- In-depth topic guides (revsets, templates, filesets, etc.)
-- Agent usage patterns for structured JSON output
-
-### changelog
-
-Manage project changelogs following the
-[Keep a Changelog](https://keepachangelog.com) format.
-
-- Add entries: `changelog add --type added "feature description"`
-- Release versions: `changelog release patch`
-- Review git commits: `changelog review`
-
-### svbump
-
-Read and write semantic versions in config files (JSON, TOML, YAML).
-
-- Read versions: `svbump read version package.json`
-- Bump versions: `svbump write patch version package.json`
-- Preview changes: `svbump preview minor version deno.json`
+| Plugin | Description |
+|--------|-------------|
+| **jj-vcs** | Jujutsu (jj) version control documentation and workflows |
+| **changelog** | Manage project changelogs following the [Keep a Changelog](https://keepachangelog.com) format |
+| **svbump** | Read and write semantic versions in config files (JSON, TOML, YAML) |
+| **chores** | Jujutsu repository maintenance and Apple container utilities |
+| **[speccer](plugins/speccer/README.md)** | Distill rough ideas into structured project specs with issues |
 
 ## Installation
 
@@ -51,6 +34,8 @@ claude plugin marketplace add schpet/toolbox
 claude plugin install jj-vcs@toolbox
 claude plugin install changelog@toolbox
 claude plugin install svbump@toolbox
+claude plugin install chores@toolbox
+claude plugin install speccer@toolbox
 ```
 
 Restart Claude Code after installation.
@@ -61,6 +46,8 @@ Restart Claude Code after installation.
 claude plugin install jj-vcs@toolbox
 claude plugin install changelog@toolbox
 claude plugin install svbump@toolbox
+claude plugin install chores@toolbox
+claude plugin install speccer@toolbox
 ```
 
 ## Local development

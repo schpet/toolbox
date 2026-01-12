@@ -4,7 +4,7 @@ jj-git-remote-add - Add a Git remote
 
 # SYNOPSIS
 
-**jj git remote add** \[**\--fetch-tags**\] \[**-R**\|**\--repository**\] \[**\--ignore-working-copy**\] \[**\--ignore-immutable**\] \[**\--at-operation**\] \[**\--debug**\] \[**\--color**\] \[**\--quiet**\] \[**\--no-pager**\] \[**\--config**\] \[**\--config-file**\] \[**-h**\|**\--help**\] \<*REMOTE*\> \<*URL*\>
+**jj git remote add** \[**\--fetch-tags**\] \[**\--push-url**\] \[**-R**\|**\--repository**\] \[**\--ignore-working-copy**\] \[**\--ignore-immutable**\] \[**\--at-operation**\] \[**\--debug**\] \[**\--color**\] \[**\--quiet**\] \[**\--no-pager**\] \[**\--config**\] \[**\--config-file**\] \[**-h**\|**\--help**\] \<*REMOTE*\> \<*URL*\>
 
 # DESCRIPTION
 
@@ -24,6 +24,12 @@ Add a Git remote
     - included: Only fetch tags that point to objects that are already being transmitted
 
     - none: Do not fetch any tags
+
+**\--push-url** *\<PUSH_URL\>*
+
+:   The URL used for push
+
+    Local path will be resolved to absolute form
 
 **-h**, **\--help**
 

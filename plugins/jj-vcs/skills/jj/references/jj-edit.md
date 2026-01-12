@@ -4,7 +4,7 @@ jj-edit - Sets the specified revision as the working-copy revision
 
 # SYNOPSIS
 
-**jj edit** \[**-R**\|**\--repository**\] \[**\--ignore-working-copy**\] \[**\--ignore-immutable**\] \[**\--at-operation**\] \[**\--debug**\] \[**\--color**\] \[**\--quiet**\] \[**\--no-pager**\] \[**\--config**\] \[**\--config-file**\] \[**-h**\|**\--help**\] \<*REVSET*\>
+**jj edit** \[**-R**\|**\--repository**\] \[**\--ignore-working-copy**\] \[**\--ignore-immutable**\] \[**\--at-operation**\] \[**\--debug**\] \[**\--color**\] \[**\--quiet**\] \[**\--no-pager**\] \[**\--config**\] \[**\--config-file**\] \[**-h**\|**\--help**\] \[*REVSET*\]
 
 # DESCRIPTION
 
@@ -20,9 +20,9 @@ Note: it is \[generally recommended\] to instead use \`jj new\` and \`jj squash\
 
 :   Print help (see a summary with -h)
 
-\<*REVSET*\>
+\[*REVSET*\]
 
-:   The commit to edit
+:   The commit to edit \[aliases: -r\]
 
 # GLOBAL OPTIONS
 

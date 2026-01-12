@@ -36,7 +36,7 @@ By default, the duplicated commits retain the descriptions of the originals. Thi
 
 \[*REVSETS*\]
 
-:   The revision(s) to duplicate (default: @)
+:   The revision(s) to duplicate (default: @) \[aliases: -r\]
 
 # GLOBAL OPTIONS
 

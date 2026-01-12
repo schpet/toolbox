@@ -101,6 +101,10 @@ jj-file-list(1)
 
 :   List files in a revision
 
+jj-file-search(1)
+
+:   Search for content in files
+
 jj-file-show(1)
 
 :   Print contents of files in a revision

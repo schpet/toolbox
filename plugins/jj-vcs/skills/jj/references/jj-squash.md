@@ -10,6 +10,8 @@ jj-squash - Move changes from a revision into another revision
 
 Move changes from a revision into another revision
 
+Without any options, moves the changes from the working-copy revision to the parent revision.
+
 With the \`-r\` option, moves the changes from the specified revision to the parent revision. Fails if there are several parent revisions (i.e., the given revision is a merge).
 
 With the \`\--from\` and/or \`\--into\` options, moves changes from/to the given revisions. If either is left out, it defaults to the working-copy commit. For example, \`jj squash \--into @\--\` moves changes from the working-copy commit to the grandparent.
@@ -19,6 +21,8 @@ If, after moving changes out, the source revision is empty compared to its paren
 If the source was abandoned and both the source and destination had a non-empty description, you will be asked for the combined description. If either was empty, then the other one will be used.
 
 If a working-copy commit gets abandoned, it will be given a new, empty commit. This is true in general; it is not specific to this command.
+
+The name \"squash\" comes from the idea of combining (squashing) the changes from multiple revisions together.
 
 EXPERIMENTAL FEATURES
 

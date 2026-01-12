@@ -287,9 +287,9 @@ Once the conflicts are resolved, you can inspect the result with `jj diff`.
 Then run `jj squash` to move the resolution into the conflicted commit.
 
 $ jj log
-@  qzvqqupx martinvonz@google.com 2023-02-12 15:08:33 1978b534 conflict
+@  qzvqqupx martinvonz@google.com 2023-02-12 15:08:33 1978b534 (conflict)
 │  C
-×  puqltutt martinvonz@google.com 2023-02-12 15:08:33 f7fb5943 conflict
+×  puqltutt martinvonz@google.com 2023-02-12 15:08:33 f7fb5943 (conflict)
 │  B2
 │ ○  ovknlmro martinvonz@google.com 2023-02-12 15:07:24 7d7c6e6b
 ├─╯  B1
@@ -336,13 +336,14 @@ Once the conflicts are resolved, you can inspect the result with `jj diff`.
 Then run `jj squash` to move the resolution into the conflicted commit.
 
 $ cat file1
-<<<<<<< Conflict 1 of 1
-%%%%%%% Changes from base to side #1
+<<<<<<< conflict 1 of 1
+%%%%%%% diff from: ovknlmro 7d7c6e6b "B1" (parents of rebased revision)
+\\\\\\\        to: nuvyytnq 5dda2f09 "A" (rebase destination)
 -b1
 +a
-+++++++ Contents of side #2
++++++++ puqltutt daa6ffd5 "B2" (rebased revision)
 b2
->>>>>>> Conflict 1 of 1 ends
+>>>>>>> conflict 1 of 1 ends
 
 $ echo resolved > file1
 
@@ -427,9 +428,9 @@ Then run `jj squash` to move the resolution into the conflicted commit.
 $ jj log
 @  zxoosnnp martinvonz@google.com 2023-02-12 19:34:09 63874fe6
 │  (no description set)
-│ ×  qzvqqupx martinvonz@google.com 2023-02-12 15:08:33 1978b534 conflict
+│ ×  qzvqqupx martinvonz@google.com 2023-02-12 15:08:33 1978b534 (conflict)
 ├─╯  C
-×  puqltutt martinvonz@google.com 2023-02-12 15:08:33 f7fb5943 conflict
+×  puqltutt martinvonz@google.com 2023-02-12 15:08:33 f7fb5943 (conflict)
 │  B2
 │ ○  ovknlmro martinvonz@google.com 2023-02-12 15:07:24 7d7c6e6b
 ├─╯  B1
@@ -468,7 +469,7 @@ Added 0 files, modified 0 files, removed 1 files
 
 $ jj new -m ABC; printf 'A\nB\nc\n' > file
 Working copy  (@) now at: kwtuwqnm 6f30cd1f (empty) ABC
-Parent commit (@-)      : ztqrpvnw 51002261 ab
+Parent commit (@-)      : ztqrpvnw 51002261 abc
 
 $ jj new -m ABCD; printf 'A\nB\nC\nD\n' > file
 Working copy  (@) now at: mrxqplyk a6749154 (empty) ABCD

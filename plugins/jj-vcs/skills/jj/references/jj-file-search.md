@@ -1,42 +1,38 @@
 # NAME
 
-jj-bookmark-untrack - Stop tracking given remote bookmarks
+jj-file-search - Search for content in files
 
 # SYNOPSIS
 
-**jj bookmark untrack** \[**\--remote**\] \[**-R**\|**\--repository**\] \[**\--ignore-working-copy**\] \[**\--ignore-immutable**\] \[**\--at-operation**\] \[**\--debug**\] \[**\--color**\] \[**\--quiet**\] \[**\--no-pager**\] \[**\--config**\] \[**\--config-file**\] \[**-h**\|**\--help**\] \<*BOOKMARK*\>
+**jj file search** \[**-r**\|**\--revision**\] \<**-p**\|**\--pattern**\> \[**-R**\|**\--repository**\] \[**\--ignore-working-copy**\] \[**\--ignore-immutable**\] \[**\--at-operation**\] \[**\--debug**\] \[**\--color**\] \[**\--quiet**\] \[**\--no-pager**\] \[**\--config**\] \[**\--config-file**\] \[**-h**\|**\--help**\] \[*FILESETS*\]
 
 # DESCRIPTION
 
-Stop tracking given remote bookmarks
+Search for content in files
 
-An untracked remote bookmark is just a pointer to the last-fetched remote bookmark. It wont be imported as a local bookmark on future pulls.
+Lists files containing the specified pattern.
 
-If you want to forget a local bookmark while also untracking the corresponding remote bookmarks, use \`jj bookmark forget\` instead.
+This is an early version of the command. It only supports glob matching for now, it doesnt search files concurrently, and it doesnt indicate where in the file the match was found.
 
 # OPTIONS
 
-**\--remote** *\<REMOTE\>*
+**-r**, **\--revision** *\<REVSET\>* \[default: @\]
 
-:   Remote names to untrack
+:   The revision to search files in
 
-    By default, the specified pattern matches remote names with glob syntax. You can also use other \[string pattern syntax\].
+**-p**, **\--pattern** *\<PATTERN\>*
 
-    If no remote names are given, all remote bookmarks matching the bookmark names will be untracked.
+:   The glob pattern to search for
 
-    \[string pattern syntax\]: https://docs.jj-vcs.dev/latest/revsets/#string-patterns
+    The whole line must match the pattern, so you may want to pass something like \`\--pattern \*foo\*\`.
 
 **-h**, **\--help**
 
 :   Print help (see a summary with -h)
 
-\<*BOOKMARK*\>
+\[*FILESETS*\]
 
-:   Bookmark names to untrack
-
-    By default, the specified pattern matches bookmark names with glob syntax. You can also use other \[string pattern syntax\].
-
-    \[string pattern syntax\]: https://docs.jj-vcs.dev/latest/revsets/#string-patterns
+:   Only search files matching these prefixes (instead of all files)
 
 # GLOBAL OPTIONS
 

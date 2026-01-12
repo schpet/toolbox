@@ -12,6 +12,10 @@ Push to a Git remote
 
 By default, pushes tracking bookmarks pointing to \`remote_bookmarks(remote=\<remote\>)..@\`. Use \`\--bookmark\` to push specific bookmarks. Use \`\--all\` to push all bookmarks. Use \`\--change\` to generate bookmark names based on the change IDs of specific commits.
 
+When pushing a bookmark, the command pushes all commits in the range from the remotes current position up to and including the bookmarks target commit. Any descendant commits beyond the bookmark are not pushed.
+
+If the local bookmark has changed from the last fetch, push will update the remote bookmark to the new position after passing safety checks. This is similar to \`git push \--force-with-lease\` - the remote is updated only if its current state matches what Jujutsu last fetched.
+
 Unlike in Git, the remote to push to is not derived from the tracked remote bookmarks. Use \`\--remote\` to select the remote Git repository by name. There is no option to push to multiple remotes.
 
 Before the command actually moves, creates, or deletes a remote bookmark, it makes several \[safety checks\]. If there is a problem, you may need to run \`jj git fetch \--remote \<remote name\>\` and/or resolve some \[bookmark conflicts\].
@@ -32,9 +36,9 @@ Before the command actually moves, creates, or deletes a remote bookmark, it mak
 
 :   Push only this bookmark, or bookmarks matching a pattern (can be repeated)
 
-    By default, the specified name matches exactly. Use \`glob:\` prefix to select bookmarks by \[wildcard pattern\].
+    By default, the specified pattern matches bookmark names with glob syntax. You can also use other \[string pattern syntax\].
 
-    \[wildcard pattern\]: https://docs.jj-vcs.dev/latest/revsets#string-patterns
+    \[string pattern syntax\]: https://docs.jj-vcs.dev/latest/revsets/#string-patterns
 
 **\--all**
 

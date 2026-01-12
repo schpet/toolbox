@@ -167,7 +167,7 @@ jj-help(1)
 
 jj-interdiff(1)
 
-:   Compare the changes of two commits
+:   Show differences between the diffs of two revisions
 
 jj-log(1)
 
@@ -279,4 +279,4 @@ jj help \--help lists available keywords. Use jj help -k to show help for one of
 
 # VERSION
 
-v0.36.0
+v0.37.0

@@ -26,9 +26,9 @@ Show commit description and changes in a revision
 
 :   Print help (see a summary with -h)
 
-\[*REVSET*\] \[default: @\]
+\[*REVSET*\]
 
-:   Show changes in this revision, compared to its parent(s)
+:   Show changes in this revision, compared to its parent(s) \[default: @\] \[aliases: -r\]
 
 # DIFF FORMATTING OPTIONS
 

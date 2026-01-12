@@ -4,13 +4,25 @@ jj-git-remote-set-url - Set the URL of a Git remote
 
 # SYNOPSIS
 
-**jj git remote set-url** \[**-R**\|**\--repository**\] \[**\--ignore-working-copy**\] \[**\--ignore-immutable**\] \[**\--at-operation**\] \[**\--debug**\] \[**\--color**\] \[**\--quiet**\] \[**\--no-pager**\] \[**\--config**\] \[**\--config-file**\] \[**-h**\|**\--help**\] \<*REMOTE*\> \<*URL*\>
+**jj git remote set-url** \[**\--push**\] \[**\--fetch**\] \[**-R**\|**\--repository**\] \[**\--ignore-working-copy**\] \[**\--ignore-immutable**\] \[**\--at-operation**\] \[**\--debug**\] \[**\--color**\] \[**\--quiet**\] \[**\--no-pager**\] \[**\--config**\] \[**\--config-file**\] \[**-h**\|**\--help**\] \<*REMOTE*\> \[*URL*\]
 
 # DESCRIPTION
 
 Set the URL of a Git remote
 
 # OPTIONS
+
+**\--push** *\<PUSH\>*
+
+:   The URL or path to push to
+
+    Local path will be resolved to absolute form.
+
+**\--fetch** *\<FETCH\>*
+
+:   The URL or path to fetch from
+
+    Local path will be resolved to absolute form.
 
 **-h**, **\--help**
 
@@ -20,9 +32,11 @@ Set the URL of a Git remote
 
 :   The remotes name
 
-\<*URL*\>
+\[*URL*\]
 
-:   The desired URL or path for \`remote\`
+:   The URL or path to fetch from
+
+    This is a short form, equivalent to using the explicit \--fetch.
 
     Local path will be resolved to absolute form.
 

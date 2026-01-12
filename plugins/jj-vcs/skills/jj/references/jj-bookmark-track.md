@@ -4,29 +4,37 @@ jj-bookmark-track - Start tracking given remote bookmarks
 
 # SYNOPSIS
 
-**jj bookmark track** \[**-R**\|**\--repository**\] \[**\--ignore-working-copy**\] \[**\--ignore-immutable**\] \[**\--at-operation**\] \[**\--debug**\] \[**\--color**\] \[**\--quiet**\] \[**\--no-pager**\] \[**\--config**\] \[**\--config-file**\] \[**-h**\|**\--help**\] \<*BOOKMARK@REMOTE*\>
+**jj bookmark track** \[**\--remote**\] \[**-R**\|**\--repository**\] \[**\--ignore-working-copy**\] \[**\--ignore-immutable**\] \[**\--at-operation**\] \[**\--debug**\] \[**\--color**\] \[**\--quiet**\] \[**\--no-pager**\] \[**\--config**\] \[**\--config-file**\] \[**-h**\|**\--help**\] \<*BOOKMARK*\>
 
 # DESCRIPTION
 
 Start tracking given remote bookmarks
 
-A tracking remote bookmark will be imported as a local bookmark of the same name. Changes to it will propagate to the existing local bookmark on future pulls.
+A tracked remote bookmark will be imported as a local bookmark of the same name. Changes to it will propagate to the existing local bookmark on future pulls.
 
 # OPTIONS
+
+**\--remote** *\<REMOTE\>*
+
+:   Remote names to track
+
+    By default, the specified pattern matches remote names with glob syntax. You can also use other \[string pattern syntax\].
+
+    If no remote names are given, all remote bookmarks matching the bookmark names will be tracked.
+
+    \[string pattern syntax\]: https://docs.jj-vcs.dev/latest/revsets/#string-patterns
 
 **-h**, **\--help**
 
 :   Print help (see a summary with -h)
 
-\<*BOOKMARK@REMOTE*\>
+\<*BOOKMARK*\>
 
-:   Remote bookmarks to track
+:   Bookmark names to track
 
-    By default, the specified name matches exactly. Use \`glob:\` prefix to select bookmarks by \[wildcard pattern\].
+    By default, the specified pattern matches bookmark names with glob syntax. You can also use other \[string pattern syntax\].
 
-    Examples: bookmark@remote, glob:main@\*, glob:jjfan-\*@upstream
-
-    \[wildcard pattern\]: https://docs.jj-vcs.dev/latest/revsets/#string-patterns
+    \[string pattern syntax\]: https://docs.jj-vcs.dev/latest/revsets/#string-patterns
 
 # GLOBAL OPTIONS
 

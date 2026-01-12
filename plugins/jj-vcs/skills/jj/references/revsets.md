@@ -34,7 +34,9 @@ ID can also be used. It is an error to use a non-unique prefix.
 
 A full change ID refers to a visible commit with that change ID. A unique prefix
 of the full change ID can also be used. It is an error to use a non-unique
-prefix or [a divergent change ID][divergent-change].
+prefix or [a divergent change ID][divergent-change]. To refer to a
+[hidden](#hidden-revisions) commit or [divergent change][divergent-change], a
+[change offset][change-offset] can be added using `<change ID>/<offset>` syntax.
 
 Use [single or double quotes][string-literals] to prevent a symbol from being
 interpreted as an expression. For example, `"x-"` is the symbol `x-`, not the
@@ -42,7 +44,8 @@ parents of symbol `x`. Taking shell quoting into account, you may need to use
 something like `jj log -r '"x-"'`.
 
 [divergent-change]: glossary.md#divergent-change
-[string-literals]: templates.md#string-literals
+[change-offset]: glossary.md#change-offset
+[string-literals]: templates.md#stringliteral-type
 
 ### Priority
 
@@ -269,8 +272,8 @@ revsets (expressions) as arguments.
   `main@origin` or `main@upstream`. If a bookmark is in a conflicted state, all
   its possible targets are included.
 
-  Git-tracking bookmarks are excluded by default. Use `remote=exact:"git"` or
-  `remote=glob:"*"` to select bookmarks including `@git` ones.
+  Git-tracking bookmarks are excluded by default. Use `remote="git"` or
+  `remote="*"` to select bookmarks including `@git` ones.
 
 * `tracked_remote_bookmarks([bookmark_pattern], [[remote=]remote_pattern])`: All
   targets of tracked remote bookmarks. Supports the same optional arguments as
@@ -285,11 +288,6 @@ revsets (expressions) as arguments.
   pattern](#string-patterns). For example, `tags(v1)` would match the
   tags `v123` and `rev1` but not the tag `v2`. If a tag is
   in a conflicted state, all its possible targets are included.
-
-* `git_refs()`:  All Git ref targets as of the last import. If a Git ref
-  is in a conflicted state, all its possible targets are included.
-
-* `git_head()`: The Git `HEAD` target as of the last import.
 
 * `visible_heads()`: All visible heads (same as `heads(all())` if no hidden
   revisions are mentioned).
@@ -329,8 +327,8 @@ revsets (expressions) as arguments.
   [string pattern](#string-patterns).
 
   A non-empty description is usually terminated with newline character. For
-  example, `description(exact:"")` matches commits without description, and
-  `description(exact:"foo\n")` matches commits with description `"foo\n"`.
+  example, `description("")` matches commits without description, and
+  `description("foo\n")` matches commits with description `"foo\n"`.
 
 * `subject(pattern)`: Commits that have a subject matching the given [string
   pattern](#string-patterns). A subject is the first line of the description
@@ -389,7 +387,7 @@ revsets (expressions) as arguments.
   are scanned by default, but it is likely to change in future version to
   respect the command line path arguments.
 
-  For example, `diff_contains("TODO", "src")` will search revisions where "TODO"
+  For example, `diff_contains("*TODO*", "src")` will search revisions where "TODO"
   is added to or removed from files under "src".
 
 * `conflicts()`: Commits with conflicts.
@@ -478,9 +476,7 @@ revsets (expressions) as arguments.
 Functions that perform string matching support the following pattern syntax (the
 quotes are optional).
 
-By default, `"string"` is parsed as a `substring:` pattern in revsets. The
-default will be changed to `glob:` in a future release. The new behavior can be
-enabled by: `ui.revsets-use-glob-by-default=true`.
+By default, `"string"` is parsed as a `glob:` pattern.
 
 * `exact:"string"`: Matches strings exactly equal to `string`.
 * `glob:"pattern"`: Matches strings with Unix-style shell [wildcard
@@ -632,7 +628,6 @@ jj log -r 'tags() | bookmarks()'
 Show local commits leading up to the working copy, as well as descendants of
 those commits:
 
-
 ```shell
 jj log -r '(remote_bookmarks()..@)::'
 ```
@@ -641,5 +636,5 @@ Show commits authored by "martinvonz" and containing the word "reset" in the
 description:
 
 ```shell
-jj log -r 'author(martinvonz) & description(reset)'
+jj log -r 'author(*martinvonz*) & description(*reset*)'
 ```

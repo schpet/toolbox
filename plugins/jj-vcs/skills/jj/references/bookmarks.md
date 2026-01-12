@@ -1,6 +1,5 @@
 # Bookmarks
 
-
 ## Introduction
 
 Bookmarks are named pointers to revisions (just like branches are in Git). You
@@ -72,11 +71,11 @@ If you want to know the internals of bookmark tracking, consult the
 - A **tracked (remote) bookmark** is defined above. You can make a remote bookmark
   tracked with the [`jj bookmark track` command](#manually-tracking-a-bookmark), for
   example.
-- A **tracking (local) bookmark** is the local bookmark that `jj` tries to keep in
-  sync with the tracked remote bookmark. For example, after `jj bookmark track
-  mybookmark@origin`, there will be a local bookmark `mybookmark` that's tracking the
-  remote `mybookmark@origin` bookmark. A local bookmark can track a bookmark of the same
-  name on 0 or more remotes.
+- A **tracking (local) bookmark** is the local bookmark that `jj` tries to keep
+  in sync with the tracked remote bookmark. For example, after `jj bookmark
+  track mybookmark --remote=origin`, there will be a local bookmark `mybookmark`
+  that's tracking the remote `mybookmark@origin` bookmark. A local bookmark can
+  track a bookmark of the same name on 0 or more remotes.
 
 The notion of tracked bookmarks serves a similar function to the Git notion of an
 "upstream branch". Unlike Git, a single local bookmark can be tracking remote
@@ -85,9 +84,9 @@ must match.
 
 ### Manually tracking a bookmark
 
-To track a bookmark permanently use `jj bookmark track <bookmark name>@<remote name>`.
-It will now be imported as a local bookmark until you untrack it or it is deleted
-on the remote.
+To track a bookmark permanently use `jj bookmark track <bookmark name>
+--remote=<remote name>`. It will now be imported as a local bookmark until you
+untrack it or it is deleted on the remote.
 
 Example:
 
@@ -97,7 +96,7 @@ $ jj bookmark list --all
 $ # Find the bookmark.
 $ # [...]
 $ # Actually track the bookmark.
-$ jj bookmark track <bookmark name>@<remote name> # Example: jj bookmark track my-feature@origin
+$ jj bookmark track <bookmark name> --remote=<remote name> # Example: jj bookmark track my-feature --remote=origin
 $ # From this point on, <bookmark name> will be imported when fetching from <remote name>.
 $ jj git fetch --remote <remote name>
 $ # A local bookmark <bookmark name> should have been created or updated while fetching.
@@ -118,7 +117,7 @@ $ jj bookmark list --all
 $ # Find the bookmark we no longer want to track.
 $ # [...]
 # # Actually untrack it.
-$ jj bookmark untrack <bookmark name>@<remote name> # Example: jj bookmark untrack stuff@origin
+$ jj bookmark untrack <bookmark name> --remote=<remote name> # Example: jj bookmark untrack stuff --remote=origin
 $ # From this point on, this remote bookmark won't be imported anymore.
 $ # The local bookmark (e.g. stuff) is unaffected. It may or may not still
 $ # be tracking bookmarks on other remotes (e.g. stuff@upstream).
@@ -131,7 +130,6 @@ This command omits local Git-tracking bookmarks by default.
 
 You can see if a specific bookmark is tracked with `jj bookmark list --tracked <bookmark name>`.
 
-
 ### Automatic tracking of bookmarks & `auto-track-bookmarks` option
 
 There are two situations where `jj` tracks bookmarks automatically. `jj git
@@ -143,7 +141,7 @@ By default, every other remote bookmark is marked as "not tracked" when it's
 fetched. If desired, you need to manually `jj bookmark track` them. This works
 well for repositories where multiple people work on a large number of bookmarks.
 
-The default can be changed by setting the config `remotes.<name>.auto-track-bookmarks = "glob:*"`.
+The default can be changed by setting the config `remotes.<name>.auto-track-bookmarks = "*"`.
 Then, `jj git fetch` tracks every *newly fetched* bookmark with a local bookmark.
 Branches that already existed before the `jj git fetch` are not affected. This
 is similar to Mercurial, which fetches all its bookmarks (equivalent to Git's
@@ -198,7 +196,6 @@ makes several safety checks.
 
 [^known-issue]: See "A general note on safety" in
     <https://git-scm.com/docs/git-push#Documentation/git-push.txt---no-force-with-lease>
-
 
 ## Conflicts
 

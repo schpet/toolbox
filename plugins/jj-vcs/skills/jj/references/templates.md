@@ -95,7 +95,7 @@ The following functions are defined.
   `separator` between **non-empty** `content`s.
 * `surround(prefix: Template, suffix: Template, content: Template) -> Template`:
   Surround **non-empty** content with texts such as parentheses.
-* `config(name: String) -> ConfigValue`: Look up configuration value by `name`.
+* `config(name: StringLiteral) -> ConfigValue`: Look up configuration value by `name`.
 
 ## Built-in Aliases
 
@@ -161,23 +161,24 @@ This type cannot be printed. The following methods are defined.
   local one.
 * `.local_tags() -> List<CommitRef>`: All local tags pointing to the commit.
 * `.remote_tags() -> List<CommitRef>`: All remote tags pointing to the commit.
-* `.git_refs() -> List<CommitRef>`
-* `.git_head() -> Boolean`: True for the Git `HEAD` commit.
-* `.divergent() -> Boolean`: True if the commit's change id corresponds to multiple
+* `.divergent() -> Boolean`: True if the commit's change ID corresponds to multiple
   visible commits.
 * `.hidden() -> Boolean`: True if the commit is not visible (a.k.a. abandoned).
+* `.change_offset() -> Option<Integer>`: The [change offset](glossary.md#change-offset)
+  of this commit. May not be available for some commits.
 * `.immutable() -> Boolean`: True if the commit is included in [the set of
   immutable commits](config.md#set-of-immutable-commits).
-* `.contained_in(revset: String) -> Boolean`: True if the commit is included in
+* `.contained_in(revset: StringLiteral) -> Boolean`: True if the commit is included in
   [the provided revset](revsets.md).
 * `.conflict() -> Boolean`: True if the commit contains merge conflicts.
 * `.empty() -> Boolean`: True if the commit modifies no files.
-* `.diff([files: String]) -> TreeDiff`: Changes from the parents within [the
+* `.diff([files: StringLiteral]) -> TreeDiff`: Changes from the parents within [the
   `files` expression](filesets.md). All files are compared by default, but it is
   likely to change in future version to respect the command line path arguments.
-* `.files([files: String]) -> List<TreeEntry>`: Files that exist in this commit,
+* `.files([files: StringLiteral]) -> List<TreeEntry>`: Files that exist in this commit,
   matching [the `files` expression](filesets.md). Use `.diff().files()` to list
   changed files.
+* `.conflicted_files() -> List<TreeEntry>`: Conflicted files in this commit.
 * `.root() -> Boolean`: True if the commit is the root commit.
 
 ### `CommitEvolutionEntry` type
@@ -189,6 +190,10 @@ This type cannot be printed. The following methods are defined.
 * `.commit() -> Commit`: New commit.
 * `.operation() -> Operation`: Operation where the commit was created or
   rewritten.
+* `.predecessors() -> List<Commit>`: Predecessor commits of this entry.
+* `.inter_diff([files: StringLiteral]) -> TreeDiff`: Changes between this commit and its
+  predecessor version(s), rebased onto the parents of this commit to avoid unrelated
+  changes (similar to `jj evolog -p`).
 
 ### `ChangeId` type
 
@@ -300,6 +305,7 @@ This type holds the diff stats per file. The following methods are defined.
 * `.lines_removed() -> Integer`: Number of lines deleted.
 * `.path() -> RepoPath`: Path to the entry. If the entry is a copy/rename, this
   points to the target (or right) entry.
+* `.display_diff_path() -> String`: Format path for display, taking into account copy/rename information.
 * `.status() -> String`: One of `"modified"`, `"added"`, `"removed"`, `"copied"`, or `"renamed"`.
 * `.status_char() -> String`: One of `"M"` (modified), `"A"` (added), `"D"` (removed),
   `"C"` (copied), or `"R"` (renamed).
@@ -355,9 +361,10 @@ The following methods are defined. See also the `List` type.
 
 _Conversion: `Boolean`: no, `Serialize`: no, `Template`: yes_
 
-The following methods are defined. See also the `List` type.
+The following methods are defined.
 
-* `.join(separator: Template) -> Template`
+* `.join(separator: Template) -> Template`: Concatenate elements with
+  the given `separator`.
 
 ### `Operation` type
 
@@ -508,7 +515,10 @@ defined.
   can use it in a template like `'{ "foo": ' ++ foo.escape_json() ++ ' }'` to
   return a JSON/JSONL.
 
-#### String literals
+### `StringLiteral` type
+
+A string literal known at parse time. Unlike `Stringify`, this cannot be a
+dynamic expression - it must be a literal value like `"main"` or `"format"`.
 
 String literals must be surrounded by single or double quotes (`'` or `"`).
 A double-quoted string literal supports the following escape sequences:
@@ -528,6 +538,10 @@ that don't form a valid escape sequence.
 
 A single-quoted string literal has no escape syntax. `'` can't be expressed
 inside a single-quoted string literal.
+
+String literals have their own type so that the value can be validated at parse
+time. For example, `contained_in(revset)` requires a literal so the revset can
+be parsed and checked before the template is evaluated.
 
 ### `Stringify` type
 
@@ -564,14 +578,14 @@ _Conversion: `Boolean`: no, `Serialize`: yes, `Template`: yes_
 The following methods are defined.
 
 * `.ago() -> String`: Format as relative timestamp.
-* `.format(format: String) -> String`: Format with [the specified strftime-like
+* `.format(format: StringLiteral) -> String`: Format with [the specified strftime-like
   format string](https://docs.rs/chrono/latest/chrono/format/strftime/).
 * `.utc() -> Timestamp`: Convert timestamp into UTC timezone.
 * `.local() -> Timestamp`: Convert timestamp into local timezone.
-* `.after(date: String) -> Boolean`: True if the timestamp is exactly at or
+* `.after(date: StringLiteral) -> Boolean`: True if the timestamp is exactly at or
   after the given date. Supported date formats are the same as the revset
   [Date pattern type].
-* `.before(date: String) -> Boolean`: True if the timestamp is before, but
+* `.before(date: StringLiteral) -> Boolean`: True if the timestamp is before, but
   not including, the given date. Supported date formats are the same as the
   revset [Date pattern type].
 
@@ -617,8 +631,11 @@ This type cannot be printed. The following methods are defined.
 
 * `.path() -> RepoPath`: Path to the entry. If the entry is a copy/rename, this
   points to the target (or right) entry.
+* `.display_diff_path() -> String`: Format path for display, taking into account copy/rename information.
 * `.status() -> String`: One of `"modified"`, `"added"`, `"removed"`,
   `"copied"`, or `"renamed"`.
+* `.status_char() -> String`: Single-character status indicator: `"M"` for modified,
+  `"A"` for added, `"D"` for removed, `"C"` for copied, or `"R"` for renamed.
 * `.source() -> TreeEntry`: The source (or left) entry.
 * `.target() -> TreeEntry`: The target (or right) entry.
 
@@ -630,6 +647,8 @@ This type cannot be printed. The following methods are defined.
 
 * `.path() -> RepoPath`: Path to the entry.
 * `.conflict() -> Boolean`: True if the entry is a merge conflict.
+* `.conflict_side_count() -> Integer`: Number of sides in the merge conflict (1 if not
+  conflicted, 2 or more for multi-way merges).
 * `.file_type() -> String`: One of `"file"`, `"symlink"`, `"tree"`,
   `"git-submodule"`, or `"conflict"`.
 * `.executable() -> Boolean`: True if the entry is an executable file.

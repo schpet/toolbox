@@ -4,7 +4,7 @@ jj-tag-list - List tags
 
 # SYNOPSIS
 
-**jj tag list** \[**-T**\|**\--template**\] \[**-R**\|**\--repository**\] \[**\--ignore-working-copy**\] \[**\--ignore-immutable**\] \[**\--at-operation**\] \[**\--debug**\] \[**\--color**\] \[**\--quiet**\] \[**\--no-pager**\] \[**\--config**\] \[**\--config-file**\] \[**-h**\|**\--help**\] \[*NAMES*\]
+**jj tag list** \[**-T**\|**\--template**\] \[**\--sort**\] \[**-R**\|**\--repository**\] \[**\--ignore-working-copy**\] \[**\--ignore-immutable**\] \[**\--at-operation**\] \[**\--debug**\] \[**\--color**\] \[**\--quiet**\] \[**\--no-pager**\] \[**\--config**\] \[**\--config-file**\] \[**-h**\|**\--help**\] \[*NAMES*\]
 
 # DESCRIPTION
 
@@ -22,6 +22,17 @@ List tags
 
     \[\`jj help -k templates\`\]: https://docs.jj-vcs.dev/latest/templates/
 
+**\--sort** *\<SORT_KEY\>*
+
+:   Sort tags based on the given key (or multiple keys)
+
+    Suffix the key with \`-\` to sort in descending order of the value (e.g. \`\--sort name-\`). Note that when using multiple keys, the first key is the most significant.
+
+    This defaults to the \`ui.tag-list-sort-keys\` setting.\
+
+    \
+    \[*possible values:* name, name-, author-name, author-name-, author-email, author-email-, author-date, author-date-, committer-name, committer-name-, committer-email, committer-email-, committer-date, committer-date-\]
+
 **-h**, **\--help**
 
 :   Print help (see a summary with -h)
@@ -30,9 +41,9 @@ List tags
 
 :   Show tags whose local name matches
 
-    By default, the specified name matches exactly. Use \`glob:\` prefix to select tags by \[wildcard pattern\].
+    By default, the specified pattern matches tag names with glob syntax. You can also use other \[string pattern syntax\].
 
-    \[wildcard pattern\]: https://docs.jj-vcs.dev/latest/revsets/#string-patterns
+    \[string pattern syntax\]: https://docs.jj-vcs.dev/latest/revsets/#string-patterns
 
 # GLOBAL OPTIONS
 

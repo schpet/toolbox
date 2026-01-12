@@ -1,6 +1,6 @@
 # NAME
 
-jj-interdiff - Compare the changes of two commits
+jj-interdiff - Show differences between the diffs of two revisions
 
 # SYNOPSIS
 
@@ -8,19 +8,31 @@ jj-interdiff - Compare the changes of two commits
 
 # DESCRIPTION
 
-Compare the changes of two commits
+Show differences between the diffs of two revisions
 
-This excludes changes from other commits by temporarily rebasing \`\--from\` onto \`\--to\`s parents. If you wish to compare the same change across versions, consider \`jj evolog -p\` instead.
+This is like running \`jj diff -r\` on each change, then comparing those results. It answers: \"How do the modifications introduced by revision A differ from the modifications introduced by revision B?\"
+
+For example, if two changes both add a feature but implement it differently, \`jj interdiff \--from @- \--to other\` shows what one implementation adds or removes that the other doesnt.
+
+A common use of this command is to compare how a change has changed since the last push to a remote:
+
+\`\`\`sh \$ jj interdiff \--from push-xyz@origin \--to push-xyz \`\`\`
+
+This command is different from \`jj diff \--from A \--to B\`, which compares file contents directly. \`interdiff\` compares what the changes do in terms of their patches, rather than their file contents. This makes a difference when the two revisions have different parents: \`jj diff \--from A \--to B\` will include the changes between their parents while \`jj interdiff \--from A \--to B\` will not.
+
+Technically, this works by rebasing \`\--from\` onto \`\--to\`s parents and comparing the result to \`\--to\`.
+
+To see the changes throughout the whole evolution of a change instead of between just two revisions, use \`jj evolog -p instead\`.
 
 # OPTIONS
 
 **-f**, **\--from** *\<REVSET\>*
 
-:   Show changes from this revision
+:   The first revision to compare (default: @)
 
 **-t**, **\--to** *\<REVSET\>*
 
-:   Show changes to this revision
+:   The second revision to compare (default: @)
 
 **-h**, **\--help**
 

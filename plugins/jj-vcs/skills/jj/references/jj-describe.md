@@ -38,7 +38,7 @@ Starts an editor to let you edit the description of changes. The editor will be 
 
 \[*REVSETS*\]
 
-:   The revision(s) whose description to edit (default: @)
+:   The revision(s) whose description to edit (default: @) \[aliases: -r\]
 
 # GLOBAL OPTIONS
 

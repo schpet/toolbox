@@ -10,7 +10,7 @@ jj-bookmark-list - List bookmarks and their targets
 
 List bookmarks and their targets
 
-By default, a tracking remote bookmark will be included only if its target is different from the local target. A non-tracking remote bookmark wont be listed. For a conflicted bookmark (both local and remote), old target revisions are preceded by a \"-\" and new target revisions are preceded by a \"+\".
+By default, a tracked remote bookmark will be included only if its target is different from the local target. An untracked remote bookmark wont be listed. For a conflicted bookmark (both local and remote), old target revisions are preceded by a \"-\" and new target revisions are preceded by a \"+\".
 
 See \[\`jj help -k bookmarks\`\] for more information.
 
@@ -20,21 +20,23 @@ See \[\`jj help -k bookmarks\`\] for more information.
 
 **-a**, **\--all-remotes**
 
-:   Show all tracking and non-tracking remote bookmarks including the ones whose targets are synchronized with the local bookmarks
+:   Show all tracked and untracked remote bookmarks including the ones whose targets are synchronized with the local bookmarks
 
 **\--remote** *\<REMOTE\>*
 
-:   Show all tracking and non-tracking remote bookmarks belonging to this remote
+:   Show all tracked and untracked remote bookmarks belonging to this remote
 
     Can be combined with \`\--tracked\` or \`\--conflicted\` to filter the bookmarks shown (can be repeated.)
 
-    By default, the specified remote name matches exactly. Use \`glob:\` prefix to select remotes by \[wildcard pattern\].
+    By default, the specified pattern matches remote names with glob syntax. You can also use other \[string pattern syntax\].
 
-    \[wildcard pattern\]: https://docs.jj-vcs.dev/latest/revsets/#string-patterns
+    \[string pattern syntax\]: https://docs.jj-vcs.dev/latest/revsets/#string-patterns
 
 **-t**, **\--tracked**
 
-:   Show remote tracked bookmarks only. Omits local Git-tracking bookmarks by default
+:   Show tracked remote bookmarks only
+
+    This omits local Git-tracking bookmarks by default.
 
 **-c**, **\--conflicted**
 
@@ -75,9 +77,9 @@ See \[\`jj help -k bookmarks\`\] for more information.
 
 :   Show bookmarks whose local name matches
 
-    By default, the specified name matches exactly. Use \`glob:\` prefix to select bookmarks by \[wildcard pattern\].
+    By default, the specified pattern matches bookmark names with glob syntax. You can also use other \[string pattern syntax\].
 
-    \[wildcard pattern\]: https://docs.jj-vcs.dev/latest/revsets/#string-patterns
+    \[string pattern syntax\]: https://docs.jj-vcs.dev/latest/revsets/#string-patterns
 
 # GLOBAL OPTIONS
 

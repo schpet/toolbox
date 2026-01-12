@@ -1,7 +1,7 @@
 {
   "name": "changelog",
   "description": "Manage project changelogs following the Keep a Changelog format",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "author": {
     "name": "schpet"
   },

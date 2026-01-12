@@ -2,7 +2,6 @@
 
 These are the config settings available to jj/Jujutsu.
 
-
 ## Config files and TOML
 
 `jj` loads several types of config settings:
@@ -73,7 +72,6 @@ then use whichever suits you in your config. If you mix dotted keys and headings
 That's probably enough TOML to keep you out of trouble but the [syntax guide] is
 very short if you ever need to check.
 
-
 ## User settings
 
 ```toml
@@ -143,13 +141,13 @@ commit_id = "ansi-color-81"
 
 If you use a string value for a color, as in the examples above, it will be used
 for the foreground color. You can also set the background color, reverse colors
-(swap foreground and background), or make the text bold, italic, or underlined.
-For that, you need to use a table:
+(swap foreground and background), or make the text bold, dim, italic, or
+underlined. For that, you need to use a table:
 
 ```toml
 [colors]
 commit_id = { fg = "green", bg = "#ff1525", bold = true, underline = true }
-change_id = { reverse = true, italic = true }
+change_id = { reverse = true, dim = false, italic = true }
 ```
 
 The key names are called "labels". The above used `commit_id` as label. You can
@@ -200,6 +198,7 @@ concat(
 ```
 
 You can override only the `default_commit_description` value if you like, e.g.:
+
 ```toml
 [template-aliases]
 default_commit_description = '''
@@ -229,25 +228,25 @@ concat(
 '''
 ```
 
-### Bookmark listing order
+### Bookmark/tag listing order
 
-By default, `jj bookmark list` displays bookmarks sorted alphabetically by name.
-You can customize this sorting behavior by specifying sort keys in your config
-file:
+By default, `jj bookmark list` and `jj tag list` display bookmarks and tags
+sorted alphabetically by name. You can customize this sorting behavior by
+specifying sort keys in your config file:
 
 ```toml
 [ui]
 bookmark-list-sort-keys = ["name"]
+tag-list-sort-keys = ["name"]
 ```
 
-The configuration works identically to using the `--sort` option for
-`jj bookmark list`. The following sort keys are supported: `name`, `author-name`,
-`author-email`, `author-date`, `committer-name`, `committer-email`,
-`committer-date`. Suffix the key with `-` to sort in descending order. Multiple
-keys can be supplied here, the first key is the most significant.
+The configuration works identically to using the `--sort` option. The following
+sort keys are supported: `name`, `author-name`, `author-email`, `author-date`,
+`committer-name`, `committer-email`, `committer-date`. Suffix the key with `-`
+to sort in descending order. Multiple keys can be supplied here, the first key
+is the most significant.
 
-When the `--sort` option is used with `jj bookmark list`, the configuration
-is ignored.
+When the `--sort` option is used, the configuration is ignored.
 
 ### Commit trailers
 
@@ -289,6 +288,18 @@ can override the default style with the following keys:
 "diff added token" = { bg = "#002200", underline = false }
 # Alternatively, swap colors
 "diff token" = { reverse = true, underline = false }
+```
+
+In color-words diffs, line numbers of context lines are rendered with decreased
+intensity to highlight changed lines. You can also decrease intensity of context
+contents.
+
+```toml
+[colors]
+# Dim context line numbers (default)
+"diff context line_number" = { dim = true }
+# Dim context line numbers and contents (applies to color-words and git diffs)
+"diff context" = { dim = true }
 ```
 
 ### Diff format
@@ -383,7 +394,7 @@ diff-args = ["--color=always", "$left", "$right"]
   not work for viewing diffs.
 
 By default `jj` will invoke external tools with a directory containing the left
-and right sides.  The `diff-invocation-mode` config can change this to file by file
+and right sides. The `diff-invocation-mode` config can change this to file by file
 invocations as follows:
 
 ```toml
@@ -493,7 +504,6 @@ you can add this to your config:
 config_list = "builtin_config_list_detailed"
 ```
 
-
 ## Log
 
 ### Default revisions
@@ -572,6 +582,7 @@ templates.
 - `templates.op_log_node` for operations (with `Operation` keywords)
 
 For example:
+
 ```toml
 [templates]
 log_node = '''
@@ -806,7 +817,6 @@ show-ruler = true # (default)
 show-ruler = false
 ```
 
-
 ### Processing contents to be paged
 
 If you'd like to pass the output through a formatter e.g.
@@ -919,7 +929,7 @@ Obviously, you would only set one line, don't copy them all in!
 ## Editing diffs
 
 The `ui.diff-editor` setting affects the default tool used for editing diffs
-(e.g.  `jj split`, `jj squash -i`). If it is not set, the special value
+(e.g. `jj split`, `jj squash -i`). If it is not set, the special value
 `:builtin` is used. It launches a built-in TUI tool (known as [scm-diff-editor])
 to edit the diff in your terminal.
 
@@ -971,7 +981,6 @@ diff-editor = ["/path/to/binary", "--be-helpful", "$left", "$right"]
 # Equivalent to ["binary", "$left", "$right"] arguments by default
 diff-editor = "binary"
 ```
-
 
 ### Experimental 3-pane diff editing
 
@@ -1027,7 +1036,6 @@ Host myhost
 With that configuration, you should be able to simply `ssh myhost`.
 
 </details>
-
 
 Setting either `ui.diff-editor = "meld-3"` or `ui.diff-editor = "diffedit3"`
 will result in the diff editor showing 3 panes: the diff on the left and right,
@@ -1513,12 +1521,12 @@ jj config set --repo git.fetch "upstream"
 jj config set --repo git.fetch '["origin", "upstream"]'
 ```
 
-By default, the specified remote names matches exactly. You can also use a
-[string pattern](revsets.md#string-patterns) to select remotes using patterns:
+By default, the specified pattern matches remote names with glob syntax. You can
+also use other [string pattern syntax](revsets.md#string-patterns):
 
 ```sh
-jj config set --repo git.fetch "glob:*"
-jj config set --repo git.fetch '["glob:remote*", "glob:upstream*"]'
+jj config set --repo git.fetch "regex:'^(remote|upstream)'"
+jj config set --repo git.fetch '["remote*", "upstream*"]'
 ```
 
 Similarly, you can also set the variable `git.push` to cause `jj git push` to
@@ -1542,7 +1550,7 @@ created locally and ones fetched from the remote. For example:
 
 ```toml
 [remotes.origin]
-auto-track-bookmarks = "glob:*"
+auto-track-bookmarks = "*"
 ```
 
 This will simply track all bookmarks for the remote "origin". There are various
@@ -1558,7 +1566,7 @@ reasons to restrict which bookmarks to track:
 
   ```toml
   [remotes.origin]
-  auto-track-bookmarks = "glob:alice/*"
+  auto-track-bookmarks = "alice/*"
   ```
 
   That way, bookmarks pushed by other people (who probably use a different
@@ -1577,7 +1585,7 @@ reasons to restrict which bookmarks to track:
 
   ```toml
   [remotes.origin]
-  auto-track-bookmarks = "glob:*"
+  auto-track-bookmarks = "*"
   [remotes.upstream]
   auto-track-bookmarks = "main"
   ```
@@ -1639,7 +1647,7 @@ unset, all commits are eligible to be pushed.
 ```toml
 [git]
 # Prevent pushing work in progress or anything explicitly labeled "private"
-private-commits = "description(glob:'wip:*') | description(glob:'private:*')"
+private-commits = "description('wip:*') | description('private:*')"
 ```
 
 If a commit is in `git.private-commits` but is already on the remote, then it is
@@ -1810,6 +1818,47 @@ eol-conversion = "input-output"
       [`gitoxide`][gitoxide-is-binary] or [`git`][git-is-binary]. Jujutsu
       doesn't plan to align the binary detection logic with git.
 
+### Respect or ignore executable bit permission changes
+
+Whether to respect or ignore changes to the executable bit for files on Unix.
+This option is unused on Windows.
+
+```toml
+[working-copy]
+exec-bit-change = "respect" | "ignore" | "auto" (default)
+```
+
+On Unix systems, files have a permission bit for whether they are executable as
+scripts or binary code. Jujutsu stores this state in the repository and will
+update it for files as you operate on a repository. If you set your working
+copy to a commit where a file is recorded as executable or not, `jj` will
+adjust the permission of that file. If you change a file's executable bit
+through the filesystem, `jj` will record that change when taking a snapshot.
+
+Setting this to `"ignore"` will make Jujutsu ignore the executable bit on the
+filesystem when updating the state for the repository. In addition, `jj` will
+not attempt to modify a file's executable bit and will add new files as
+"not executable." This is already the behavior on Windows, and having the
+option to enable this behavior is useful for Unix users dual-booting Windows,
+Windows users accessing files from WSL, or anyone experimenting with other
+filesystem configurations.
+
+On Unix if `"auto"` is set (the default), `jj` will try to detect whether the
+filesystem supports changing executable bits to choose between `"respect"` or
+`"ignore"`. On errors, we assume `"respect"`, except if permission was denied
+which will assume `"ignore"`.
+
+On Windows, files have no executable bit so this option is unused.
+
+You can always use `jj file chmod` to update the recorded executable bit for a
+file manually. If this option is `"respect"`, `jj` will also attempt to
+propagate that change to the filesystem.
+
+Note that if you modify a file's executable bit before changing this setting
+from `"ignore"` or  `"auto"` to `"respect"`, `jj` may not update the stored
+executable bit until you modify the file's contents or update its modification
+time, e.g. with `touch`.
+
 ## Ways to specify `jj` config: details
 
 ### User config files
@@ -1979,7 +2028,7 @@ email = "YOUR_DEFAULT_EMAIL@example.com"
 email = "YOUR_WORK_EMAIL@workplace.com"
 
 [revset-aliases]
-work = "heads(::@ ~ description(exact:''))::"
+work = "heads(::@ ~ description(''))::"
 
 [aliases]
 wip = ["log", "-r", "work"]

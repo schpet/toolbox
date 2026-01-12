@@ -32,7 +32,7 @@ If a working-copy commit gets abandoned, it will be given a new, empty commit. T
 
 \[*REVSETS*\]
 
-:   The revision(s) to abandon (default: @)
+:   The revision(s) to abandon (default: @) \[aliases: -r\]
 
 # GLOBAL OPTIONS
 

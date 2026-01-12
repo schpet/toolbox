@@ -62,9 +62,9 @@ Note that you can create a merge commit by specifying multiple revisions as argu
 
 :   Print help (see a summary with -h)
 
-\[*REVSETS*\] \[default: @\]
+\[*REVSETS*\]
 
-:   Parent(s) of the new change
+:   Parent(s) of the new change \[default: @\] \[aliases: -o, -r\]
 
 # GLOBAL OPTIONS
 

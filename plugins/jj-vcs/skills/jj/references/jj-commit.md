@@ -12,21 +12,21 @@ Update the description and create a new change on top \[default alias: ci\]
 
 When called without path arguments or \`\--interactive\`, \`jj commit\` is equivalent to \`jj describe\` followed by \`jj new\`.
 
-Otherwise, this command is very similar to \`jj split\`. Differences include:
+When using \`\--interactive\` or path arguments, the selected changes stay in the current commit while the remaining changes are moved to a new working-copy commit on top. This is very similar to \`jj split\`. Differences include:
 
 \* \`jj commit\` is not interactive by default (it selects all changes).
 
 \* \`jj commit\` doesnt have a \`-r\` option. It always acts on the working-copy commit (@).
 
-\* \`jj split\` (without \`-d/-A/-B\`) will move bookmarks forward from the old change to the child change. \`jj commit\` doesnt move bookmarks forward.
+\* \`jj split\` (without \`-o\`/\`-A\`/\`-B\`) will move bookmarks forward from the old change to the child change. \`jj commit\` doesnt move bookmarks forward.
 
-\* \`jj split\` allows you to move the selected changes to a different destination with \`-d/-A/-B\`.
+\* \`jj split\` allows you to move the selected changes to a different destination with \`-o\`/\`-A\`/\`-B\`.
 
 # OPTIONS
 
 **-i**, **\--interactive**
 
-:   Interactively choose which changes to include in the first commit
+:   Interactively choose which changes to include in the current commit
 
 **\--tool** *\<NAME\>*
 
@@ -48,7 +48,7 @@ Otherwise, this command is very similar to \`jj split\`. Differences include:
 
 \[*FILESETS*\]
 
-:   Put these paths in the first commit
+:   Put these paths in the current commit
 
 # GLOBAL OPTIONS
 

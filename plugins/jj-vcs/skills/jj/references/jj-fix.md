@@ -12,6 +12,8 @@ Update files with formatting fixes or other changes
 
 The primary use case for this command is to apply the results of automatic code formatting tools to revisions that may not be properly formatted yet. It can also be used to modify files with other tools like \`sed\` or \`sort\`.
 
+The modification made by \`jj fix\` can be reviewed by \`jj op show -p\`.
+
 \### How it works
 
 The changed files in the given revisions will be updated with any fixes determined by passing their file content through any external tools the user has configured for those files. Descendants will also be updated by passing their versions of the same files through the same tools, which will ensure that the fixes are not lost. This will never result in new conflicts. Files with existing conflicts will be updated on all sides of the conflict, which can potentially increase or decrease the number of conflict markers.

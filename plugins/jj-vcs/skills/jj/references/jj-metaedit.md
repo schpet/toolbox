@@ -52,7 +52,13 @@ Whenever any metadata is updated, the committer name, email, and timestamp are a
 
 **\--author-timestamp** *\<AUTHOR_TIMESTAMP\>*
 
-:   Set the author date to the given date either human readable, eg Sun, 23 Jan 2000 01:23:45 JST) or as a time stamp, eg 2000-01-23T01:23:45+09:00)
+:   Set the author date to the given date
+
+    The date can either be human readable (\[RFC2822\], eg Sun, 23 Jan 2000 01:23:45 PST) or a time stamp (\[RFC3339\], eg 2000-01-23T01:23:45-08:00).
+
+    \[RFC2822\]: https://datatracker.ietf.org/doc/html/rfc2822
+
+    \[RFC3339\]: https://datatracker.ietf.org/doc/html/rfc3339
 
 **\--force-rewrite**
 
@@ -72,7 +78,7 @@ Whenever any metadata is updated, the committer name, email, and timestamp are a
 
 \[*REVSETS*\]
 
-:   The revision(s) to modify (default: @)
+:   The revision(s) to modify (default: @) \[aliases: -r\]
 
 # GLOBAL OPTIONS
 

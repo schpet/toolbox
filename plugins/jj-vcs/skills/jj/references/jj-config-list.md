@@ -38,11 +38,13 @@ List variables set in config files, along with their values
 
     The following keywords are available in the template expression:
 
-    \* \`name: String\`: Config name. \* \`value: ConfigValue\`: Value to be formatted in TOML syntax. \* \`overridden: Boolean\`: True if the value is shadowed by other. \* \`source: String\`: Source of the value. \* \`path: String\`: Path to the config file.
+    \* \`name: String\`: Config name, in \[TOMLs \"dotted key\" format\]. \* \`value: ConfigValue\`: Value to be formatted in TOML syntax. \* \`overridden: Boolean\`: True if the value is shadowed by other. \* \`source: String\`: Source of the value. \* \`path: String\`: Path to the config file.
 
     Can be overridden by the \`templates.config_list\` setting. To see a detailed config list, use the \`builtin_config_list_detailed\` template.
 
     See \[\`jj help -k templates\`\] for more information.
+
+    \[TOMLs \"dotted key\" format\]: https://toml.io/en/v1.0.0#keys
 
     \[\`jj help -k templates\`\]: https://docs.jj-vcs.dev/latest/templates/
 

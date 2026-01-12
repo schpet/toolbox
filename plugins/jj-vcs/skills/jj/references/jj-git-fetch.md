@@ -18,7 +18,11 @@ If a working-copy commit gets abandoned, it will be given a new, empty commit. T
 
 :   Fetch only some of the branches
 
-    By default, the specified name matches exactly. Use \`glob:\` prefix to expand \`\*\` as a glob, e.g. \`\--branch glob:push-\*\`. Other wildcard characters such as \`?\` are \*not\* supported. Can be repeated to specify multiple branches.
+    By default, the specified pattern matches branch names with glob syntax, but only \`\*\` is expanded. Other wildcard characters such as \`?\` are \*not\* supported. Patterns can be repeated or combined with \[logical operators\] to specify multiple branches, but only union and negative intersection are supported.
+
+    Examples: \`push-\*\`, \`(push-\* \| foo/\*) \~ foo/unwanted\`
+
+    \[logical operators\]: https://docs.jj-vcs.dev/latest/revsets/#string-patterns
 
 **\--tracked**
 
@@ -32,9 +36,9 @@ If a working-copy commit gets abandoned, it will be given a new, empty commit. T
 
     This defaults to the \`git.fetch\` setting. If that is not configured, and if there are multiple remotes, the remote named \"origin\" will be used.
 
-    By default, the specified remote names matches exactly. Use a \[string pattern\], e.g. \`\--remote glob:\*\`, to select remotes using patterns.
+    By default, the specified pattern matches remote names with glob syntax, e.g. \`\--remote \*\`. You can also use other \[string pattern syntax\].
 
-    \[string pattern\]: https://docs.jj-vcs.dev/latest/revsets#string-patterns
+    \[string pattern syntax\]: https://docs.jj-vcs.dev/latest/revsets/#string-patterns
 
 **\--all-remotes**
 

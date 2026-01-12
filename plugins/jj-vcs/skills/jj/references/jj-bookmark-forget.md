@@ -28,9 +28,9 @@ If a local bookmark is forgotten, any corresponding remote bookmarks will become
 
 :   The bookmarks to forget
 
-    By default, the specified name matches exactly. Use \`glob:\` prefix to select bookmarks by \[wildcard pattern\].
+    By default, the specified pattern matches bookmark names with glob syntax. You can also use other \[string pattern syntax\].
 
-    \[wildcard pattern\]: https://docs.jj-vcs.dev/latest/revsets/#string-patterns
+    \[string pattern syntax\]: https://docs.jj-vcs.dev/latest/revsets/#string-patterns
 
 # GLOBAL OPTIONS
 

@@ -6,7 +6,7 @@ a dumping ground for teaching the llm new tricks.
 
 | Plugin | Description |
 |--------|-------------|
-| **jj-vcs** | Jujutsu (jj) version control documentation and workflows |
+| **[jj-vcs](plugins/jj-vcs/README.md)** | Jujutsu (jj) version control documentation and workflows |
 | **changelog** | Manage project changelogs following the [Keep a Changelog](https://keepachangelog.com) format |
 | **svbump** | Read and write semantic versions in config files (JSON, TOML, YAML) |
 | **chores** | Jujutsu repository maintenance and Apple container utilities |

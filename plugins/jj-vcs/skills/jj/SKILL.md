@@ -45,15 +45,11 @@ jj --config ui.conflict-marker-style=git new --insert-before ...
 
 The conflict style is applied when conflicts are materialized to the working copy, so the config must be set *before* the conflict occurs.
 
-### Structured Output
-
-For structured output, use the JSON template:
-
+**JSON:** For structured/programmatic output, use the `json(self)` template:
 ```bash
-jj log --ignore-working-copy --no-graph -r '::' -T 'json(self) ++ "\n"'
+jj log --ignore-working-copy --no-graph -T 'json(self) ++ "\n"'
 ```
-
-This outputs one JSON object per line, which is easy to parse programmatically. The `json(self)` template works with most jj commands that support `-T`.
+Outputs one JSON object per line with commit_id, change_id, description, author, etc. Works with `jj log`, `jj show`, and other commands that support `-T`.
 
 ## Common Commands
 

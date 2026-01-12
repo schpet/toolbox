@@ -15,6 +15,5 @@ just claude-install-local
 
 After making changes to plugins, fully uninstall and reinstall:
 ```bash
-just claude-remove-local
-just claude-install-local
+just claude-reinstall-local
 ```

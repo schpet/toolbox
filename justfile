@@ -25,6 +25,9 @@ claude-install-local:
     claude plugin install chores@toolbox
     claude plugin install speccer@toolbox
 
+# Reinstall plugins from local directory (remove + install)
+claude-reinstall-local: claude-remove-local claude-install-local
+
 # Update plugins (reinstall)
 claude-update:
     claude plugin install jj-vcs@toolbox

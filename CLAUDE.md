@@ -13,12 +13,8 @@ Install plugins locally for testing:
 just claude-install-local
 ```
 
-For faster iteration (changes picked up on Claude restart without reinstall):
+After making changes to plugins, fully uninstall and reinstall:
 ```bash
-just claude-symlink-dev
-```
-
-Update installed plugins:
-```bash
-just claude-update
+just claude-remove-local
+just claude-install-local
 ```

@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [0.1.6] - 2026-01-12
+
+### Fixed
+
+- Preserve agent usage documentation when regenerating jj docs
+
 ## [0.1.5] - 2026-01-12
 
 ### Changed
@@ -37,7 +43,8 @@
 
 ## [0.1.0] - 2026-01-05
 
-[Unreleased]: https://github.com/schpet/toolbox/compare/v0.1.5...HEAD
+[Unreleased]: https://github.com/schpet/toolbox/compare/v0.1.6...HEAD
+[0.1.6]: https://github.com/schpet/toolbox/compare/v0.1.5...v0.1.6
 [0.1.5]: https://github.com/schpet/toolbox/compare/v0.1.4...v0.1.5
 [0.1.4]: https://github.com/schpet/toolbox/compare/v0.1.3...v0.1.4
 [0.1.3]: https://github.com/schpet/toolbox/compare/v0.1.2...v0.1.3

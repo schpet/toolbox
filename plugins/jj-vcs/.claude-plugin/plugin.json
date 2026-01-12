@@ -1,7 +1,7 @@
 {
   "name": "jj-vcs",
   "description": "Jujutsu (jj) version control documentation and workflows for Claude Code",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "author": {
     "name": "schpet"
   },

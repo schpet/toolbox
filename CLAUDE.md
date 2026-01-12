@@ -2,6 +2,10 @@
 
 Claude Code plugin marketplace with jj-vcs, changelog, svbump, chores, and speccer plugins.
 
+## Agents
+
+use the jj skill to work on this project
+
 ## Docs
 
 - [Releasing](docs/releasing.md) - How to release new versions

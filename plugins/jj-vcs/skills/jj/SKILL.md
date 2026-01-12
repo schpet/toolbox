@@ -69,7 +69,6 @@ Outputs one JSON object per line with commit_id, change_id, description, author,
 
 In-depth guides on jj concepts and syntax.
 
-
 - [Bookmarks](references/bookmarks.md)
 - [Config](references/config.md)
 - [Filesets](references/filesets.md)
@@ -231,6 +230,7 @@ Documentation generated from jj manpages. For details on any command, read the c
 - [jj-workspace-rename](references/jj-workspace-rename.md)
 - [jj-workspace-root](references/jj-workspace-root.md)
 - [jj-workspace-update-stale](references/jj-workspace-update-stale.md)
+
 
 ---
 *Generated from jj manpages (jj 0.37.0)*

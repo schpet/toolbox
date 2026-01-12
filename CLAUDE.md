@@ -9,6 +9,7 @@ use the jj skill to work on this project
 ## Docs
 
 - [Releasing](docs/releasing.md) - How to release new versions
+- [Updating jj-vcs docs](plugins/jj-vcs/docs/updating-jj-docs.md) - Regenerate jj skill when jj is updated
 
 ## Development
 

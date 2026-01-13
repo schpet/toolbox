@@ -7,6 +7,7 @@ a dumping ground for teaching the llm new tricks.
 | Plugin | Description |
 |--------|-------------|
 | **[jj-vcs](plugins/jj-vcs/README.md)** | Jujutsu (jj) version control documentation and workflows |
+| **[jjwf](plugins/jjwf/README.md)** | Jujutsu workflow commands: `/ci`, `/describe`, `/squash`, `/catchup`, `/clone`, `/pr` |
 | **changelog** | Manage project changelogs following the [Keep a Changelog](https://keepachangelog.com) format |
 | **svbump** | Read and write semantic versions in config files (JSON, TOML, YAML) |
 | **chores** | Jujutsu repository maintenance and Apple container utilities |
@@ -32,6 +33,7 @@ claude plugin marketplace add schpet/toolbox
 
 ```bash
 claude plugin install jj-vcs@toolbox
+claude plugin install jjwf@toolbox
 claude plugin install changelog@toolbox
 claude plugin install svbump@toolbox
 claude plugin install chores@toolbox
@@ -44,6 +46,7 @@ Restart Claude Code after installation.
 
 ```bash
 claude plugin install jj-vcs@toolbox
+claude plugin install jjwf@toolbox
 claude plugin install changelog@toolbox
 claude plugin install svbump@toolbox
 claude plugin install chores@toolbox

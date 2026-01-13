@@ -10,6 +10,7 @@ generate-jj-docs:
 # Remove local plugin installation
 claude-remove-local:
     -claude plugin remove jj-vcs@toolbox
+    -claude plugin remove jjwf@toolbox
     -claude plugin remove changelog@toolbox
     -claude plugin remove svbump@toolbox
     -claude plugin remove chores@toolbox
@@ -20,6 +21,7 @@ claude-remove-local:
 claude-install-local:
     claude plugin marketplace add ./
     claude plugin install jj-vcs@toolbox
+    claude plugin install jjwf@toolbox
     claude plugin install changelog@toolbox
     claude plugin install svbump@toolbox
     claude plugin install chores@toolbox
@@ -31,6 +33,7 @@ claude-reinstall-local: claude-remove-local claude-install-local
 # Update plugins (reinstall)
 claude-update:
     claude plugin install jj-vcs@toolbox
+    claude plugin install jjwf@toolbox
     claude plugin install changelog@toolbox
     claude plugin install svbump@toolbox
     claude plugin install chores@toolbox
@@ -53,6 +56,7 @@ bump-versions:
 claude-install-github:
     claude plugin marketplace add schpet/toolbox
     claude plugin install jj-vcs@toolbox
+    claude plugin install jjwf@toolbox
     claude plugin install changelog@toolbox
     claude plugin install svbump@toolbox
     claude plugin install chores@toolbox

@@ -1,7 +1,7 @@
 {
   "name": "speccer",
   "description": "Distill rough ideas into structured project specs with issues",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "author": {
     "name": "schpet"
   },

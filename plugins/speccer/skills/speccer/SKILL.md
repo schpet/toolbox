@@ -23,12 +23,49 @@ All spec documents live in `docs/specs/` within the project.
 ```
 docs/specs/
 ├── index.md           # Top-level overview, links to all sections
+├── _setup.md          # Project foundation: toolchain, scaffolding, env setup
 ├── _questions.md      # Consolidated questions awaiting user answers
 ├── _issues.md         # Generated issues with acceptance criteria
 └── {feature}.md       # One file per feature/domain area
 ```
 
 ## Workflow
+
+### Phase 0: Project Foundation
+
+Before analyzing features, establish the project's technical foundation. This ensures setup and scaffolding become the first issues.
+
+1. **Identify the tech stack** by asking the user:
+   - What language/framework will this project use? (e.g., Rust, Rails, Node.js, Python)
+   - Is this a new project or adding to an existing codebase?
+
+2. **For new projects**, determine prerequisites and scaffolding:
+
+   | Stack | Prerequisites | Scaffolding Command |
+   |-------|---------------|---------------------|
+   | Rust | rustup, cargo | `cargo new` or `cargo init` |
+   | Rails | Ruby, bundler, rails gem | `rails new` + database choice |
+   | Node.js | Node, npm/pnpm/yarn | `npm init` or framework CLI |
+   | Python | Python, pip/uv, venv | `uv init` or framework setup |
+   | Go | Go toolchain | `go mod init` |
+   | Elixir | Erlang, Elixir, mix | `mix new` or `mix phx.new` |
+
+3. **Ask clarifying questions** about project setup:
+   - Database requirements? (PostgreSQL, SQLite, MySQL, none)
+   - Package manager preferences? (npm vs pnpm, pip vs uv)
+   - Any specific framework version requirements?
+   - CI/CD requirements? (GitHub Actions, etc.)
+   - Deployment target? (affects scaffolding choices)
+
+4. **Create `docs/specs/_setup.md`** documenting:
+   - Required toolchains and installation instructions
+   - Project scaffolding commands to run
+   - Initial configuration choices (database, etc.)
+   - Development environment setup steps
+
+5. **Update `index.md`** with a "Setup" section linking to `_setup.md`
+
+The setup issues generated from this phase **must** be ordered first in `_issues.md`.
 
 ### Phase 1: Decomposition
 
@@ -39,6 +76,7 @@ When invoked with rough input:
 3. Create initial `docs/specs/index.md` with:
    - Project name/title (ask user if unclear)
    - High-level summary of what the project does
+   - Tech stack and setup reference (from Phase 0)
    - List of identified feature areas (as links to section files)
    - Status: "Decomposition complete, analysis in progress"
 
@@ -113,12 +151,13 @@ After receiving user answers:
 
 When all clarifications are complete:
 
-1. Read all section files
-2. Compile issues from each section's "Suggested issues"
+1. Read `_setup.md` and all section files
+2. Compile issues starting with setup, then feature issues
 3. Create `docs/specs/_issues.md` with:
-   - Issues grouped by feature area
+   - **Setup issues first**: toolchain installation, project scaffolding, initial configuration
+   - Feature issues grouped by area
    - Each issue has: title, description, acceptance criteria
-   - Issues are ordered by suggested implementation sequence
+   - Issues are ordered by dependency (setup → foundation → features)
 
 4. **If user wants beads integration**, for each issue:
    ```
@@ -159,6 +198,11 @@ The `index.md` file serves as the authoritative reference. When resuming work:
 ## Overview
 [2-3 sentence summary]
 
+## Tech Stack
+- **Language/Framework**: [e.g., Rust, Rails 8, Node.js + Express]
+- **Database**: [e.g., PostgreSQL, SQLite, none]
+- **See**: [Project Setup](./_setup.md) for toolchain and scaffolding
+
 ## Status
 [Current phase and progress]
 
@@ -170,6 +214,7 @@ The `index.md` file serves as the authoritative reference. When resuming work:
 
 ## Documents
 
+- [Project Setup](./_setup.md) - Toolchain, scaffolding, dev environment
 - [Open Questions](./_questions.md) - X questions pending
 - [Issues](./_issues.md) - Y issues defined
 

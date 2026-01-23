@@ -2,6 +2,104 @@
 
 Templates for the spec documents created by speccer.
 
+## Setup Document Template
+
+Use this structure for the project foundation document (`docs/specs/_setup.md`):
+
+```markdown
+# Project Setup
+
+This document defines the technical foundation for the project, including toolchain requirements, scaffolding steps, and initial configuration.
+
+## Prerequisites
+
+Install these before starting development:
+
+### [Language/Runtime]
+
+| Tool | Version | Installation |
+|------|---------|--------------|
+| [Tool name] | [Version or "latest"] | [Install command or link] |
+| [Tool name] | [Version or "latest"] | [Install command or link] |
+
+**Verification**:
+```bash
+[command to verify installation, e.g., "rustc --version"]
+```
+
+## Project Scaffolding
+
+Run these commands to initialize the project:
+
+```bash
+# Step 1: [Description]
+[command]
+
+# Step 2: [Description]
+[command]
+```
+
+## Configuration Choices
+
+Decisions made during project setup:
+
+| Choice | Decision | Rationale |
+|--------|----------|-----------|
+| Database | [e.g., PostgreSQL] | [Why this choice] |
+| Package manager | [e.g., pnpm] | [Why this choice] |
+| [Other choice] | [Decision] | [Rationale] |
+
+## Development Environment
+
+### Required Environment Variables
+
+```bash
+# .env.example
+DATABASE_URL=postgres://localhost/[project_name]_development
+[OTHER_VAR]=[value or description]
+```
+
+### IDE/Editor Setup (optional)
+
+- [Recommended extensions or plugins]
+- [Configuration files to create]
+
+## Suggested Setup Issues
+
+### Issue: Install [language] toolchain
+
+**Description**: Set up the required development toolchain.
+
+**Acceptance Criteria**:
+- [ ] [Tool] is installed and accessible from command line
+- [ ] Version meets minimum requirements ([version])
+- [ ] Verification command succeeds
+
+---
+
+### Issue: Scaffold project with [framework/tool]
+
+**Description**: Create the initial project structure.
+
+**Acceptance Criteria**:
+- [ ] Project directory created with standard structure
+- [ ] Dependencies installed successfully
+- [ ] Project builds/runs with no errors
+- [ ] [Framework-specific checks, e.g., "default route responds"]
+
+---
+
+### Issue: Configure development database
+
+**Description**: Set up local development database.
+
+**Acceptance Criteria**:
+- [ ] Database server running locally
+- [ ] Development database created
+- [ ] Connection string configured in environment
+- [ ] Migrations run successfully (if applicable)
+```
+
 ## Section Document Template
 
 Use this structure for feature/domain section files (`docs/specs/<feature>.md`):
@@ -103,18 +201,53 @@ Structure for `docs/specs/_issues.md`:
 # Issues
 
 Generated from spec on [Date]
-Total issues: X
+Total issues: X (Y setup + Z feature)
 
 ## Implementation Order
 
-Suggested sequence based on dependencies:
+Suggested sequence based on dependencies. **Setup issues must come first.**
 
-1. [Issue title] (Feature A)
-2. [Issue title] (Feature B) - depends on #1
-3. [Issue title] (Feature A)
+### Phase 1: Project Setup
+
+1. Install [language] toolchain
+2. Scaffold project with [framework]
+3. Configure development database
+4. Set up development environment
+
+### Phase 2: Core Features
+
+5. [Issue title] (Feature A) - depends on setup
+6. [Issue title] (Feature B) - depends on #5
+7. [Issue title] (Feature A)
 ...
 
-## By Feature
+## By Category
+
+### Setup
+
+#### Install [language] toolchain
+
+**Description**: Set up the required development toolchain.
+
+**Acceptance Criteria**:
+- [ ] [Tool] installed and accessible
+- [ ] Version verified
+
+**Labels**: setup, toolchain
+
+---
+
+#### Scaffold project
+
+**Description**: Initialize project structure.
+
+**Acceptance Criteria**:
+- [ ] Project created with standard structure
+- [ ] Builds/runs successfully
+
+**Labels**: setup, scaffolding
+
+---
 
 ### [Feature A]
 
@@ -127,6 +260,7 @@ Suggested sequence based on dependencies:
 - [ ] [Criterion 2]
 
 **Labels**: feature-a, [priority if known]
+**Depends on**: Setup issues
 
 ---
 
@@ -146,9 +280,20 @@ Structure for `docs/specs/index.md`:
 
 [2-3 sentence summary of the entire project scope]
 
+## Tech Stack
+
+| Component | Choice | Notes |
+|-----------|--------|-------|
+| Language | [e.g., Rust, Ruby, TypeScript] | [Version if specific] |
+| Framework | [e.g., Axum, Rails 8, Next.js] | |
+| Database | [e.g., PostgreSQL, SQLite, none] | |
+| Package Manager | [e.g., cargo, bundler, pnpm] | |
+
+**See**: [Project Setup](./_setup.md) for toolchain installation and scaffolding steps.
+
 ## Status
 
-**Current Phase**: [Decomposition | Analysis | Clarification | Refinement | Complete]
+**Current Phase**: [Foundation | Decomposition | Analysis | Clarification | Refinement | Complete]
 **Last Updated**: [Date]
 **Progress**: [Brief note on what's done/pending]
 
@@ -161,6 +306,7 @@ Structure for `docs/specs/index.md`:
 
 ## Documents
 
+- [Project Setup](./_setup.md) - Toolchain, scaffolding, dev environment
 - [Open Questions](./_questions.md) - X questions pending
 - [Issues](./_issues.md) - Y issues defined (generated when spec is complete)
 

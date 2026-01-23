@@ -8,7 +8,28 @@ Interactive workflow to clean up mutable commits and create a pull request.
 
 ## Workflow
 
-### Step 1: Review the current state
+### Step 1: Run formatting and linting
+
+Before preparing the PR, check if the project has automatic formatting or linting configured. Look for:
+
+- `package.json` scripts like `format`, `lint`, `lint:fix`, `prettier`
+- Configuration files like `.prettierrc`, `biome.json`, `.eslintrc`, `rustfmt.toml`
+- `Makefile` or `justfile` with format/lint targets
+- `deno.json` with fmt/lint tasks
+
+If formatters or linters exist, run them to ensure code is properly formatted:
+
+```bash
+# Examples - use what's appropriate for the project:
+npm run format        # Node.js with prettier/eslint
+deno fmt              # Deno projects
+cargo fmt             # Rust projects
+just fmt              # If justfile has fmt target
+```
+
+This ensures any formatting changes are included in the commits before cleanup.
+
+### Step 2: Review the current state
 
 First, check the current working copy and recent ancestors:
 
@@ -28,7 +49,7 @@ And list all mutable commits:
 jj log -r 'mutable()' --ignore-working-copy --no-graph
 ```
 
-### Step 2: Handle the working copy (@)
+### Step 3: Handle the working copy (@)
 
 Check if the working copy has changes:
 
@@ -44,7 +65,7 @@ If the working copy has changes but no description:
 
 If the working copy is empty (no changes), it will be handled in the next step.
 
-### Step 3: Handle empty commits
+### Step 4: Handle empty commits
 
 Check for empty mutable commits:
 
@@ -58,7 +79,7 @@ If there are empty commits, ask if they should be abandoned:
 jj abandon 'mutable() & empty()'
 ```
 
-### Step 4: Review @- and @--
+### Step 5: Review @- and @--
 
 Check if @- and @-- are mutable and could be squashed:
 
@@ -75,7 +96,7 @@ jj squash -r @- --into @--
 
 Then generate a new description preserving any ID prefixes (like `ABC-123`) and trailers (like `Co-authored-by:`).
 
-### Step 5: Handle commits without descriptions
+### Step 6: Handle commits without descriptions
 
 Check for mutable commits without descriptions:
 
@@ -89,7 +110,7 @@ For each commit without a description:
 - If generate: `jj describe -r <rev> -m "<generated message>"`
 - If squash and there's a parent to squash into: `jj squash -r <rev>`
 
-### Step 6: Consider squashing all mutable commits
+### Step 7: Consider squashing all mutable commits
 
 If there are multiple non-empty mutable commits remaining, ask if the user wants to squash them all into one:
 
@@ -99,7 +120,7 @@ jj squash --from 'mutable() ~ @' --into 'roots(mutable() ~ @)'
 
 Generate a new combined description, preserving ID prefixes and trailers from existing descriptions.
 
-### Step 7: Push and create bookmark
+### Step 8: Push and create bookmark
 
 Determine which commit to push (the tip of mutable commits, excluding empty working copy):
 
@@ -115,7 +136,7 @@ jj git push -c <change-id>
 
 Note the bookmark name from the output (e.g., `push-abcdefgh`).
 
-### Step 8: Create pull request (optional)
+### Step 9: Create pull request (optional)
 
 Ask if the user wants to create a pull request.
 

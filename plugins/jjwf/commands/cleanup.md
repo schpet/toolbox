@@ -10,32 +10,32 @@ Perform repository maintenance tasks for jujutsu (jj) repositories.
 
 ### Step 1: Remove Empty Mutable Commits
 
-First, find all empty mutable commits in the current branch and remove them:
+First, find all empty mutable commits in the current branch (excluding the working copy) and remove them:
 
 1. Run this command to find empty mutable commits:
    ```bash
-   jj log --ignore-working-copy --no-graph -r 'mutable() & empty() & ancestors(@)' -T 'change_id ++ " " ++ description.first_line() ++ "\n"'
+   jj log --ignore-working-copy --no-graph -r 'mutable() & empty() & ::@-' -T 'change_id ++ " " ++ description.first_line() ++ "\n"'
    ```
 
 2. If any empty commits are found, abandon them using:
    ```bash
-   jj abandon 'mutable() & empty() & ancestors(@)'
+   jj abandon 'mutable() & empty() & ::@-'
    ```
 
 3. Report to the user how many empty commits were removed.
 
 ### Step 2: Handle Commits Without Descriptions
 
-Next, find mutable commits without descriptions:
+Next, find mutable commits without descriptions (excluding the working copy):
 
 1. Run this command to find commits with empty descriptions:
    ```bash
-   jj log --ignore-working-copy --no-graph -r 'mutable() & ancestors(@) & description("")' -T 'change_id.short() ++ " " ++ commit_id.short() ++ "\n"'
+   jj log --ignore-working-copy --no-graph -r 'mutable() & ::@- & description("")' -T 'change_id.short() ++ " " ++ commit_id.short() ++ "\n"'
    ```
 
 2. If any commits without descriptions are found, show them to the user with:
    ```bash
-   jj log --ignore-working-copy -r 'mutable() & ancestors(@) & description("")'
+   jj log --ignore-working-copy -r 'mutable() & ::@- & description("")'
    ```
 
 3. Use the AskUserQuestion tool to ask what to do with these commits. Present these options:
@@ -54,5 +54,5 @@ Next, find mutable commits without descriptions:
 ## Notes
 
 - The `mutable()` revset ensures only non-immutable commits are affected
-- The `ancestors(@)` constraint limits changes to the current branch
+- The `::@-` constraint limits changes to ancestors of the parent of the working copy, excluding `@` itself
 - Always use `--ignore-working-copy` for read operations to avoid unnecessary snapshots

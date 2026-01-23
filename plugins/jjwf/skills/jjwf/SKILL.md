@@ -26,6 +26,7 @@ This project uses Jujutsu (jj) for version control instead of git.
 | Create new change | `jj new` |
 | Push to remote | `jj git push` |
 | Fetch from remote | `jj git fetch` |
+| Cleanup empty commits | `/cleanup` |
 
 ## Agent Guidelines
 

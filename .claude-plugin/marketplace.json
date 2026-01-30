@@ -65,6 +65,16 @@
       },
       "homepage": "https://github.com/schpet/toolbox",
       "source": "./plugins/speccer"
+    },
+    {
+      "name": "restate",
+      "description": "Restate durable execution framework documentation and patterns",
+      "version": "0.1.0",
+      "author": {
+        "name": "schpet"
+      },
+      "homepage": "https://github.com/schpet/toolbox",
+      "source": "./plugins/restate"
     }
   ]
 }

@@ -7,6 +7,10 @@ default:
 generate-jj-docs:
     deno run --allow-run --allow-read --allow-write plugins/jj-vcs/scripts/generate-jj-docs.ts
 
+# Sync Restate documentation from official sources
+sync-restate-docs:
+    plugins/restate/scripts/sync-docs.sh
+
 # Remove local plugin installation
 claude-remove-local:
     -claude plugin remove jj-vcs@toolbox
@@ -15,6 +19,7 @@ claude-remove-local:
     -claude plugin remove svbump@toolbox
     -claude plugin remove chores@toolbox
     -claude plugin remove speccer@toolbox
+    -claude plugin remove restate@toolbox
     -claude plugin marketplace remove toolbox
 
 # Install plugin from local directory
@@ -26,6 +31,7 @@ claude-install-local:
     claude plugin install svbump@toolbox
     claude plugin install chores@toolbox
     claude plugin install speccer@toolbox
+    claude plugin install restate@toolbox
 
 # Reinstall plugins from local directory (remove + install)
 claude-reinstall-local: claude-remove-local claude-install-local
@@ -38,6 +44,7 @@ claude-update:
     claude plugin install svbump@toolbox
     claude plugin install chores@toolbox
     claude plugin install speccer@toolbox
+    claude plugin install restate@toolbox
 
 # Bump all plugin versions to latest changelog version
 bump-versions:
@@ -61,3 +68,4 @@ claude-install-github:
     claude plugin install svbump@toolbox
     claude plugin install chores@toolbox
     claude plugin install speccer@toolbox
+    claude plugin install restate@toolbox

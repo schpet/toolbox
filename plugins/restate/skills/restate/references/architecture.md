@@ -4,25 +4,18 @@ sidebar_position: 1
 description: "Restate architecture and distributed deployment concepts"
 ---
 
-import Admonition from '@theme/Admonition';
-
 # Restate Architecture
 
 Restate is designed to be extremely simple to get started with by delivering all the functionality in a single binary with minimal upfront configuration needs. In particular, when starting out by running Restate on a single node, you don't need to understand its internal architecture in a great level of detail.
 
 As you begin to plan for more complex deployment scenarios, you will benefit from having a deeper understanding of the various components and how they fit together to support scalable and resilient clusters. The goal of this section is to introduce the terminology we use throughout the server documentation and inform the choices involved in configuring Restate clusters.
 
-
 ## Overview
 
 Restate is implemented with a three-layered architecture: a control plane, distributed log, and processors.
 
-<img width={"750px"} alt={"Restate Node internal architecture"} src={"/img/architecture/restate_layered_arch.png"}/>
-
-
 ### Control plane
 This component stores all metadata about deployments (what services exist behind which endpoint addresses / URLs / ARNs) and is responsible for assigning the leaders to log partitions and processors.
-
 
 ### Distributed Log a.k.a Bifrost
 Restate uses a distributed log, called Bifrost, to durably record all events in the system before acting on them, similar to the function of a write-ahead log (WAL) in a database system.
@@ -49,8 +42,6 @@ Restate clusters are designed to scale out in support of large deployments. As y
 
 Here is an overview of the different roles that can run on a node:
 
-<img alt={"Restate Node internal architecture"} src={"/img/architecture/node_internal_architecture.png"}/>
-
 - Metadata server: the source of truth for cluster-wide information
 - Ingress: the entry point for external requests
 - Log server: responsible for durably persisting the log
@@ -68,15 +59,11 @@ The metadata store is designed to support relatively low volumes of read and wri
 
 External requests enter the Restate cluster via the HTTP ingress component, which runs on nodes assigned the `http-ingress` role. Compared to other roles, the HTTP ingress role does not involve long-lived state and it can move around relatively freely, since it only handles ongoing client connections.
 
-<Admonition type="info" title={"Fine-grained ingress role"}>
     The fine-grained `http-ingress` role is a new addition in Restate 1.2. For backwards-compatibility, nodes running the `worker` role will continue to run the ingress function in version 1.2.
-</Admonition>
-
 
 ## Log servers
 
 Log server nodes running the `log-server` role are responsible for durably persisting the log. If the log is the equivalent of a WAL, then partition stores are the materializations that enable efficient reads of the events (invocation journals, key-value data) that have been recorded. Depending on the configured **log replication** requirements, Restate will replicate log records to multiple log servers to persist a given log, and this will change over time to support maintenance and resizing of the cluster.
-
 
 ## Workers
 Nodes assigned the `worker` role run the partition processors, which are the Restate components responsible for maintaining the partition store.
@@ -84,9 +71,6 @@ Partition processors can operate in either leader or follower mode.
 Only a single leader for a given partition can be active at a time, and this is the sole processor that handles invocations to deployed services.
 Followers keep up with the log without taking action, and are ready to take over in the event that the partition's leader becomes unavailable.
 The overall number of processors per partition is configurable via the **partition replication** configuration option.
-
-<img alt={"Restate invocation flow"} src={"/img/architecture/invocation_flow.png"}/>
-
 
 Partition processors replicate their state by following and applying the log for their partition.
 If a processor needs to stop, for example for scheduled maintenance, it will typically catch up on the records it missed by reading them from the cluster's log servers once it comes back online.

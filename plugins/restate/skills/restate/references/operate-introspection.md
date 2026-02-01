@@ -4,12 +4,6 @@ sidebar_position: 7
 description: "Learn how to inspect/troubleshoot stuck or failing invocations."
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
-import Admonition from '@theme/Admonition';
-import {Terminal} from "../../src/components/code/terminal";
-import {CodeWithTabs} from "../../src/components/code/code";
-
 # Introspection
 
 Restate exposes information on invocations and application state via its CLI and [Introspection SQL API](/references/sql-introspection). You can use this to gain insight into the status of invocations and the service state that is stored.
@@ -18,10 +12,8 @@ This can be useful for troubleshooting. For example, a Virtual Object might be b
 
 You can inspect what is stored in Restate via the UI, via the [CLI](/develop/local_dev#running-restate-server--cli-locally) (via commands or SQL queries), and via curl.
 
-<Admonition type="tip" title="Restate UI for understanding your applications">
     You can use the [UI](/develop/local_dev#restate-ui) to debug your applications.
     Have a look at the [UI announcement blog post](https://restate.dev/blog/announcing-restate-ui/) to get some inspiration on how you can use the UI for debugging and understanding your applications.
-</Admonition>
 
 ## SQL over the data in Restate
 
@@ -47,7 +39,6 @@ For each of the queries we will show the CLI command and the equivalent SQL quer
 
 ### Listing ongoing invocations
 
-<CodeWithTabs groupId="interface">
     ```shell !!tabs CLI
     restate invocations list
     ```
@@ -57,7 +48,6 @@ For each of the queries we will show the CLI command and the equivalent SQL quer
     ```shell !!tabs curl
     curl localhost:9070/query --json '{ "query" : "select * from sys_invocation" }'
     ```
-</CodeWithTabs>
 
 Restate only retains the entries for active invocations, workflows or invocations that were invoked with an idempotency key.
 Active invocations are invocations that haven't completed yet and are either invoked or suspended.
@@ -67,7 +57,6 @@ The CLI command only shows the active invocations, not the completed ones. Use `
 
 ### Retrieving the status of an invocation
 
-<CodeWithTabs groupId="interface">
     ```shell !!tabs CLI
     restate invocations describe <INVOCATION_ID>
     ```
@@ -77,7 +66,6 @@ The CLI command only shows the active invocations, not the completed ones. Use `
     ```shell !!tabs curl
     curl localhost:9070/query --json '{ "query" : "select * from sys_invocation where id = '<INVOCATION_ID>';" }'
     ```
-</CodeWithTabs>
 
 The status is either:
 
@@ -90,7 +78,6 @@ The status is either:
 
 ### Inspecting the invocation journal
 
-<CodeWithTabs groupId="interface">
     ```shell !!tabs CLI
     restate invocations describe <INVOCATION_ID>
     ```
@@ -100,7 +87,6 @@ The status is either:
     ```shell !!tabs curl
     curl localhost:9070/query --json '{ "query" : "select * from sys_journal where id = '<INVOCATION_ID>';" }'
     ```
-</CodeWithTabs>
 
 You see the journal printed in the output.
 
@@ -108,7 +94,6 @@ You see the journal printed in the output.
 
 To have a look at the invocations that are currently in a retry loop, you can execute:
 
-<CodeWithTabs groupId="interface">
     ```shell !!tabs CLI
     restate invocations list --status backing-off
     ```
@@ -118,15 +103,13 @@ To have a look at the invocations that are currently in a retry loop, you can ex
     ```shell !!tabs curl
     curl localhost:9070/query --json '{ "query" : "select * from sys_invocation where retry_count > 1;" }'
     ```
-</CodeWithTabs>
 
 ### Listing invocations that are blocking a Virtual Object
 
 You can retrieve the invocation ID that is currently blocking a Virtual Object via:
 
-<CodeWithTabs groupId="interface">
     ```shell !!tabs CLI
-    restate invocations list --service <SERVICE> --key <KEY>
+    restate invocations list --service  --key
     ```
     ```shell !!tabs CLI-SQL
     restate sql --json "select invocation_id from sys_keyed_service_status where service_name = 'test.MyServiceName' and service_key = 'myKey';"
@@ -134,7 +117,6 @@ You can retrieve the invocation ID that is currently blocking a Virtual Object v
     ```shell !!tabs curl
     curl localhost:9070/query --json '{ "query" : "select invocation_id from sys_keyed_service_status where service_name = 'test.MyServiceName' and service_key = 'myKey';" }'
     ```
-</CodeWithTabs>
 
 With the CLI, you can also drill down and list only invocations that are blocking any Virtual Object:
 
@@ -142,13 +124,12 @@ With the CLI, you can also drill down and list only invocations that are blockin
 restate invocations list --virtual-objects-only
 ```
 
-Add `--key <KEY>` to list only invocations that are blocking a specific Virtual Object.
+Add `--key ` to list only invocations that are blocking a specific Virtual Object.
 
 You can then use the invocation ID to [cancel the invocation](/operate/invocation#cancelling-invocations).
 
 ### Checking the last time an invocation was modified
 
-<CodeWithTabs groupId="interface">
     ```shell !!tabs CLI
     restate invocations describe <INVOCATION_ID>
     ```
@@ -158,7 +139,6 @@ You can then use the invocation ID to [cancel the invocation](/operate/invocatio
     ```shell !!tabs curl
     curl localhost:9070/query --json '{ "query" : "select modified_at from sys_invocation where id = '<INVOCATION_ID>';" }'
     ```
-</CodeWithTabs>
 
 This includes any modification to the invocation "data", for example when the service last switched its status from `invoked` to `suspended`, or when the last journal entry was added.
 
@@ -166,7 +146,6 @@ This includes any modification to the invocation "data", for example when the se
 
 To find out if an invocation was triggered via the ingress or by another service:
 
-<CodeWithTabs groupId="interface">
     ```shell !!tabs CLI
     restate invocations describe <INVOCATION_ID>
     ```
@@ -176,7 +155,6 @@ To find out if an invocation was triggered via the ingress or by another service
     ```shell !!tabs curl
     curl localhost:9070/query --json '{ "query" : "select invoked_by, invoked_by_service_name, invoked_by_id from sys_invocation where id = '<INVOCATION_ID>';" }'
     ```
-</CodeWithTabs>
 
 With the CLI, you see the caller at the root of the tree in the invocation progress:
 
@@ -190,10 +168,8 @@ With the CLI, you see the caller at the root of the tree in the invocation progr
 For the SQL queries, the `invoked_by` field contains either `ingress` or `service`.
 If the invocation was triggered by another service, then the fields `invoked_by_service_name` and `invoked_by_id` will supply more information about the invoking service.
 
-
 ### Retrieving the trace ID of an invocation
 
-<CodeWithTabs groupId="interface">
     ```shell !!tabs CLI
     restate invocations describe <INVOCATION_ID>
     ```
@@ -203,7 +179,6 @@ If the invocation was triggered by another service, then the fields `invoked_by_
     ```shell !!tabs curl
     curl localhost:9070/query --json '{ "query" : "select trace_id from sys_invocation where id = '<INVOCATION_ID>';" }'
     ```
-</CodeWithTabs>
 
 Afterwards, you can use this trace ID to [search for spans in Jaeger](/operate/monitoring/tracing#searching-traces).
 
@@ -211,7 +186,6 @@ Afterwards, you can use this trace ID to [search for spans in Jaeger](/operate/m
 
 To list the oldest invocations that are not making progress:
 
-<CodeWithTabs groupId="interface">
     ```shell !!tabs CLI
     restate invocations list --oldest-first --status pending,backing-off,suspended
     ```
@@ -221,13 +195,11 @@ To list the oldest invocations that are not making progress:
     ```shell !!tabs curl
     curl localhost:9070/query --json '{ "query" : "select * from sys_invocation where to_timestamp(modified_at) <= now() - interval '1' hour;" }'
     ```
-</CodeWithTabs>
 
 ### Listing zombie invocations
 
 Zombie invocations are invocations that are pinned to a specific deployment but that deployment was forcefully removed. You can list them by executing:
 
-<CodeWithTabs groupId="interface">
     ```shell !!tabs CLI
     restate invocations list --zombie
     ```
@@ -237,7 +209,6 @@ Zombie invocations are invocations that are pinned to a specific deployment but 
     ```shell !!tabs curl
     curl localhost:9070/query --json '{ "query" : "select * from sys_invocation where pinned_deployment_id = '<DEPLOYMENT_ID>';" }'
     ```
-</CodeWithTabs>
 
 For the SQL queries, you need to know the deployment ID of the deployment that was forcefully removed.
 
@@ -246,7 +217,6 @@ For the SQL queries, you need to know the deployment ID of the deployment that w
 ### With the CLI
 To retrieve the state of a specific service and service key, do:
 
-<Terminal>
     ```shell !command
     restate kv get <SERVICE_NAME> <SERVICE_KEY>
     ```
@@ -261,7 +231,6 @@ To retrieve the state of a specific service and service key, do:
     KEY   VAL
     seen  8
     ```
-</Terminal>
 
 If the values are not JSON-encoded UTF-8 strings, then it is also possible to use the `--binary` flag,
 and get the value as base64 encoded string.
@@ -270,42 +239,34 @@ and get the value as base64 encoded string.
 
 You can query the application state via the `state` table.
 
-<CodeWithTabs groupId="interface">
     ```shell !!tabs CLI-SQL
     restate sql --json "select * from state where service_name = 'test.MyServiceName' and service_key = 'myKey';"
     ```
     ```shell !!tabs curl
     curl localhost:9070/query --json '{ "query" : "select * from state where service_name = 'test.MyServiceName' and service_key = 'myKey';" }'
     ```
-</CodeWithTabs>
-
 
 If your state value is a regular string, then you can access its content in the column `value_utf8`.
 
 To retrieve the state of a specific service name, service key and state key, do:
 
-<CodeWithTabs groupId="interface">
     ```shell !!tabs CLI-SQL
     restate sql --json "select * from state where service_name = 'MyServiceName' and service_key = 'myKey' and key = 'myStateKey';"
     ```
     ```shell !!tabs curl
     curl localhost:9070/query --json '{ "query" : "select * from state where service_name = 'MyServiceName' and service_key = 'myKey' and key = 'myStateKey';" }'
     ```
-</CodeWithTabs>
 
 The state key is the name you used to store the state with the SDK. For example, the code snippet `ctx.set("count", 1)` stores `1` under the key `count`.
 
-<Admonition type="tip" title="Joining the tables">
 To join the `sys_invocation` and `state` table:
-<CodeWithTabs groupId="interface">
+
     ```shell !!tabs CLI-SQL
     restate sql --json "select * from sys_invocation JOIN state on sys_invocation.target_service_name = state.service_name and sys_invocation.target_service_key = state.service_key;"
     ```
     ```shell !!tabs curl
     curl localhost:9070/query --json '{ "query" : "select * from sys_invocation JOIN state on sys_invocation.target_service_name = state.service_name and sys_invocation.target_service_key = state.service_key;" }'
     ```
-</CodeWithTabs>
-</Admonition>
 
 ## Edit application state
 
@@ -328,14 +289,11 @@ This can be useful in combination with tools like `jq` for example:
 restate kv get counter bob --plain | jq '.seen'
 ```
 
-<Admonition type="caution" title="Editing state during ongoing invocations">
 If during the editing of the state with the CLI, an invocation changed the state as well, then the edit of the CLI will not take affect.
 If you want the CLI state edit to be applied even if the state has changed in the meantime, then use the `--force` flag.
-</Admonition>
 
 An example on how to edit the K/V state of the service `counter` for the key `bob`:
 
-<Terminal>
     ```shell !command
     restate kv edit counter bob
     ```
@@ -343,7 +301,6 @@ An example on how to edit the K/V state of the service `counter` for the key `bo
     ```log !output
     ℹ️  About to write the following state :
     ―――――――――――――――――――――――――――――――――――――――
-
 
     service  counter
     key      bob
@@ -355,7 +312,5 @@ An example on how to edit the K/V state of the service `counter` for the key `bo
 
     ✔ Are you sure? · yes
 
-
     Enqueued successfully for processing
     ```
-</Terminal>

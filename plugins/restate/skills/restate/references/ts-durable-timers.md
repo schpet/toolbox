@@ -3,8 +3,6 @@ sidebar_position: 5
 description: "Durable sleep tracked by Restate."
 ---
 
-import Admonition from '@theme/Admonition';
-
 # Scheduling & Timers
 The Restate SDK includes durable timers.
 You can use these to let handlers sleep for a specified time, or to schedule a handler to be called at a later time.
@@ -15,7 +13,6 @@ Restate stores and keeps track of the timers and triggers them on time, even acr
 
 To schedule a handler to be called at a later time, have a look at the documentation on [delayed calls](/develop/ts/service-communication#delayed-calls).
 
-
 ## Durable sleep
 To sleep in a Restate application for ten seconds, do the following:
 
@@ -23,16 +20,12 @@ To sleep in a Restate application for ten seconds, do the following:
 CODE_LOAD::ts/src/develop/durable_timers.ts
 ```
 
-<Admonition type="tip" title="Cost savings on FaaS">
     Restate suspends the handler while it is sleeping, to free up resources.
     This is beneficial for AWS Lambda deployments, since you don't pay for the time the handler is sleeping.
-</Admonition>
 
-<Admonition type="info" title="Sleeping in Virtual Objects">
     Virtual Objects only process a single invocation at a time, so the Virtual Object will be blocked while sleeping.
-</Admonition>
 
-<details className="grey-details">
+<details>
     <summary>Clock synchronization Restate Server vs. SDK</summary>
 
     The Restate SDK calculates the wake-up time based on the delay you specify.

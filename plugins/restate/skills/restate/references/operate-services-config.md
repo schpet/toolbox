@@ -16,8 +16,6 @@ These can be set via:
 1. [**UI**](/develop/local_dev#restate-ui): click on your registered deployment and adapt the settings
 2. **CLI**: execute the command, adapt the config file and save it:
     ```
-    restate services config edit <SERVICE>
+    restate services config edit
     ```
 3. [**Admin API**](/adminapi/modify-service): You can find an example of an Admin API request, in the [docs on private services](/operate/security#private-services)
-
-

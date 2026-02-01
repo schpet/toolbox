@@ -3,20 +3,14 @@ sidebar_position: 1
 description: "Services, Virtual Objects, and Workflows."
 ---
 
-import Admonition from '@theme/Admonition';
-
 # Overview
 
 The Restate TypeScript SDK is open source and can be found on GitHub: ([sdk-typescript repo](https://github.com/restatedev/sdk-typescript)).
 
-<Admonition type="tip" icon="🚀" title="Set up your project in seconds">
 Have a look at the [TypeScript Quickstart](/get_started/quickstart?sdk=ts)!
-</Admonition>
 
-<Admonition type="note" title="Prerequisites">
 - [NodeJS](https://nodejs.org/en/) >= v18.17.1 or [Bun](https://bun.sh/docs/installation) or [Deno](https://deno.land/#installation)
 - [npm CLI](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) >= 9.6.7
-</Admonition>
 
 Add the `@restatedev/restate-sdk` dependency to your project to start developing Restate services.
 
@@ -78,6 +72,5 @@ This handler uses the `WorkflowContext` to interact with the SDK.
 They use the `WorkflowSharedContext` to interact with the SDK.
 These handlers can run concurrently with the `run` handler and can still be called after the `run` handler has finished.
 - [Have a look at the workflow docs to learn more.](/develop/ts/workflows)
-
 
 Now that you have a high-level idea of what a Restate service might look like, let's have a look at what the Restate Context allows you to do.

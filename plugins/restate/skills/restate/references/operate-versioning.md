@@ -3,12 +3,6 @@ sidebar_position: 6
 description: "All you need to know on upgrading deployments."
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
-import Admonition from '@theme/Admonition';
-import {Terminal} from "../../src/components/code/terminal";
-import {CodeWithTabs} from "../../src/components/code/code";
-
 # Versioning
 
 Restate comes with different solutions to update the services, to simplify development and evolution of your codebase without sacrificing Restate's strong guarantees.
@@ -17,10 +11,6 @@ Restate comes with different solutions to update the services, to simplify devel
 
 To check which deployments are currently serving your services, you can use the [UI](/develop/local_dev#restate-ui) or do the following:
 
-<Tabs groupId="interface" queryString>
-    <TabItem value="cli" label="CLI">
-
-        <Terminal>
             ```bash !command
             restate services list
             ```
@@ -31,7 +21,6 @@ To check which deployments are currently serving your services, you can use the 
             🌎  CartObject       1                 HTTP 2           dp_14LsPzGz9HBxXIeBoH5wYUh
             🌎  CheckoutService  1                 HTTP 2           dp_14LsPzGz9HBxXIeBoH5wYUh
             ```
-        </Terminal>
 
         To list only the deployments, you can do `restate deployments list`.
 
@@ -41,54 +30,40 @@ To check which deployments are currently serving your services, you can use the 
         restate deployment describe dp_14LsPzGz9HBxXIeBoH5wYUh
         ```
 
-    </TabItem>
-
-    <TabItem value="curl" label="curl">
-
-        <Terminal>
             ```bash !command
             curl localhost:9070/services/Greeter
             ```
 
             ```json !output
-            {
+
                 "name": "Greeter",
                 "revision": 2,
                 // withClass highlight-line
                 "endpoint_id": "Z3JlZXRlci12Mi8",
                 [...]
-            }
+
             ```
-        </Terminal>
 
         Note that deployment IDs start with `dp_`. You can use it to describe the deployment:
 
-        <Terminal>
             ```bash !command
             curl localhost:9070/deployments/Z3JlZXRlci12Mi8
             ```
 
             ```json !output
-            {
+
                 "id": "Z3JlZXRlci12Mi8",
                 "uri": "http://greeter-v2/",
                 "additional_headers": {},
                 "protocol_type": "BidiStream",
                 "services": [
-                    {
+
                         "name": "Greeter",
                         "revision": 2
-                    }
+
                 ]
-            }
+
             ```
-        </Terminal>
-
-
-    </TabItem>
-</Tabs>
-
-
 
 ## Deploying new service versions
 
@@ -98,31 +73,22 @@ To deploy an updated version of a service, you need to deploy and register a new
 For example, let's assume there is a `Greeter` service deployed at `http://greeter-v1/`.
 To update it, we deploy a new revision at `http://greeter-v2/`, and then register it via the [UI](/develop/local_dev#restate-ui) or via:
 
-<CodeWithTabs groupId="interface">
         ```shell !!tabs CLI
         restate deployments register http://greeter-v2/
         ```
         ```shell !!tabs curl
         curl localhost:9070/deployments --json '{"uri": "http://greeter-v2/"}'
         ```
-</CodeWithTabs>
 
 When the services at the new endpoint were already registered before, Restate will treat them as new revisions.
 New invocations are always routed to the latest service revision, while old invocations will continue to use the previous deployment.
 So new invocations will be routed to `http://greeter-v2/`, while existing invocations continue execution at `http://greeter-v1/` (e.g. sleeping/waiting invocations) until completion.
 
-<Admonition type={"caution"}>
 It must be guaranteed that the old deployment lives until all the existing invocations complete.
-</Admonition>
 
-
-<Admonition type={"info"} title={"State compatibility"}>
 When updating Virtual Objects, the new revisions will continue to use the same state created by previous revisions. You must ensure state entries are evolved in a backward compatible way.
-</Admonition>
 
-<Admonition type={"tip"} title={"Versioning in Kubernetes"}>
     The Restate Kubernetes operator can handle registration and versioning for your automatically.
-</Admonition>
 
 ## Removing services
 
@@ -138,14 +104,13 @@ So make sure that you first deploy the services you want to keep in a separate n
 
 **When all prerequisites are fulfilled**, you can remove the deployment containing the service via the [UI](/develop/local_dev#restate-ui) or via:
 
-<CodeWithTabs groupId="interface">
 ```shell !!tabs CLI
 restate deployments remove dp_14LsPzGz9HBxXIeBoH5wYUh
 ```
 ```bash !!tabs curl
 curl -X DELETE localhost:9070/deployments/dp_14LsPzGz9HBxXIeBoH5wYUh
 ```
-</CodeWithTabs>
+
 If the deployment isn't drained yet but you still want to remove it, use the `--force` flag in CLI, or `?force=true` for curl.
 
 ## Updating deployments in-place
@@ -179,7 +144,5 @@ and the potential for new failing invocations to occur on deployment 2 as well. 
 3. Rebase the fix onto the version backing deployment 2.
 4. By updating the underlying code or with the update deployment API, change deployment 2 to include the fix. Verify that this resolves any failing invocations, if any, new invocations.
 
-<Admonition type={"info"} title={"Updating a deployment to use a conflicting endpoint"}>
 It is possible to use the update deployment API to give a deployment the same URI/ARN as another deployment. This is useful where the an appropriate fix for a drained deployment has already been registered as a new deployment.
 If this is done, there will be two deployments with the same endpoint, which is otherwise not allowed. It is strongly recommended that you delete one of the two deployments when the failing invocations have been resolved.
-</Admonition>

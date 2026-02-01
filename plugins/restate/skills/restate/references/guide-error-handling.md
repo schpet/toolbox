@@ -5,9 +5,6 @@ pagination_next: null
 pagination_prev: null
 ---
 
-import Admonition from "@theme/Admonition";
-import {CodeWithTabs} from "../../src/components/code/code";
-
 # Error Handling
 
 Restate handles retries for failed invocations. By default, Restate infinitely retries all errors with an exponential backoff strategy.
@@ -74,7 +71,6 @@ Handlers use run blocks to execute non-deterministic actions, often involving ot
 These run blocks are especially prone to transient failures, and you might want to configure a specific retry policy for them.
 Most Restate SDKs allow this:
 
-<CodeWithTabs groupId={"sdk"}>
     ```ts !!tabs TypeScript
     CODE_LOAD::ts/src/guides/retries.ts?1
     ```
@@ -99,17 +95,12 @@ Most Restate SDKs allow this:
     CODE_LOAD::rust/src/guides/retries.rs
     ```
 
-</CodeWithTabs>
-
-
 Note that these retries are coordinated and initiated by the Restate Server.
 So the handler goes through the regular retry cycle of suspension and re-invocation.
 
 If you set a maximum number of attempts, then the run block will fail with a TerminalException once the retries are exhausted.
 
-<Admonition type="note" title="Other levels of retry policies">
 Service-level retry policies are planned and will come soon.
-</Admonition>
 
 ## Application errors (terminal)
 
@@ -120,7 +111,6 @@ For these cases you can throw a terminal error. Terminal errors are permanent an
 
 You can throw a terminal error as follows:
 
-<CodeWithTabs groupId={"sdk"}>
     ```ts !!tabs TypeScript
     CODE_LOAD::ts/src/develop/error_handling.ts
     ```
@@ -144,7 +134,6 @@ You can throw a terminal error as follows:
     ```rust !!tabs Rust
     CODE_LOAD::rust/src/guides/retries.rs#terminal_error
     ```
-</CodeWithTabs>
 
 You can throw terminal errors from any place in your handler, including run blocks.
 
@@ -156,7 +145,7 @@ You can catch terminal errors just like any other error, and build control flow 
 For example, the catch block can run undo actions for the actions you did earlier in your handler, to bring it to a consistent state before rethrowing the terminal error.
 
 For example, to catch a terminal error of a run block:
-<CodeWithTabs groupId={"sdk"}>
+
     ```ts !!tabs TypeScript
     CODE_LOAD::ts/src/guides/retries.ts#catch
     ```
@@ -180,13 +169,9 @@ For example, to catch a terminal error of a run block:
     ```rust !!tabs Rust
     CODE_LOAD::rust/src/guides/retries.rs#catch
     ```
-</CodeWithTabs>
 
-<Admonition type="note" title="Sagas with Restate">
     When you throw a terminal error, you might need to undo the actions you did earlier in your handler to make sure that your system remains in a consistent state.
     Have a look at our [sagas guide](/guides/sagas) to learn more.
-</Admonition>
-
 
 ## Cancellations are Terminal Errors
 
@@ -219,10 +204,7 @@ By default, the abort timeout is set to one minute.
 This timer potentially interrupts user code.
 If the user code needs longer to gracefully terminate, then this value needs to be set accordingly.
 
-<Admonition type="note" title="Long-running run blocks">
     If you have long-running `ctx.run` blocks, you need to increase both timeouts to prevent the handler from terminating prematurely.
-</Admonition>
-
 
 ### Configuring the timeouts
 
@@ -231,7 +213,7 @@ You can set the inactivity timeout via the UI, the CLI or the [Restate Server co
 Via the CLI:
 
 ```shell
-restate services config edit <SERVICE>
+restate services config edit
 ```
 Then you can adapt the configuration file and save it for the new settings to take effect.
 
@@ -255,7 +237,6 @@ RESTATE_WORKER__INVOKER__INACTIVITY_TIMEOUT=5m \
   RESTATE_WORKER__INVOKER__ABORT_TIMEOUT=5m \
   restate-server
 ```
-
 
 ## Common patterns
 
@@ -284,7 +265,6 @@ You can implement this in Restate by wrapping your handler in a try-catch block.
         The called handler then takes raw input and does the decoding and validation itself.
         In this case, it would be included in the try-catch block which would do the dispatching:
 
-        <CodeWithTabs groupId={"sdk"}>
             ```ts !!tabs TypeScript
             CODE_LOAD::ts/src/guides/retries.ts#raw
             ```
@@ -309,7 +289,6 @@ You can implement this in Restate by wrapping your handler in a try-catch block.
             ```rust !!tabs Rust
             CODE_LOAD::rust/src/guides/retries.rs#raw
             ```
-        </CodeWithTabs>
 
         The other errors mainly occur due to misconfiguration of your setup (e.g. wrong service name, wrong handler name, forgot service registration...).
         You cannot handle those.
@@ -320,7 +299,6 @@ You can implement this in Restate by wrapping your handler in a try-catch block.
 
 You can set timeouts for context actions like calls, awakeables, etc. to bound the time they take:
 
-<CodeWithTabs groupId={"sdk"}>
     ```ts !!tabs TypeScript
     CODE_LOAD::ts/src/guides/retries.ts#timeout
     ```
@@ -340,4 +318,3 @@ You can set timeouts for context actions like calls, awakeables, etc. to bound t
     ```go !!tabs Go
     CODE_LOAD::go/guides/retries.go#timeout
     ```
-</CodeWithTabs>

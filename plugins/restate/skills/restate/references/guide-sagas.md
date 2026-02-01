@@ -5,21 +5,15 @@ pagination_next: null
 pagination_prev: null
 ---
 
-import Admonition from "@theme/Admonition";
-import {Step} from "../../src/components/Stepper";
-import {CodeWithTabs} from "../../src/components/code/code";
-
 # Sagas
 
 When building distributed systems, it is crucial to ensure that the system remains consistent even in the presence of failures.
 One way to achieve this is by using the [Saga pattern](https://learn.microsoft.com/en-us/azure/architecture/reference-architectures/saga/saga).
 
-<Admonition type={"tip"} title={"What is a Saga?"}>
     A *Saga* is a design pattern for handling transactions that span multiple services.
     It breaks the process into a sequence of local operations, each with a corresponding **compensating action**.
 
     If a failure occurs partway through, these compensations are triggered to **undo** completed steps, ensuring your system stays consistent even when things go wrong.
-</Admonition>
 
 ## How does Restate help?
 
@@ -28,14 +22,10 @@ Restate makes it easy to implement resilient sagas in your code:
 - **Resilience built-in**: No need to manually track state or retry logic. Restate handles all persistence and compensation orchestration for you.
 - **Code-first approach**: Define sagas using regular code, no DSLs. Track compensations in a list, and execute them on non-transient failures.
 
-<img src={"/img/guides/sagas/saga_invocation.png"} alt="Sagas UI" />
-
 ## Example
 
 Here is a typical travel booking workflow, where you book a flight, then rent a car, and finally book a hotel.
 If any step fails for a non-transient reason (e.g. driver license not accepted, hotel full), we want to roll back the previous steps to keep the system consistent.
-
-<img src={"/img/guides/sagas/saga_diagram.svg"} alt="Sagas example diagram" width={"550px"}/>
 
 **Restate lets us implement this purely in code without any DSLs or extra infrastructure.**
 - Wrap your business logic in a try-block, and throw a terminal error for cases where you want to compensate and finish.
@@ -44,7 +34,6 @@ If any step fails for a non-transient reason (e.g. driver license not accepted, 
 
 Note that for Golang we use `defer` to run the compensations at the end.
 
-<CodeWithTabs groupId={"sdk"}>
         ```ts !!tabs TypeScript https://github.com/restatedev/examples/blob/main/typescript/patterns-use-cases/src/sagas/booking_workflow.ts
         // collapse_prequel
         CODE_LOAD::https://raw.githubusercontent.com/restatedev/examples/refs/heads/main/typescript/patterns-use-cases/src/sagas/booking_workflow.ts
@@ -65,12 +54,9 @@ Note that for Golang we use `defer` to run the compensations at the end.
         // collapse_prequel
         CODE_LOAD::https://raw.githubusercontent.com/restatedev/examples/refs/heads/main/go/patterns-use-cases/src/sagas/bookingworkflow.go
         ```
-</CodeWithTabs>
 
-<Admonition type={"note"} title={"Example not available in your language?"}>
     This pattern is implementable with any of our SDKs. We are still working on translating all patterns to all SDK languages.
     If you need help with a specific language, please reach out to us via [Discord](https://discord.com/invite/skW3AZ6uGd) or [Slack](https://join.slack.com/t/restatecommunity/shared_invite/zt-2v9gl005c-WBpr167o5XJZI1l7HWKImA).
-</Admonition>
 
 ## When to use Sagas
 
@@ -82,17 +68,13 @@ For these failures, sagas are essential:
     - Some failures are not transient but a business decision (e.g. “Hotel is full” or “Driver license not accepted”), retrying won't help.
     - In this case, you can throw a terminal error to stop the execution and trigger the compensations.
 
-
 2. **User/system-initiated cancellations**:
     - If a user [cancels](/operate/invocation#cancelling-invocations) a long-running invocation (say via UI or CLI), this triggers a terminal error.
     - Restate will not retry.
     - Again, a saga can kick in to undo previous successful operations so the system doesn't end up in an inconsistent state (e.g., booking a hotel but not a car).
 
-
 ## Running the example
 
-<Step stepLabel="1" title="Download the example">
-    <CodeWithTabs groupId={"sdk"} className={"display-none"}>
         ```shell !!tabs ts
         restate example typescript-patterns-use-cases && cd typescript-patterns-use-cases
         ```
@@ -108,15 +90,11 @@ For these failures, sagas are essential:
         ```shell !!tabs go
         restate example go-patterns-use-cases && cd go-patterns-use-cases
         ```
-    </CodeWithTabs>
-</Step>
-<Step stepLabel="2" title="Start the Restate Server">
+
     ```shell
     restate-server
     ```
-</Step>
-<Step stepLabel="3" title="Start the Service">
-    <CodeWithTabs groupId={"sdk"} className={"display-none"}>
+
         ```shell !!tabs ts
         npx tsx watch ./src/sagas/booking_workflow.ts
         ```
@@ -132,15 +110,11 @@ For these failures, sagas are essential:
         ```shell !!tabs go
         go run ./src/sagas
         ```
-    </CodeWithTabs>
-</Step>
-<Step stepLabel="4" title="Register the services">
+
     ```shell
     restate deployments register localhost:9080
     ```
-</Step>
-<Step stepLabel="5" title="Send a request">
-    <CodeWithTabs groupId={"sdk"} className={"display-none"}>
+
         ```shell !!tabs ts
         curl localhost:8080/BookingWorkflow/run --json '{
                 "flight": {
@@ -154,7 +128,7 @@ For these failures, sagas are essential:
                     "hotel": {
                     "arrivalDate": "2024-12-16",
                     "departureDate": "2024-12-20"
-                }
+
             }'
         ```
         ```shell !!tabs java
@@ -170,7 +144,7 @@ For these failures, sagas are essential:
                     "hotel": {
                     "arrivalDate": "2024-12-16",
                     "departureDate": "2024-12-20"
-                }
+
             }'
         ```
         ```shell !!tabs kotlin
@@ -186,7 +160,7 @@ For these failures, sagas are essential:
                     "hotel": {
                     "arrivalDate": "2024-12-16",
                     "departureDate": "2024-12-20"
-                }
+
             }'
         ```
         ```shell !!tabs python
@@ -202,7 +176,7 @@ For these failures, sagas are essential:
                     "hotel": {
                     "arrivalDate": "2024-12-16",
                     "departureDate": "2024-12-20"
-                }
+
             }'
         ```
         ```shell !!tabs go
@@ -218,19 +192,11 @@ For these failures, sagas are essential:
                     "hotel": {
                     "arrivalDate": "2024-12-16",
                     "departureDate": "2024-12-20"
-                }
+
             }'
         ```
-    </CodeWithTabs>
 
-</Step>
-
-<Step stepLabel="4" title="Check the UI or service logs">
     See in the Restate UI (`localhost:9070`) how all steps were executed, and how the compensations were triggered because the hotel was full.
-
-    <img src={"/img/guides/sagas/saga_journal.png"} alt="Sagas UI" />
-</Step>
-
 
 ## Advanced: Idempotency and compensations
 
@@ -244,7 +210,6 @@ Based on the API you are using, generating the idempotency key and registering t
 1. **Two-phase APIs**: First you _reserve_, then _confirm_ or _cancel_. Register the compensation after reservation, when you have the resource ID.
 Reservations that are not confirmed, get automatically cancelled by the API after a timeout.
 
-<CodeWithTabs groupId={"sdk"}>
     ```ts !!tabs TypeScript
     CODE_LOAD::ts/src/guides/sagas/booking_workflow.ts#twostep
     ```
@@ -260,13 +225,10 @@ Reservations that are not confirmed, get automatically cancelled by the API afte
     ```rust !!tabs Go
     CODE_LOAD::go/guides/sagas/bookingworkflow.go#twostep
     ```
-</CodeWithTabs>
-
 
 2. **One-shot APIs with idempotency key**: First, you generate an idempotency key and persist it in Restate. Then, you register the compensation (e.g. `refund`), and finally do the action (e.g. `charge`).
 We need to register the compensation before doing the action, because there is a chance that the action succeeded but that we never got the confirmation.
 
-<CodeWithTabs groupId={"sdk"}>
     ```ts !!tabs TypeScript
     CODE_LOAD::ts/src/guides/sagas/booking_workflow.ts#idempotency
     ```
@@ -282,7 +244,6 @@ We need to register the compensation before doing the action, because there is a
     ```rust !!tabs Go
     CODE_LOAD::go/guides/sagas/bookingworkflow.go#idempotency
     ```
-</CodeWithTabs>
 
 ## Related resources
 

@@ -41,12 +41,14 @@ git clone --depth 1 "$DOCS_REPO" "$DOCS_DIR" 2>&1 | grep -v "^remote:" || true
 echo ""
 echo "==> Copying documentation files..."
 
-# Helper function to copy and convert mdx to md
+# Helper function to copy and convert mdx to plain md
+# Strips JSX/React components and converts MDX syntax to standard markdown
 copy_doc() {
     local src="$1"
     local dest="$2"
     if [[ -f "$src" ]]; then
-        cp "$src" "$dest"
+        # Use Python script to convert MDX to plain Markdown
+        python3 "$SCRIPT_DIR/mdx-to-md.py" "$src" "$dest"
         echo "    Copied: $(basename "$dest")"
         return 0
     else

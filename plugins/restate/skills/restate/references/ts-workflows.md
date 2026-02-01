@@ -3,10 +3,6 @@ sidebar_position: 7
 description: "Workflows and what you can do with them."
 ---
 
-import Admonition from '@theme/Admonition';
-import {TextAndCode} from "../../../src/components/code/code/text-and-code";
-import {Scrollycoding} from "../../../src/components/code/scrollycoding";
-
 # Workflows
 
 [Workflows](/concepts/services#workflows) are a sequence of steps that gets executed durably.
@@ -24,17 +20,12 @@ A workflow can be seen as a special type of [Virtual Object](/concepts/services#
 - Workflows have access to the `WorkflowContext` and `WorkflowSharedContext`, giving them some extra functionality, for example [Durable Promises](/develop/ts/workflows#implementing-workflows) to signal workflows.
 - The K/V state of the workflow is isolated to the workflow execution, and can only be mutated by the `run` handler.
 
-
-<Admonition type="note" title={"Workflow retention time"}>
     The retention time of a workflow execution is 24 hours after the finishing of the `run` handler.
     After this timeout any [K/V state](/develop/ts/state) is cleared, the workflow's shared handlers cannot be called anymore, and the [Durable Promises](/develop/ts/workflows#signaling-workflows) are discarded.
     The retention time can be configured via the [UI](/develop/local_dev#restate-ui) or [Admin API](/adminapi/modify-service) per Workflow definition by setting `workflow_completion_retention`.
-</Admonition>
 
 ## Implementing workflows
 Have a look at the code example to get a better understanding of how workflows are implemented:
-
-<Scrollycoding>
 
     ### !!steps The run handler
 
@@ -70,7 +61,6 @@ Have a look at the code example to get a better understanding of how workflows a
     You can also use this pattern in reverse and let the `run` handler resolve promises that other handlers are waiting on.
     For example, the `run` handler could resolve a promise when it finishes a step of the workflow, so that other handlers can request whether this step has been completed.
 
-
     ```ts !
     CODE_LOAD::ts/src/develop/workflows/signup.ts?3
     ```
@@ -83,14 +73,11 @@ Have a look at the code example to get a better understanding of how workflows a
     ```ts !
     CODE_LOAD::ts/src/develop/workflows/signup.ts?4
     ```
-</Scrollycoding>
 
-<Admonition type={"tip"} title={"Workflows-as-code with Restate"}>
     [Check out some examples of workflows-as-code with Restate on the use case page](/use-cases/workflows).
-</Admonition>
 
 ## Submitting workflows with SDK clients
-<TextAndCode>
+
     [**Submit**](/develop/ts/clients):
     This returns a handle to the workflow once has been registered in Restate.
     You can only submit once per workflow ID (here `"someone"`).
@@ -99,9 +86,6 @@ Have a look at the code example to get a better understanding of how workflows a
     CODE_LOAD::ts/src/develop/workflows/submit.ts#submit
     ```
 
-</TextAndCode>
-
-<TextAndCode>
     [**Query/signal**](/develop/ts/clients):
     Call the other handlers of the workflow in the same way as for Virtual Object handlers.
     For now, you can only do request-response calls.
@@ -109,19 +93,16 @@ Have a look at the code example to get a better understanding of how workflows a
     ```ts !result
     CODE_LOAD::ts/src/develop/workflows/submit.ts#query
     ```
-</TextAndCode>
 
-<TextAndCode>
     [**Attach/peek**](/develop/ts/clients#retrieve-result-of-invocations-and-workflows):
     This lets you retrieve the result of a workflow or check if it's finished.
 
     ```ts !result
     CODE_LOAD::ts/src/develop/workflows/submit.ts#attach
     ```
-</TextAndCode>
 
 ## Submitting workflows from a Restate service
-<TextAndCode>
+
     [**Submit/query/signal**](/develop/ts/service-communication):
     Call the workflow handlers in the same way as for Services and Virtual Objects.
     This returns the result of the workflow/handler once it has finished.
@@ -131,10 +112,9 @@ Have a look at the code example to get a better understanding of how workflows a
     ```ts !result
     CODE_LOAD::ts/src/develop/workflows/service.ts
     ```
-</TextAndCode>
 
 ## Submitting workflows over HTTP
-<TextAndCode>
+
     [**Submit/query/signal**](/invoke/http#request-response-calls-over-http):
     Call any handler of the workflow in the same way as for Services and Virtual Objects.
     This returns the result of the handler once it has finished.
@@ -144,9 +124,7 @@ Have a look at the code example to get a better understanding of how workflows a
     ```shell !result
     curl localhost:8080/signup/someone/run --json '{"email": "someone@restate.dev"}'
     ```
-</TextAndCode>
 
-<TextAndCode>
     [**Attach/peek**](/invoke/http#retrieve-result-of-invocations-and-workflows):
     This lets you retrieve the result of a workflow or check if it's finished.
 
@@ -155,16 +133,8 @@ Have a look at the code example to get a better understanding of how workflows a
     curl localhost:8080/restate/workflow/signup/someone/output
     ```
 
-</TextAndCode>
-
-
 ## Inspecting workflows
 
 You can inspect your workflows via the [UI](/develop/local_dev#restate-ui) or CLI:
 - Inspect the progress of a workflow by looking at the invocation journal in the `Invocations` tab of the [UI](/develop/local_dev#restate-ui) or via the [CLI](/operate/introspection#inspecting-the-invocation-journal)
 - Inspect the K/V state of a workflow in the `State` tab of the [UI](/develop/local_dev#restate-ui) or via the [CLI](/operate/introspection#inspecting-application-state)
-
-
-
-
-

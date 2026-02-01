@@ -1,6 +1,7 @@
 ---
 name: restate
-description: This skill should be used when working with Restate durable execution framework, building workflows, virtual objects, or services that need automatic retries, state management, and fault tolerance. Use when the user mentions "restate", "durable execution", "durable workflows", or needs to build resilient distributed systems.
+description: "This skill should be used when working with Restate durable execution framework, building workflows, virtual objects, or services that need automatic retries, state management, and fault tolerance. Use when the user mentions \"restate\", \"durable execution\", \"durable workflows\", needs to build resilient distributed systems, or when they invoke /restate."
+user-invocable: true
 ---
 
 # Restate Durable Execution Framework

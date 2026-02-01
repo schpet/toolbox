@@ -3,29 +3,19 @@ sidebar_position: 1
 description: "Invoke handlers over HTTP."
 ---
 
-import Admonition from '@theme/Admonition';
-import {CodeWithTabs} from "../../src/components/code/code";
-import {TextAndCode} from "../../src/components/code/code/text-and-code";
-import {Terminal} from "../../src/components/code/terminal";
-
 # HTTP
 
 You can invoke handlers over HTTP with or without waiting for a response, and with or without an idempotency key.
 
-<Admonition type="info">
     Make sure to first [register the handler](/operate/registration) you want to invoke.
-</Admonition>
 
-<Admonition type="tip" title="Invoke via the UI Playground">
     The [UI](/develop/local_dev#restate-ui) helps you with invoking your services.
     Open the UI at port 9070, register your service, click on the service, open the playground, and invoke your handlers from there.
-</Admonition>
 
 ## Request-response calls over HTTP
 You can invoke services over HTTP 1.1 or higher.
 Request/response bodies should be encoded as JSON.
 
-<TextAndCode>
     ### Invoking Services
     Invoke `myHandler` of `myService` as follows:
 
@@ -33,8 +23,6 @@ Request/response bodies should be encoded as JSON.
     curl localhost:8080/MyService/myHandler --json '{"name": "Mary", "age": 25}'
     ```
 
-</TextAndCode>
-<TextAndCode>
     ### Invoking Virtual Objects
     Invoke `myHandler` of `myVirtualObject` for `myKey` as follows:
 
@@ -42,8 +30,6 @@ Request/response bodies should be encoded as JSON.
     curl localhost:8080/MyVirtualObject/myObjectKey/myHandler --json '{"name": "Mary", "age": 25}'
     ```
 
-</TextAndCode>
-<TextAndCode>
     ### Invoke Workflows
     Call the `run` handler of the `MyWorkflow` as follows:
 
@@ -51,20 +37,14 @@ Request/response bodies should be encoded as JSON.
     curl localhost:8080/MyWorkflow/myWorkflowId/run --json '{"name": "Mary", "age": 25}'
     ```
 
-</TextAndCode>
-
-
 Follow the same pattern for calling the other handlers of the workflow.
 
-<Admonition type="info" title="Restate as proxy">
     Note that all invocations go first via the Restate Server. The server then forwards the request to the appropriate service.
     Therefore, `localhost:8080` refers to ingress port of the Restate Server, not the service instance.
-</Admonition>
 
 ## Sending a message over HTTP
 If you do not want to wait for the response, you can also send a message by adding `/send` to the URL path:
 
-<Terminal>
     ```shell !command
     curl localhost:8080/MyService/myHandler/send --json '{"name": "Mary", "age": 25}'
     ```
@@ -72,7 +52,6 @@ If you do not want to wait for the response, you can also send a message by addi
     ```json !output
     {"invocationId":"inv_1aiqX0vFEFNH1Umgre58JiCLgHfTtztYK5","status":"Accepted"}
     ```
-</Terminal>
 
 The response contains the [Invocation ID](/operate/invocation#invocation-identifier).
 You can use this identifier [to cancel](/operate/invocation#cancelling-invocations) or [kill the invocation](/operate/invocation#killing-invocations).
@@ -80,8 +59,6 @@ You can use this identifier [to cancel](/operate/invocation#cancelling-invocatio
 ## Sending a delayed message over HTTP
 
 You can **delay the message** by adding a delay request parameter in ISO8601 notation or using [humantime format](https://docs.rs/humantime/latest/humantime/):
-
-<CodeWithTabs>
 
     ```shell !!tabs humantime
     curl localhost:8080/MyService/myHandler/send?delay=10s --json '{"name": "Mary", "age": 25}'
@@ -91,13 +68,8 @@ You can **delay the message** by adding a delay request parameter in ISO8601 not
     curl localhost:8080/MyService/myHandler/send?delay=PT10S --json '{"name": "Mary", "age": 25}'
     ```
 
-</CodeWithTabs>
-
-<Admonition type="note" title={"Not supported for workflows"}>
     You cannot yet use this feature for workflows.
     Workflows can only be scheduled with a delay from within another Restate handler ([TS](/develop/ts/service-communication#delayed-calls)/[Java/Kotlin](/develop/java/service-communication#delayed-calls)).
-</Admonition>
-
 
 ## Invoke a handler idempotently
 
@@ -113,21 +85,13 @@ curl localhost:8080/MyService/myHandler \
 After the invocation completes, Restate persists the response for a retention period of one day (24 hours).
 If you re-invoke the service with the same idempotency key within 24 hours, Restate sends back the same response and doesn't re-execute the request to the service.
 
-<Admonition type="tip" title={"Make any service call idempotent with Restate"}>
     With Restate and an idempotency key, you can make any service call idempotent, without any extra code or setup.
     This is a very powerful feature to ensure that your system stays consistent and doesn't perform the same operation multiple times.
-</Admonition>
 
-<details className={"grey-details"}>
-    <summary> Tuning retention time</summary>
-
-    You can tune the retention time on a service-level by using the [Admin API](/adminapi/modify-service)):
-    ```shell
-    curl -X PATCH localhost:9070/services/MyService --json '{"idempotency_retention": "2days"}'
+<details'
     ```
     The retention time is in [humantime format](https://docs.rs/humantime/latest/humantime/).
 </details>
-
 
 ## Retrieve result of invocations and workflows
 

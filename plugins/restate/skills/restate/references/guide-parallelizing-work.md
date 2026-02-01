@@ -5,15 +5,9 @@ pagination_next: null
 pagination_prev: null
 ---
 
-import Admonition from "@theme/Admonition";
-import {CodeWithTabs} from "../../src/components/code/code";
-import {Step} from "../../src/components/Stepper";
-
 # Parallelizing work
 
 This guide shows how to use the Restate to **execute a list of tasks in parallel and then gather their result**, also known as fan-out, fan-in.
-
-<img src={"/img/guides/parallelizework.png"} width={"400px"}/>
 
 ## How does Restate help?
 - Restate lets you schedule the tasks asynchronously and guarantees that all tasks will run, with **retries and recovery** on failures.
@@ -36,7 +30,6 @@ You can run this on FaaS infrastructure, like AWS Lambda, and it will scale auto
 The `run` handler will then suspend while it waits for all subtasks to finish.
 Restate will then resume the handler when all subtasks are done.
 
-<CodeWithTabs groupId={"sdk"}>
     ```ts !!tabs TypeScript https://github.com/restatedev/examples/blob/main/typescript/patterns-use-cases/src/parallelizework/fan_out_worker.ts
     // collapse_prequel
     CODE_LOAD::https://raw.githubusercontent.com/restatedev/examples/refs/heads/main/typescript/patterns-use-cases/src/parallelizework/fan_out_worker.ts
@@ -61,20 +54,14 @@ Restate will then resume the handler when all subtasks are done.
     // collapse_prequel
     CODE_LOAD::https://raw.githubusercontent.com/restatedev/examples/refs/heads/main/go/patterns-use-cases/src/parallelizework/fanoutworker.go
     ```
-</CodeWithTabs>
 
 In this example, we parallelize RPC calls, but this can also be used to parallelize `ctx.run` actions.
 
-<Admonition type={"note"} title={"Example not available in your language?"}>
     This pattern is implementable with any of our SDKs. We are still working on translating all patterns to all SDK languages.
     If you need help with a specific language, please reach out to us via [Discord](https://discord.com/invite/skW3AZ6uGd) or [Slack](https://join.slack.com/t/restatecommunity/shared_invite/zt-2v9gl005c-WBpr167o5XJZI1l7HWKImA).
-</Admonition>
-
 
 ## Running the example
 
-<Step stepLabel="1" title="Download the example">
-    <CodeWithTabs groupId={"sdk"} className={"display-none"}>
         ```shell !!tabs ts
         restate example typescript-patterns-use-cases && cd typescript-patterns-use-cases
         ```
@@ -90,15 +77,11 @@ In this example, we parallelize RPC calls, but this can also be used to parallel
         ```shell !!tabs go
         restate example go-patterns-use-cases && cd go-patterns-use-cases
         ```
-    </CodeWithTabs>
-</Step>
-<Step stepLabel="2" title="Start the Restate Server">
+
     ```shell
     restate-server
     ```
-</Step>
-<Step stepLabel="3" title="Start the Service">
-    <CodeWithTabs groupId={"sdk"} className={"display-none"}>
+
         ```shell !!tabs ts
         npx tsx watch ./src/parallelizework/fan_out_worker.ts
         ```
@@ -114,15 +97,11 @@ In this example, we parallelize RPC calls, but this can also be used to parallel
         ```shell !!tabs go
         go run ./src/parallelizework
         ```
-    </CodeWithTabs>
-</Step>
-<Step stepLabel="4" title="Register the services">
+
     ```shell
     restate deployments register localhost:9080
     ```
-</Step>
-<Step stepLabel="5" title="Send a request">
-    <CodeWithTabs groupId={"sdk"} className={"display-none"}>
+
         ```shell !!tabs ts
         curl localhost:8080/worker/run \
             --json '{"description": "get out of bed,shower,make coffee,have breakfast"}'
@@ -143,13 +122,9 @@ In this example, we parallelize RPC calls, but this can also be used to parallel
         curl localhost:8080/FanOutWorker/Run \
             --json '{"description": "get out of bed,shower,make coffee,have breakfast"}'
         ```
-    </CodeWithTabs>
 
-</Step>
-
-<Step stepLabel="4" title="Check the service logs">
     See how all tasks get spawned in parallel, finish at different times, and then get aggregated.
-    <CodeWithTabs groupId={"sdk"} className={"display-none"}>
+
         ```shell !!tabs ts
         # !mark gold
         [restate] [worker/runSubtask][inv_17jBqoqRG0TN3msVqHEpZn2aQMOX5kSKrf][2025-01-17T08:51:44.993Z] INFO:  Started executing subtask: get out of bed
@@ -291,8 +266,6 @@ In this example, we parallelize RPC calls, but this can also be used to parallel
         2025/01/16 16:41:26 Aggregated result: get out of bed: DONE,shower: DONE,have breakfast: DONE,make coffee: DONE
         2025/01/16 16:41:26 INFO Invocation completed successfully method=FanOutWorker/Run invocationID=inv_1lkcVTBmCorR3fSPhE0pNTiO8XFXoV34C5
         ```
-    </CodeWithTabs>
-</Step>
 
 ## Related resources
 

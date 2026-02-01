@@ -3,8 +3,6 @@ sidebar_position: 3
 description: "Persist results of operations."
 ---
 
-import Admonition from '@theme/Admonition';
-
 # Journaling Results
 
 Restate uses an execution log for replay after failures and suspensions.
@@ -26,21 +24,15 @@ CODE_LOAD::ts/src/develop/journaling_results.ts#side_effect
 You cannot use the Restate context within `ctx.run`.
 This includes actions such as getting state, calling another service, and nesting other journaled actions.
 
-<Admonition type="info" title={"Serialization"}>
     By default, Typescript SDK uses the built-in [JSON](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON) support to perform (de)serialization.
     Consult the [serialization docs](/develop/ts/serialization) for other options.
-</Admonition>
 
-<Admonition type="caution" title={"Immediately await journaled actions"}>
 Always immediately await `ctx.run`, before doing any other context calls.
 If not, you might bump into non-determinism errors during replay,
 because the journaled result can get interleaved with the other context calls in the journal in a non-deterministic way.
-</Admonition>
 
-<Admonition type="note" title="Failure semantics">
 Failures in `ctx.run` have the same semantics as failures in the rest of your handler code.
 By default, the `ctx.run` function is retried infinitely on failure, unless you specify differently in the retry policy (see below) or throw a [`TerminalError`](/develop/ts/error-handling).
-</Admonition>
 
 ### Run-block Retry Policies
 
@@ -54,7 +46,6 @@ This way you can override the default retry behavior of your Restate service for
 
 If you set a maximum number of attempts, then the `ctx.run` block will fail with a [`TerminalError`](/develop/ts/error-handling) once the retries are exhausted.
 Have a look at the [error handling docs](/develop/ts/error-handling) and [Sagas guide](/guides/sagas) to learn how to handle these.
-
 
 ## Restate Promise combinators {#combineable-promise-combinators}
 Operations such as `ctx.run`, calls, awakeables, and sleep return a `RestatePromise`.
@@ -84,9 +75,7 @@ Do not use this in cryptographic contexts.
 CODE_LOAD::ts/src/develop/journaling_results.ts#uuid
 ```
 
-
 ### Generating random numbers
-
 
 This returns a new pseudorandom float within the range `[0,1]`.
 This is the equivalent of JS `Math.random()` but deterministically replayable.

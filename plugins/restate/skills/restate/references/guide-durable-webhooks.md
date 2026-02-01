@@ -5,14 +5,9 @@ pagination_next: null
 pagination_prev: null
 ---
 
-import {CodeWithTabs} from "../../src/components/code/code";
-import Admonition from "@theme/Admonition";
-
 # Durable webhooks
 
 Restate handlers can be used as **durable processors of webhook events**.
-
-<img src={"/img/guides/durable-webhooks.png"} width={"400px"}/>
 
 What does this give you?
 
@@ -29,7 +24,6 @@ This example processes webhook callbacks from a payment provider.
 The payment provider notifies us about payment success or failure of invoices by sending webhook events to our handler.
 The handler then routes the event to the correct processor via a one-way message.
 
-<CodeWithTabs groupId={"sdk"}>
     ```ts !!tabs TypeScript https://github.com/restatedev/examples/blob/main/typescript/patterns-use-cases/src/webhookcallbacks/webhook_callback_router.ts
     // collapse_prequel
     CODE_LOAD::https://raw.githubusercontent.com/restatedev/examples/refs/heads/main/typescript/patterns-use-cases/src/webhookcallbacks/webhook_callback_router.ts
@@ -39,9 +33,6 @@ The handler then routes the event to the correct processor via a one-way message
     // collapse_prequel
     CODE_LOAD::https://raw.githubusercontent.com/restatedev/examples/refs/heads/main/go/patterns-use-cases/src/webhookcallbacks/callbackrouter.go
     ```
-</CodeWithTabs>
 
-<Admonition type={"note"} title={"Example not available in your language?"}>
     This pattern is implementable with any of our SDKs. We are still working on translating all patterns to all SDK languages.
     If you need help with a specific language, please reach out to us via [Discord](https://discord.com/invite/skW3AZ6uGd) or [Slack](https://join.slack.com/t/restatecommunity/shared_invite/zt-2v9gl005c-WBpr167o5XJZI1l7HWKImA).
-</Admonition>

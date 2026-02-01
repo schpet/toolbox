@@ -3,32 +3,19 @@ sidebar_position: 3
 description: ""
 ---
 
-import FeatureList from "../../src/components/FeatureList"
-import {Scrollycoding} from "../../src/components/code/scrollycoding";
-import {
-    Terminal
-} from "../../src/components/code/terminal";
-import SdkIcons from "../../src/components/SdkIcons";
-
 # Invocations
 
 An invocation is a request to execute a handler that is part of a Restate service.
 
 There are three ways to invoke a handler:
 
-<FeatureList features={[
-    {
-        title: 'HTTP requests',
-        iconPath: '/img/http-icon.svg',
-        description: (
-            <p>
                 Send a request to the Restate Server (port <code>8080</code>), with the handler name in the path, and the payload body.
                 <br/>
                 <a href="/invoke/http">Learn more</a>
             </p>
         ),
     },
-    {
+
         title: 'Programmatically',
         iconPath: '/img/code-icon.svg',
         description: (
@@ -39,7 +26,7 @@ There are three ways to invoke a handler:
             </p>
         ),
     },
-    {
+
         title: 'Kafka events',
         iconPath: '/img/kafka-icon.svg',
         description: (
@@ -50,15 +37,13 @@ There are three ways to invoke a handler:
             </p>
         ),
     },
-]}/>
+]
 
 All invocations are proxied through the Restate Server, which registers the request, routes the request to the correct handler, and drives the execution of the handler.
 
 Invocations get a unique identifier. This identifier is used to track the progress of the invocation, and lets you correlate logs and metrics.
 
 ## Invocation types
-
-<Scrollycoding>
 
     ## !!steps
     **Request-response invocations** allow you to call another handler and wait for the response.
@@ -142,20 +127,6 @@ Invocations get a unique identifier. This identifier is used to track the progre
     curl localhost:8080/GreeterService/greet/send?delay=10s --json '"Hi"'
     ```
 
-</Scrollycoding>
-
-<SdkIcons
-    sdkLinks={{
-        description: "Or have a look at the SDK documentation on service communication:",
-        ts: "/develop/ts/overview#virtual-objects",
-        java: "/develop/java/overview#virtual-objects",
-        kotlin: "/develop/java/overview?sdk=kotlin#virtual-objects",
-        go: "/develop/go/overview#virtual-objects",
-        python: "/develop/python/overview#virtual-objects",
-        rust: "https://docs.rs/restate-sdk/latest/restate_sdk/#virtual-objects"
-    }}
-/>
-
 Learn more about [HTTP invocations](/invoke/http), [SDK clients](/invoke/clients), [Kafka events](/invoke/kafka).
 
 ## Idempotent invocations
@@ -175,11 +146,7 @@ Restate proxies and manages inbound as well as service-to-service invocations.
 This makes it a great source of observability data for your application.
 You can inspect invocations via the UI:
 
-<img src="/img/concepts/ui_invocation_debug.png"/>
-
-
 Or via the CLI:
-<Terminal>
 
     ```shell !command
     restate services list
@@ -191,9 +158,7 @@ Or via the CLI:
      🌎  CheckoutService  1                   HTTP 2           dp_11pXug0mWsff2NOoRBZbOcV
      🌎  TicketObject     1         ⬅️ 🚶🚶🚶  HTTP 2           dp_11pXug0mWsff2NOoRBZbOcV
     ```
-</Terminal>
 
-<Terminal>
     ```shell !command
     restate services describe CartObject
     ```
@@ -211,7 +176,6 @@ Or via the CLI:
      Endpoint:         http://localhost:9080/
      Created at:       2024-04-23T12:32:16.691000000Z
 
-
     🔌 Handlers:
     ――――――――――――
      HANDLER       INPUT TYPE                 OUTPUT TYPE
@@ -222,9 +186,6 @@ Or via the CLI:
      expireTicket  one of "empty or value of  value with content-type "application/json"
                    content-type */*"
     ```
-</Terminal>
-
-<Terminal>
 
     ```shell !command
     restate invocations list
@@ -240,10 +201,6 @@ Or via the CLI:
                       [500] Failing
          Caused by:   UNKNOWN
     ```
-
-</Terminal>
-
-<Terminal>
 
 ```shell !command
 restate invocations describe inv_1fmRNvSNVxNp5PTqHI4HLJ17HpxzhB3MEV
@@ -274,15 +231,12 @@ restate invocations describe inv_1fmRNvSNVxNp5PTqHI4HLJ17HpxzhB3MEV
      ├──── ☑️  #1 Call TicketObject/seat2B/reserve inv_19maBIcE9uRD1CrHgpGXZ7FcXPsz4bzkbL
      └────>> backing-off
 ```
-</Terminal>
 
 Restate also [exposes traces](/operate/monitoring/tracing) via OpenTelemetry, which can be sent to your observability platform of choice (e.g. Jaeger).
 
-<div className="text--center">
-<img src="/img/Jaeger.svg" alt="Jaeger" class="bordered" width="20%"/>
-<img src="/img/OpenTelemetry.svg" alt="Jaeger" class="bordered" width="20%"/>
-</div>
+<div>
 
+</div>
 
 ## Cancelling and killing invocations
 
@@ -291,8 +245,6 @@ You can cancel and kill invocations via the Restate UI, the CLI, or with the SDK
 - For kills, Restate will immediately stop the handler without executing any compensation actions.
 
 If necessary, you can register compensating actions in your handlers to ensure that the system remains consistent amid cancellations ([sagas guide](/guides/sagas)).
-
-<Terminal>
 
     ```shell !command
     restate invocations cancel --kill inv_1fmRNvSNVxNp5PTqHI4HLJ17HpxzhB3MEV
@@ -312,5 +264,3 @@ If necessary, you can register compensating actions in your handlers to ensure t
 
     ✅ Request was sent successfully
     ```
-</Terminal>
-

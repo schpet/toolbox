@@ -3,9 +3,6 @@ sidebar_position: 11
 description: "Create an endpoint to serve your services."
 ---
 
-
-import Admonition from '@theme/Admonition';
-
 # Serving
 Restate services can run in a few ways: as a Node.js HTTP handler, as an AWS
 Lambda handler, or on other Javascript runtimes like Bun, Deno and Cloudflare
@@ -20,7 +17,7 @@ Workers.
 CODE_LOAD::ts/src/develop/serving.ts#endpoint
 ```
 
-<details className={"grey-details"}>
+<details className={"grey-details"
     <summary>Customizing the HTTP2 server</summary>
 
     If you need to manually control or customize the HTTP2 server, you can call `http2Handler()` instead of `listen()`, and then use it to manually instantiate the HTTP server:
@@ -41,9 +38,7 @@ CODE_LOAD::ts/src/develop/serving_lambda.ts#lambda
 Have a look at the [deployment section](/category/aws-lambda)
 for guidance on how to deploy your services on AWS Lambda.
 
-<Admonition type="tip" title={"Run on Lambda without handler changes"}>
     The implementation of your services and handlers remains the same for both deployment options.
-</Admonition>
 
 ## Creating a fetch handler
 Other Javascript runtimes like Deno and Cloudflare Workers have
@@ -67,7 +62,7 @@ and enabling bidirectional mode will cause invocations to stall and time out.
 Services running on Workers must be discovered with the `--use-http1.1`
 CLI flag.
 
-<details className={"grey-details"}>
+<details className={"grey-details"
     <summary>Cloudflare Workers and minification</summary>
 
     Cloudflare Workers minification is not working correctly with the Restate SDK. If you see an issue similar to:

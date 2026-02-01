@@ -3,8 +3,6 @@ sidebar_position: 5
 description: ""
 ---
 
-import DurableExecutionAnimation from "../../src/components/DurableExecutionAnimation";
-
 # Durable Execution
 
 Restate provides resilience for applications via its Durable Execution mechanism.
@@ -18,9 +16,6 @@ The SDKs are responsible for tracking the progress of the execution and sending 
 
 The Restate server is responsible for storing the progress in a durable log and triggering retries in case of failures.
 When the Restate server triggers a retry, it sends the progress log to the SDK, which replays the log to continue the execution from where it left off.
-
-
-<DurableExecutionAnimation/>
 
 In case of a failure (e.g. timeout,  infrastructure crash, network glitch), Restate will retry the execution by invoking the handler again and sending over the latest version of the journal.
 The handler then starts executing again and whenever it encounters an action on the Restate context, it will skip execution and will inject the response it finds in the journal.

@@ -18,7 +18,7 @@ const greeter = restate.service({
     name: "greeter",
     handlers: {
         greet: async (ctx: restate.Context, name: string) => {
-            return `Hello ${name}!`;
+            return "Hello " + name + "!";
         },
     },
 });

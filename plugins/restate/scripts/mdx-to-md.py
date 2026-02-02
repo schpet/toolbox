@@ -5,8 +5,47 @@ import sys
 import re
 
 
+def escape_template_literals_in_code_blocks(content: str) -> str:
+    """Replace JS template literals containing '!' with string concatenation.
+
+    Claude Code interprets `!` followed by backtick as bash syntax when loading skills.
+    This converts: return `Hello, ${name}!`;
+    To:            return "Hello, " + name + "!";
+    """
+    def replace_template_literal(match: re.Match) -> str:
+        code_block = match.group(0)
+        # Only process if it contains template literals with !
+        if '!`' not in code_block and '!`;' not in code_block:
+            return code_block
+
+        # Find template literals like `...${var}...!` and convert to concatenation
+        # This handles simple cases like `Hello, ${name}!`
+        def convert_literal(m: re.Match) -> str:
+            literal = m.group(0)
+            # Simple pattern: `prefix${var}suffix`
+            simple_match = re.match(r'`([^`$]*)\$\{([^}]+)\}([^`]*)`', literal)
+            if simple_match:
+                prefix, var, suffix = simple_match.groups()
+                return f'"{prefix}" + {var} + "{suffix}"'
+            return literal
+
+        code_block = re.sub(r'`[^`]*\$\{[^}]+\}[^`]*!`', convert_literal, code_block)
+        return code_block
+
+    # Match fenced code blocks (```...```)
+    content = re.sub(
+        r'```[\w]*\n[\s\S]*?```',
+        replace_template_literal,
+        content
+    )
+    return content
+
+
 def convert_mdx_to_md(content: str) -> str:
     """Strip JSX/React components and MDX-specific syntax from content."""
+
+    # First, escape problematic template literals in code blocks
+    content = escape_template_literals_in_code_blocks(content)
 
     # Remove multiline import statements (handle various patterns)
     # Pattern: import ... from "..."

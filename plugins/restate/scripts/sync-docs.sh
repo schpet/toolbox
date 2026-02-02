@@ -163,7 +163,8 @@ echo "==> Fetching TypeScript SDK README..."
 
 TS_SDK_README="$TMP_DIR/sdk-typescript-readme.md"
 if curl -fsSL "https://raw.githubusercontent.com/restatedev/sdk-typescript/main/README.md" -o "$TS_SDK_README" 2>/dev/null; then
-    cp "$TS_SDK_README" "$REFS_DIR/typescript-sdk-readme.md"
+    # Process through mdx-to-md.py to escape problematic template literals
+    python3 "$SCRIPT_DIR/mdx-to-md.py" "$TS_SDK_README" "$REFS_DIR/typescript-sdk-readme.md"
     echo "    Copied: typescript-sdk-readme.md"
 else
     echo "    SKIP (download failed): typescript-sdk-readme.md"

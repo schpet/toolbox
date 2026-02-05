@@ -1,7 +1,7 @@
 {
   "name": "jjwf",
   "description": "Jujutsu (jj) workflow commands for Claude Code - commit, describe, squash",
-  "version": "0.1.0",
+  "version": "0.1.10",
   "author": {
     "name": "schpet"
   },

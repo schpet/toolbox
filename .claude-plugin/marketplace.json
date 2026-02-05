@@ -4,12 +4,12 @@
     "name": "schpet"
   },
   "description": "Toolbox of Claude Code plugins",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "plugins": [
     {
       "name": "jj-vcs",
       "description": "Jujutsu (jj) version control documentation and workflows",
-      "version": "0.1.7",
+      "version": "0.1.10",
       "author": {
         "name": "schpet"
       },
@@ -19,7 +19,7 @@
     {
       "name": "jjwf",
       "description": "Jujutsu workflow commands: /ci, /describe, /squash, /catchup, /clone, /pr",
-      "version": "0.1.0",
+      "version": "0.1.10",
       "author": {
         "name": "schpet"
       },
@@ -29,7 +29,7 @@
     {
       "name": "changelog",
       "description": "Manage project changelogs following the Keep a Changelog format",
-      "version": "0.1.7",
+      "version": "0.1.10",
       "author": {
         "name": "schpet"
       },
@@ -39,7 +39,7 @@
     {
       "name": "svbump",
       "description": "Read and write semantic versions in config files (JSON, TOML, YAML)",
-      "version": "0.1.7",
+      "version": "0.1.10",
       "author": {
         "name": "schpet"
       },
@@ -49,7 +49,7 @@
     {
       "name": "chores",
       "description": "Jujutsu repository maintenance and Apple container utilities",
-      "version": "0.1.7",
+      "version": "0.1.10",
       "author": {
         "name": "schpet"
       },
@@ -59,7 +59,7 @@
     {
       "name": "speccer",
       "description": "Distill rough ideas into structured project specs with issues",
-      "version": "0.1.9",
+      "version": "0.1.10",
       "author": {
         "name": "schpet"
       },
@@ -69,7 +69,7 @@
     {
       "name": "restate",
       "description": "Restate durable execution framework documentation and patterns",
-      "version": "0.1.2",
+      "version": "0.1.10",
       "author": {
         "name": "schpet"
       },

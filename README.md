@@ -46,6 +46,14 @@ Restart Claude Code after installation.
 
 ## Updating
 
+First, update the marketplace to get the latest plugin versions:
+
+```bash
+claude plugin marketplace update toolbox
+```
+
+Then update individual plugins:
+
 ```bash
 claude plugin install jj-vcs@toolbox
 claude plugin install jjwf@toolbox
@@ -55,6 +63,14 @@ claude plugin install chores@toolbox
 claude plugin install speccer@toolbox
 claude plugin install restate@toolbox
 ```
+
+Or update a specific plugin:
+
+```bash
+claude plugin update jj-vcs@toolbox
+```
+
+Restart Claude Code after updating.
 
 ## Local development
 

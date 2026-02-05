@@ -1,39 +1,32 @@
 ---
 name: speccer
-description: "Distill rough ideas into structured project specs with issues. This skill takes unstructured input (bullet points, rough notes, transcribed ideas) and systematically breaks it down into feature domains, uses sub-agents to deeply analyze each domain, identifies ambiguities requiring user clarification, and ultimately produces a structured spec with actionable issues. Use this skill when the user wants to transform rough project ideas into well-defined specifications and issues, or when they invoke /speccer."
+description: "Distill rough ideas into structured project specs with issues. This skill takes unstructured input (bullet points, rough notes, transcribed ideas) and systematically breaks it down into feature domains, identifies ambiguities requiring user clarification, and produces a single structured spec document with actionable issues. Use this skill when the user wants to transform rough project ideas into well-defined specifications and issues, or when they invoke /speccer."
 user-invocable: true
 ---
 
 # Speccer
 
-Transform rough ideas into structured project specifications with actionable issues.
+Transform rough ideas into a structured project specification with actionable issues.
 
 ## Overview
 
-This skill orchestrates a multi-phase process to distill unstructured input into:
-1. A top-level project overview document
-2. Feature/domain section documents
-3. A consolidated list of questions for the user
+This skill orchestrates a multi-phase process to distill unstructured input into a **single spec document** (`docs/spec.md`) containing:
+1. Project overview and tech stack
+2. Feature/domain analysis sections
+3. Open questions for the user
 4. Actionable issues with acceptance criteria
 
-All spec documents live in `docs/specs/` within the project.
+Everything goes in one file. Do not create multiple files or a directory of spec documents.
 
-## Document Structure
+## Output
 
-```
-docs/specs/
-├── index.md           # Top-level overview, links to all sections
-├── _setup.md          # Project foundation: toolchain, scaffolding, env setup
-├── _questions.md      # Consolidated questions awaiting user answers
-├── _issues.md         # Generated issues with acceptance criteria
-└── {feature}.md       # One file per feature/domain area
-```
+The entire spec is written to `docs/spec.md`. This is the only file speccer creates or modifies.
 
 ## Workflow
 
 ### Phase 0: Project Foundation
 
-Before analyzing features, establish the project's technical foundation. This ensures setup and scaffolding become the first issues.
+Before analyzing features, establish the project's technical foundation.
 
 1. **Identify the tech stack** by asking the user:
    - What language/framework will this project use? (e.g., Rust, Rails, Node.js, Python)
@@ -57,109 +50,56 @@ Before analyzing features, establish the project's technical foundation. This en
    - CI/CD requirements? (GitHub Actions, etc.)
    - Deployment target? (affects scaffolding choices)
 
-4. **Create `docs/specs/_setup.md`** documenting:
-   - Required toolchains and installation instructions
-   - Project scaffolding commands to run
-   - Initial configuration choices (database, etc.)
-   - Development environment setup steps
-
-5. **Update `index.md`** with a "Setup" section linking to `_setup.md`
-
-The setup issues generated from this phase **must** be ordered first in `_issues.md`.
-
 ### Phase 1: Decomposition
 
 When invoked with rough input:
 
 1. Read the input and identify distinct feature/domain areas
-2. Create `docs/specs/` directory if it doesn't exist
-3. Create initial `docs/specs/index.md` with:
-   - Project name/title (ask user if unclear)
-   - High-level summary of what the project does
-   - Tech stack and setup reference (from Phase 0)
-   - List of identified feature areas (as links to section files)
-   - Status: "Decomposition complete, analysis in progress"
+2. Create the initial `docs/spec.md` with the project overview, tech stack, and list of identified feature areas
+3. Output a brief summary of identified features before proceeding
 
-Output a brief summary of identified features before proceeding.
+### Phase 2: Deep Analysis
 
-### Phase 2: Deep Analysis (Sub-Agents)
+For each identified feature/domain area, analyze:
 
-For each identified feature/domain area, spawn a sub-agent using the Task tool:
+1. What's well-defined vs ambiguous
+2. Implementation concerns (without designing solutions)
+3. Questions that need user clarification
+4. Draft acceptance criteria for potential issues
 
-```
-Use Task tool with subagent_type="general-purpose" for each feature:
+Write each feature's analysis as a section within `docs/spec.md`. Use sub-agents (Task tool with subagent_type="general-purpose") to analyze features in parallel if needed, but have them return their analysis as text — do not have sub-agents write separate files. Incorporate their output into the single spec document yourself.
 
-Prompt template:
-"Analyze the following feature area for a project spec. Your task is to:
-
-1. Read the rough input related to this feature
-2. Identify what's well-defined vs ambiguous
-3. Consider implementation concerns (but don't design solutions)
-4. List questions that need user clarification
-5. Draft acceptance criteria for potential issues
-
-Feature: {feature_name}
-Context: {relevant_input_excerpt}
-Project overview: {brief_project_context}
-
-Output a structured analysis with:
-- Summary (2-3 sentences)
-- Key requirements (bullet points)
-- Ambiguities/Questions (numbered list with context for why it matters)
-- Suggested issues (title + draft acceptance criteria)
-
-Write your analysis to: docs/specs/{feature_slug}.md"
-```
-
-Run sub-agents in parallel where possible (multiple Task tool calls in one message).
-
-### Phase 3: Consolidation
-
-After all sub-agents complete:
-
-1. Read all generated section files in `docs/specs/`
-2. Extract all questions/ambiguities from each section
-3. Create `docs/specs/_questions.md` with:
-   - Questions grouped by feature area
-   - Each question includes context for why it matters
-   - Numbered for easy reference
-4. Update `docs/specs/index.md`:
-   - Add links to all section files
-   - Update status: "Analysis complete, awaiting clarification"
-
-### Phase 4: User Clarification
+### Phase 3: User Clarification
 
 Present questions to the user using AskUserQuestion tool:
 
 - Group related questions where possible
 - Provide context for each question
 - Offer reasonable default options when applicable
-- Mark questions as answered in `_questions.md` as responses come in
+- Update `docs/spec.md` with answers as they come in
 
 For complex clarifications, ask in batches of 3-4 questions max per interaction.
 
-### Phase 5: Refinement
+### Phase 4: Refinement
 
 After receiving user answers:
 
-1. Update relevant section files with clarifications
-2. Mark answered questions in `_questions.md` as resolved
-3. If new questions arise from answers, add them and repeat Phase 4
-4. Update `index.md` status when all questions resolved
+1. Update relevant sections of `docs/spec.md` with clarifications
+2. Mark answered questions as resolved
+3. If new questions arise from answers, repeat Phase 3
 
-### Phase 6: Issue Generation
+### Phase 5: Issue Generation
 
 When all clarifications are complete:
 
-1. Read `_setup.md` and all section files
-2. Compile issues starting with setup, then feature issues
-3. Create `docs/specs/_issues.md` with:
+1. Compile issues starting with setup, then feature issues
+2. Add an Issues section to `docs/spec.md` with:
    - **Setup issues first**: toolchain installation, project scaffolding, initial configuration
    - Feature issues grouped by area
    - Each issue has: title, description, acceptance criteria
    - Issues are ordered by dependency (setup → foundation → features)
 
-4. **If user wants beads integration**, for each issue:
+3. **If user wants beads integration**, for each issue:
    ```
    Use beads:create skill to create the issue with:
    - Title from spec
@@ -167,65 +107,28 @@ When all clarifications are complete:
    - Labels for feature area
    ```
 
-5. Update `index.md`:
-   - Status: "Specification complete"
-   - Link to `_issues.md`
-   - Summary of total issues generated
+4. Update the Status section: "Specification complete"
 
 ## Invocation
 
 The skill can be invoked:
 
 - `/speccer` - Start fresh with new input
-- `/speccer refine` - Continue refining existing spec (re-run Phase 4-6)
+- `/speccer refine` - Continue refining existing spec (re-run Phase 3-5)
 - `/speccer issues` - Skip to issue generation from existing spec
 - `/speccer issues --beads` - Generate issues and create beads
 
 ## Maintaining Context
 
-The `index.md` file serves as the authoritative reference. When resuming work:
+When resuming work:
 
-1. Always read `docs/specs/index.md` first
-2. Check status to determine which phase to continue
-3. Read `_questions.md` to see pending clarifications
-4. Sub-agents should be given relevant section context
-
-## Example Index Structure
-
-```markdown
-# Project: [Name]
-
-## Overview
-[2-3 sentence summary]
-
-## Tech Stack
-- **Language/Framework**: [e.g., Rust, Rails 8, Node.js + Express]
-- **Database**: [e.g., PostgreSQL, SQLite, none]
-- **See**: [Project Setup](./_setup.md) for toolchain and scaffolding
-
-## Status
-[Current phase and progress]
-
-## Features
-
-- [Feature A](./feature-a.md) - Brief description
-- [Feature B](./feature-b.md) - Brief description
-- [Feature C](./feature-c.md) - Brief description
-
-## Documents
-
-- [Project Setup](./_setup.md) - Toolchain, scaffolding, dev environment
-- [Open Questions](./_questions.md) - X questions pending
-- [Issues](./_issues.md) - Y issues defined
-
-## Notes
-[Any project-wide context or constraints]
-```
+1. Always read `docs/spec.md` first
+2. Check the Status section to determine which phase to continue
+3. Look for the Open Questions section to see pending clarifications
 
 ## Tips
 
 - Prefer more granular features over fewer large ones
 - Questions should be concrete and actionable, not abstract
 - Acceptance criteria should be testable/verifiable
-- Keep section files focused; split if they grow beyond ~500 lines
 - When uncertain about scope, err toward asking the user

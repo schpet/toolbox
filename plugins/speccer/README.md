@@ -23,30 +23,24 @@ Invoke the skill with your rough input:
 
 ## What It Does
 
-1. **Decomposition** - Identifies feature/domain areas from your input
-2. **Deep Analysis** - Spawns sub-agents to analyze each area in parallel
-3. **Consolidation** - Gathers all ambiguities and questions
+1. **Foundation** - Establishes tech stack and project setup
+2. **Decomposition** - Identifies feature/domain areas from your input
+3. **Deep Analysis** - Analyzes each area (using sub-agents in parallel if needed)
 4. **Clarification** - Asks you questions in batches
-5. **Refinement** - Updates specs with your answers
+5. **Refinement** - Updates the spec with your answers
 6. **Issue Generation** - Produces actionable issues with acceptance criteria
 
 ## Output
 
-All documents are created in `docs/specs/`:
+Everything goes in a single file: `docs/spec.md`
 
-```
-docs/specs/
-├── index.md           # Top-level overview (the "source of truth")
-├── _questions.md      # Pending questions
-├── _issues.md         # Generated issues
-└── {feature}.md       # One file per feature area
-```
+This one document contains the project overview, tech stack, feature analysis, open questions, and generated issues.
 
 ## Resuming Work
 
-The `index.md` file tracks status. When you return to a project:
+The `docs/spec.md` file tracks status. When you return to a project:
 
-1. Speccer reads `index.md` to see current phase
+1. Speccer reads `docs/spec.md` to see the current phase
 2. Picks up where you left off (answering questions, refining, etc.)
 
 ## Example

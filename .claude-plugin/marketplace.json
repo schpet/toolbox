@@ -4,7 +4,7 @@
     "name": "schpet"
   },
   "description": "Toolbox of Claude Code plugins",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "plugins": [
     {
       "name": "jj-vcs",
@@ -59,7 +59,7 @@
     {
       "name": "speccer",
       "description": "Distill rough ideas into structured project specs with issues",
-      "version": "0.1.8",
+      "version": "0.1.9",
       "author": {
         "name": "schpet"
       },

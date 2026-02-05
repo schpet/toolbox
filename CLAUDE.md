@@ -22,3 +22,10 @@ After making changes to plugins, fully uninstall and reinstall:
 ```bash
 just claude-reinstall-local
 ```
+
+## Before Pushing
+
+Always bump versions by a patch before pushing:
+- The changed plugin's `.claude-plugin/plugin.json` version
+- The matching entry in `.claude-plugin/marketplace.json`
+- The top-level `marketplace.json` version itself

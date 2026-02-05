@@ -72,6 +72,33 @@ claude plugin update jj-vcs@toolbox
 
 Restart Claude Code after updating.
 
+## Uninstalling
+
+Remove individual plugins:
+
+```bash
+claude plugin remove jj-vcs@toolbox
+claude plugin remove jjwf@toolbox
+claude plugin remove changelog@toolbox
+claude plugin remove svbump@toolbox
+claude plugin remove chores@toolbox
+claude plugin remove speccer@toolbox
+claude plugin remove restate@toolbox
+```
+
+Remove all plugins and the marketplace:
+
+```bash
+claude plugin remove jj-vcs@toolbox
+claude plugin remove jjwf@toolbox
+claude plugin remove changelog@toolbox
+claude plugin remove svbump@toolbox
+claude plugin remove chores@toolbox
+claude plugin remove speccer@toolbox
+claude plugin remove restate@toolbox
+claude plugin marketplace remove toolbox
+```
+
 ## Local development
 
 ```bash

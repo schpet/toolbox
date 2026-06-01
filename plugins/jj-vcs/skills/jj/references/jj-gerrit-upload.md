@@ -4,7 +4,7 @@ jj-gerrit-upload - Upload changes to Gerrit for code review, or update existing 
 
 # SYNOPSIS
 
-**jj gerrit upload** \[**-r**\|**\--revisions**\] \[**-b**\|**\--remote-branch**\] \[**\--remote**\] \[**-n**\|**\--dry-run**\] \[**-R**\|**\--repository**\] \[**\--ignore-working-copy**\] \[**\--ignore-immutable**\] \[**\--at-operation**\] \[**\--debug**\] \[**\--color**\] \[**\--quiet**\] \[**\--no-pager**\] \[**\--config**\] \[**\--config-file**\] \[**-h**\|**\--help**\]
+**jj gerrit upload** \[**-r**\|**\--revision**\] \[**-R**\|**\--repository**\] \[**-b**\|**\--remote-branch**\] \[**\--ignore-working-copy**\] \[**\--no-integrate-operation**\] \[**\--remote**\] \[**\--ignore-immutable**\] \[**-n**\|**\--dry-run**\] \[**\--at-operation**\] \[**\--reviewer**\] \[**\--cc**\] \[**\--debug**\] \[**\--color**\] \[**-l**\|**\--label**\] \[**\--quiet**\] \[**\--topic**\] \[**\--hashtag**\] \[**\--no-pager**\] \[**\--config**\] \[**-m**\|**\--message**\] \[**\--config-file**\] \[**\--edit**\] \[**\--wip**\] \[**\--ready**\] \[**\--private**\] \[**\--remove-private**\] \[**\--publish-comments**\] \[**\--no-publish-comments**\] \[**\--notify**\] \[**\--submit**\] \[**\--skip-validation**\] \[**\--merged**\] \[**\--ignore-attention-set**\] \[**\--deadline**\] \[**\--custom**\] \[**\--trace**\] \[**-h**\|**\--help**\]
 
 # DESCRIPTION
 
@@ -12,7 +12,7 @@ Upload changes to Gerrit for code review, or update existing changes.
 
 Uploading in a set of revisions to Gerrit creates a single \"change\" for each revision included in the revset. These changes are then available for review on your Gerrit instance.
 
-Note: The gerrit commit Id may not match that of your local commit Id, since we add a \`Change-Id\` footer to the commit message if one does not already exist. This ID is based off the jj Change-Id, but is not the same.
+Note: The Gerrit commit Id may not match that of your local commit Id, since we add a \`Change-Id\` footer to the commit message if one does not already exist. This ID is based off the jj Change-Id, but is not the same.
 
 If a change already exists for a given revision (i.e. it contains the same \`Change-Id\`), this command will update the contents of the existing change to match.
 
@@ -20,11 +20,13 @@ Note: this command takes 1-or-more revsets arguments, each of which can resolve 
 
 # OPTIONS
 
-**-r**, **\--revisions** *\<REVISIONS\>*
+**-r**, **\--revision** *\<REVSETS\>*
 
 :   The revset, selecting which revisions are sent in to Gerrit
 
     This can be any arbitrary set of commits. Note that when you push a commit at the head of a stack, all ancestors are pushed too. This means that \`jj gerrit upload -r foo\` is equivalent to \`jj gerrit upload -r mutable()::foo\`.
+
+    If this is not provided, it will check whether @ has a description. \* If it does, it will upload @ \* Otherwise, it will upload @-
 
 **-b**, **\--remote-branch** *\<REMOTE_BRANCH\>*
 
@@ -41,6 +43,119 @@ Note: this command takes 1-or-more revsets arguments, each of which can resolve 
 **-n**, **\--dry-run**
 
 :   Do not actually push the changes to Gerrit
+
+**\--reviewer** *\<REVIEWER\>*
+
+:   Add these emails as a reviewer (can be repeated)
+
+**\--cc** *\<CC\>*
+
+:   CC these emails on the change (can be repeated)
+
+**-l**, **\--label** *\<LABEL\>*
+
+:   Add the following labels configured by Gerrit (can be repeated)
+
+    Gerrit silently ignores labels not present on your gerrit host. Defaults to +1 if no value is set. Eg. \--label=Commit-Queue will set the Commit-Queue label to +1. Eg. \--label=Commit-Queue+2 will set it to +2.
+
+**\--topic** *\<TOPIC\>*
+
+:   Applies a topic to the change
+
+    See https://gerrit-review.googlesource.com/Documentation/intro-user.html#topics. Changes can be grouped by topic, and Gerrit can be configured to submit all changes in a topic together in a single click.
+
+**\--hashtag** *\<HASHTAG\>*
+
+:   Applies a hashtag to the change (can be repeated)
+
+    See https://gerrit-review.googlesource.com/Documentation/intro-user.html#hashtags. Hashtags are freeform strings associated with a change, like on social media platforms. Similar to topics, hashtags can be used to group related changes together, and to search using the hashtag: operator. Unlike topics, a change can have multiple hashtags, and they are only used for informational grouping. Changes with the same hashtags are not necessarily submitted together.
+
+**-m**, **\--message** *\<MESSAGE\>*
+
+:   A patch set description for the new patch set
+
+**\--edit**
+
+:   Push the change as a change edit
+
+    To push a change edit the underlying change need to already exist on the gerrit server. Change edits dont immediately create a new patchset, but need to be published from the web UI first. There can only be one edit for each change. Pushing a new change edit will replace the previous one.
+
+**\--wip**
+
+:   Marks the change as WIP (work in progress)
+
+    See https://gerrit-review.googlesource.com/Documentation/intro-user.html#wip.
+
+**\--ready**
+
+:   Unmarks the change as WIP (work in progress)
+
+**\--private**
+
+:   Marks the change as private
+
+    See https://gerrit-review.googlesource.com/Documentation/intro-user.html#private-changes.
+
+**\--remove-private**
+
+:   Unmarks the change as private
+
+**\--publish-comments**
+
+:   Publishes any draft comments for the given change
+
+**\--no-publish-comments**
+
+:   Disables publishing of any draft comments for the given change
+
+    This is only useful if the user has configured Gerrit to publish comments by default.
+
+**\--notify** *\<NOTIFY\>*
+
+:   Who to email notifications to (defaults to all)\
+
+    \
+    *Possible values:*
+
+    - none: No emails
+
+    - owner: Only the change owner is notified
+
+    - owner-reviewers: Only the change owner and reviewers will be notified
+
+    - all: All relevant users, including owner, reviewers, ccd, users that have starred the change, and users who have configured a watch on files in the change
+
+**\--submit**
+
+:   Directly submit the changes, bypassing code review
+
+**\--skip-validation**
+
+:   When \--submit is provided, skip performing validations
+
+**\--merged**
+
+:   Create a new change, even if the change has already been merged
+
+**\--ignore-attention-set**
+
+:   Do not modify the attention set upon uploading
+
+**\--deadline** *\<DEADLINE\>*
+
+:   The deadline after which the push should be aborted
+
+**\--custom** *\<CUSTOM\>*
+
+:   Send the following custom keyed values to Gerrit (can be repeated)
+
+    See https://gerrit-review.googlesource.com/Documentation/user-upload.html#custom_keyed_values
+
+**\--trace** *\<TRACE\>*
+
+:   For debugging Gerrit
+
+    See https://gerrit-review.googlesource.com/Documentation/user-upload.html#trace
 
 **-h**, **\--help**
 
@@ -61,6 +176,16 @@ Note: this command takes 1-or-more revsets arguments, each of which can resolve 
     By default, Jujutsu snapshots the working copy at the beginning of every command. The working copy is also updated at the end of the command, if the command modified the working-copy commit (\`@\`). If you want to avoid snapshotting the working copy and instead see a possibly stale working-copy commit, you can use \`\--ignore-working-copy\`. This may be useful e.g. in a command prompt, especially if you have another process that commits the working copy.
 
     Loading the repository at a specific operation with \`\--at-operation\` implies \`\--ignore-working-copy\`.
+
+**\--no-integrate-operation**
+
+:   Run the command as usual but dont integrate any operations
+
+    When this option is given, the operations will still be created as usual but they will not be integrated to the operation log. The working copy will also not be updated.
+
+    The command will print the resulting operation ID. You can pass that to e.g. \`jj \--at-op\` to inspect the resulting repo state, or you can pass it to \`jj op restore\` to restore the repo to that state. You can also pass the ID to \`jj op integrate\` to integrate the operation.
+
+    Note that this does \*not\* prevent side effects outside the repo. For example, \`jj git push \--no-integrate-operation\` will still perform the push.
 
 **\--ignore-immutable**
 
@@ -93,7 +218,15 @@ Note: this command takes 1-or-more revsets arguments, each of which can resolve 
 :   When to colorize output\
 
     \
-    \[*possible values:* always, never, debug, auto\]
+    *Possible values:*
+
+    - always
+
+    - never
+
+    - debug
+
+    - auto
 
 **\--quiet**
 

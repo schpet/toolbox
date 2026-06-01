@@ -7,40 +7,45 @@ These are the config settings available to jj/Jujutsu.
 `jj` loads several types of config settings:
 
 - The built-in settings. These cannot be edited. They can be viewed in the
-  `cli/src/config/` directory in `jj`'s source repo.
+  [`cli/src/config/`] directory in `jj`'s source repo.
 
 - The user settings. These can be edited with `jj config edit --user`. User
-settings are located in [the user config files], which can be found with `jj
-config path --user`.
+  settings are located in [the user config files], which can be found with
+  `jj config path --user`.
 
-- The repo settings. These can be edited with `jj config edit --repo` and are
-located in `.jj/repo/config.toml`.
+- The repo settings. These can be edited with `jj config edit --repo`, or found
+  with `jj config path --repo`. For security reasons, they are not located
+  inside the repo.
 
-- The workspace settings. These can be edited with `jj config edit --workspace`
-and are located in `.jj/workspace-config.toml` in the workspace root.
+- The workspace settings. These can be edited with `jj config edit --workspace`,
+  or found with `jj config path --workspace`. For security reasons, they are not
+  located inside the workspace.
 
-- Settings [specified in the command-line](#specifying-config-on-the-command-line).
+- Settings [specified on the command-line].
 
 These are listed in the order they are loaded; the settings from earlier items
 in the list are overridden by the settings from later items if they disagree.
 Every type of config except for the built-in settings is optional.
 
 You can enable JSON Schema validation in your editor by adding a `#:schema`
-reference at the top of your TOML config files. See [JSON Schema
-Support] for details.
+reference at the top of your TOML config files. See [JSON Schema Support] for
+details.
 
 See the [TOML site] and the [syntax guide] for a detailed description of the
 syntax. We cover some of the basics below.
 
-[the user config files]: #user-config-files
-[TOML site]: https://toml.io/en/
-[syntax guide]: https://toml.io/en/v1.0.0
-[JSON Schema Support]: #json-schema-support
-
 The first thing to remember is that the value of a setting (the part to the
 right of the `=` sign) should be surrounded in quotes if it's a string.
 
+[`cli/src/config/`]: https://github.com/jj-vcs/jj/blob/main/cli/src/config/
+[JSON Schema Support]: #json-schema-support
+[specified on the command-line]: #specifying-config-on-the-command-line
+[syntax guide]: https://toml.io/en/latest
+[the user config files]: #user-config-files
+[TOML site]: https://toml.io/en/
+
 ### Dotted style and headings
+
 In TOML, anything under a heading can be dotted instead. For example,
 `user.name = "YOUR NAME"` is equivalent to:
 
@@ -64,13 +69,58 @@ colors."commit_id prefix".bold = true
 "commit_id prefix" = { bold = true }
 ```
 
-The docs below refer to keys in text using dotted notation, but example
-blocks will use heading notation to be unambiguous. If you are confident with TOML
-then use whichever suits you in your config. If you mix dotted keys and headings,
+The docs below refer to keys in text using dotted notation, but example blocks
+will use heading notation to be unambiguous. If you are confident with TOML then
+use whichever suits you in your config. If you mix dotted keys and headings,
 **you must put the dotted keys before the first heading**.
 
-That's probably enough TOML to keep you out of trouble but the [syntax guide] is
-very short if you ever need to check.
+### Escapes in strings
+
+There are two (or four) types of [strings in TOML]: basic and literal, with
+multi-line versions of each. Basic strings use double quotes (`"`) and support
+escape sequences, such as `"\n"`, `"\""`, `"\\"`, etc. Literal strings use
+single quotes (`'`) and do not support escape sequences. Using 3 double quotes
+or 3 single quotes to wrap a string makes it multi-line, and then you can use an
+unescaped double quote or single quote respectively without ending the string.
+
+A string in your config may be interpreted twice, first by the TOML parser and
+then by a Jujutsu parser. To avoid putting strings in your config that the TOML
+parser processes before it gets to the Jujutsu parser, you may want to use
+literal strings or literal multi-line strings in your `config.toml` files. For
+example:
+
+```toml
+[template-aliases]
+# basic_template = "'hello' ++ \"\n\""
+literal_template = '"hello" ++ "\n"'
+```
+
+`basic_template` is actually equivalent to this string:
+
+```
+'hello' ++ "
+"
+```
+
+because the TOML parser interprets the `\n` character as part of the string.
+This causes the Jujutsu parser to receive a different string than what you
+literally see in the TOML file, which may result in seemingly confusing parse
+error messages (such as referencing a line that you think shouldn't exist).
+
+On the other hand, `literal_template` is equivalent to:
+
+```
+"hello" ++ "\n"
+```
+
+because the TOML parser does not escape anything in the literal string.
+
+The same rules of basic and literal strings apply to custom Jujutsu languages:
+double quotes (`"`) allow escapes whereas single quotes (`'`) do not. So
+`template-aliases.my_template = "'hello\\n'"` would probably not be what you
+want.
+
+[strings in TOML]: https://toml.io/en/latest#string
 
 ## User settings
 
@@ -220,15 +270,45 @@ original commit.
 [templates]
 duplicate_description = '''
 concat(
-  description,
-  "\n(cherry picked from commit ",
+  description.trim_end(),
+  "\n\n(cherry picked from commit ",
   commit_id,
-  ")"
+  ")\n"
 )
 '''
 ```
 
-### Bookmark/tag listing order
+Note that `description` usually ends with a `\n` if it is not blank. Use
+`.trim_end()` to remove the `\n`.
+
+### New commit description
+
+When `jj new` creates a commit without an explicit `-m` message, it evaluates
+the `new_description` template to populate the description. By default, this
+template is empty.
+
+You can customize this to automatically generate descriptions for new commits.
+For example, to auto-generate merge commit messages:
+
+```toml
+[templates]
+new_description = '''
+if(parents.len() > 1,
+  "Merge " ++ parents.skip(1).map(|p| if(
+    p.bookmarks(),
+    p.bookmarks().first().name(),
+    p.change_id().shortest(8)
+  )).join(", ") ++ " into " ++ if(
+    parents.first().bookmarks(),
+    parents.first().bookmarks().first().name(),
+    parents.first().change_id().shortest(8)
+  ) ++ "\n",
+  ""
+)
+'''
+```
+
+### Bookmark / tag listing order
 
 By default, `jj bookmark list` and `jj tag list` display bookmarks and tags
 sorted alphabetically by name. You can customize this sorting behavior by
@@ -247,6 +327,36 @@ to sort in descending order. Multiple keys can be supplied here, the first key
 is the most significant.
 
 When the `--sort` option is used, the configuration is ignored.
+
+### Bookmark advance default targets
+
+The `jj bookmark advance` command moves bookmarks forward in the graph. The
+default values for what bookmarks to advance and where to advance them to are:
+
+```toml
+[revsets]
+bookmark-advance-from = 'heads(::to & bookmarks())'  # The closest bookmarks
+bookmark-advance-to = '@'  # To the current working copy
+```
+
+The default `from` is likely to be a good fit for almost everyone. The `from`
+revset has access to `to`, allowing it to find bookmarks relative to the
+destination revision.
+
+The default `to` is largely up to your preference and workflow. One simple
+alternative which fits squash-heavy workflows is `@-`, while a more involved
+and versatile alternative that advances to the closest "pushable" revision is:
+
+```toml
+[revsets]
+bookmark-advance-to = 'closest_pushable(@)'
+
+[revset-aliases]
+# Closest revision that is mutable, described and either non-empty or a merge
+'closest_pushable(to)' = '''
+  heads(::to & mutable() & ~description(exact:"") & (~empty() | merges()))
+'''
+```
 
 ### Commit trailers
 
@@ -302,6 +412,17 @@ contents.
 "diff context" = { dim = true }
 ```
 
+Colors and styles can be configured differently for each diff format:
+
+```toml
+[colors]
+# Dim unchanged parts of changed lines in color-words diffs
+"diff color_words removed" = { dim = true }
+"diff color_words added" = { dim = true }
+"diff color_words removed token" = { dim = false }
+"diff color_words added token" = { dim = false }
+```
+
 ### Diff format
 
 ```toml
@@ -354,9 +475,13 @@ In git diffs you can change the default number of lines of context shown.
 
 * `context`: Number of lines of context to show in the diff. The default is `3`.
 
+* `show-path-prefix`: Whether to show the `a/` and `b/` path prefixes in
+  `diff --git` output. The default is `true`.
+
 ```toml
 [diff.git]
 context = 3
+show-path-prefix = true
 ```
 
 ### Generating diffs by external command
@@ -436,9 +561,9 @@ page](conflicts.md#conflict-markers).
 
 You can configure the set of immutable commits via
 `revset-aliases."immutable_heads()"`. The default set of immutable heads is
-`builtin_immutable_heads()`, which in turn is defined as
-`present(trunk()) | tags() | untracked_remote_bookmarks()`. For example, to
-also consider the `release@origin` bookmark immutable:
+`builtin_immutable_heads()`, which in turn is defined as `trunk() | tags() |
+untracked_remote_bookmarks()`. For example, to also consider the
+`release@origin` bookmark immutable:
 
 ```toml
 [revset-aliases]
@@ -517,7 +642,23 @@ log = "main@origin.."
 ```
 
 The default value for `revsets.log` is
-`'present(@) | ancestors(immutable_heads().., 2) | present(trunk())'`.
+`'present(@) | ancestors(immutable_heads().., 2) | trunk()'`.
+
+### Default revisions for operation diffs
+
+You can configure the set of revisions that are considered "interesting" when
+showing the difference between two operations (e.g. in `jj op show`,
+`jj op diff`, or `jj op log -p`). Revisions that are not in this set are
+elided into a summary count.
+
+```toml
+[revsets]
+# Only show mutable revisions and the trunk
+op-diff-changes-in = "mutable() | trunk()"
+```
+
+The default value for `revsets.op-diff-changes-in` is
+`'mutable() | immutable_heads()'`.
 
 ### Prioritize Revsets in the Log over @
 
@@ -729,6 +870,10 @@ this by passing output through `less -FRX` on most platforms (on Windows it uses
 Which pager to use can be customized by setting `ui.pager`. When choosing a
 pager, ensure that it either supports color codes or that you disable color (see
 [Colorizing output](#colorizing-output)).
+
+The `JJ_PAGER` environment variable overrides `ui.pager`, and is useful for
+tool-specific environments that should not affect other programs. The generic
+`PAGER` environment variable is ignored.
 
 Examples:
 
@@ -1233,6 +1378,25 @@ the values have the following properties:
  - `enabled`: Enables or disables the tool. If omitted, the tool is enabled.
    This is useful for defining disabled tools in user configuration that can
    be enabled in individual repositories with one config setting.
+ - `line-range-arg`: An optional template string specifying how to pass a line
+   range to the tool. It may include the variables `$first` and `$last`, which
+   will be replaced with the 1-based line numbers of, respectively, the first
+   and last lines inside the modified range. A range containing a single line
+   will have equal values for `$first` and `$last`. Empty ranges representing
+   deletions will be skipped because they cannot be represented this way.
+   If the tool does not support formatting specific line ranges, this setting
+   should be omitted, and the tool will always process the entire file.
+   Example: `line-range-arg = "--lines=$first:$last"`.
+ - `run-tool-if-zero-line-ranges`: Whether to run the tool invocation for this tool on
+   files that had zero line ranges to format in the revision being fixed.
+   Defaults to `false`, meaning the tool is skipped for these files. This default
+   behavior serves two main purposes:
+   - Avoiding unnecessary executions of tools when no line ranges are modified.
+   - Preventing tools configured with `line-range-arg` from making overly
+     broad changes (formatting the whole file) when no line ranges are available.
+
+   Setting this to `true` is useful if the tool should run regardless of diffs
+   (e.g., to sort imports, or run with `--include-unchanged-files`).
 
 `jj fix` provides the file content anonymously on standard input, but the name
 of the file being formatted may be important for include sorting or other output
@@ -1264,6 +1428,39 @@ command = ["sort", "-u"]
 patterns = ["word_list.txt"]
 ```
 
+### Enforce code formatting on modified lines
+
+You can configure `jj fix` to run a formatter only on the modified lines of a
+file, rather than formatting the entire file. This is particularly useful for
+avoiding unrelated formatting changes in untouched parts of a file.
+
+To enable this, specify the `line-range-arg` configuration to match the line
+range argument format expected by your tool. The formatter will be invoked with
+this argument repeated for each modified line range (e.g. `--lines=10-20
+--lines=30-40`).
+
+Additionally, you can use `run-tool-if-zero-line-ranges` to control the
+behavior when a diff results in zero line ranges (which can happen when lines
+are only deleted or with `--include-unchanged-files`). If `false` (the default),
+`jj` will skip the tool entirely for that file. If `true`, `jj` will run the tool
+even when there are zero line ranges calculated. This is useful for tools that
+perform file-wide operations, such as import sorting.
+
+Note that you can use the `--all-lines` CLI flag for `jj fix` to ignore these
+line ranges and format the entire modified file instead.
+
+Example of `clang-format` with line ranges:
+
+```toml
+[fix.tools.clang-format]
+command = ["/usr/bin/clang-format", "--assume-filename=$path"]
+patterns = ["glob:'**/*.cc'",
+            "glob:'**/*.h'"]
+enabled = true
+line-range-arg = "--lines=$first:$last"
+run-tool-if-zero-line-ranges = false
+```
+
 ### Tools stored inside the workspace
 
 Some fix tools may be stored inside the workspace. For example, a binary may be
@@ -1272,12 +1469,8 @@ path to such a program:
 
 ```toml
 [fix.tools.biome]
-
-# Linux and macOS
-command = ["$root/node_modules/@biomejs/cli-linux-x64/biome"]
-
-# Windows
-command = ["$root\\node_modules\\@biomejs\\cli-win32-x64\\biome.exe"]
+command = ["$root/node_modules/@biomejs/biome/bin/biome", "format", "--stdin-file-path=$path"]
+patterns = ["glob:'**/*.ts'", "glob:'**/*.tsx'"]
 ```
 
 ### Execution order of tools
@@ -1540,6 +1733,24 @@ Note that unlike `git.fetch`, `git.push` can currently only be a single remote.
 This is not a hard limitation, and could be changed in the future if there is
 demand.
 
+### Default bookmarks and tags to fetch
+
+You can configure which bookmarks and tags to fetch by default per remote, using
+the `remotes.<name>.fetch-bookmarks`/`fetch-tags` config. The value is a [string
+pattern](./revsets.md#string-patterns) that matches the names of the bookmarks
+and tags to fetch. If `remotes.<name>.fetch-bookmarks` is not configured, the
+default fetch refspecs for the remotes are read from the Git configuration.
+
+Note that **`remotes.<name>.fetch-tags` is experimental**. Tags matching this
+pattern will be fetched as tracked `<name>@<remote>` tags, and corresponding
+local tags will be created.
+
+```toml
+[remotes.origin]
+fetch-bookmarks = "~gh-pages"
+fetch-tags = "v*"
+```
+
 ### Automatic tracking of bookmarks
 
 You can configure which bookmarks to track automatically per remote, using the
@@ -1589,6 +1800,21 @@ reasons to restrict which bookmarks to track:
   [remotes.upstream]
   auto-track-bookmarks = "main"
   ```
+
+- If you're collaborating with people on the same remote, but your bookmark
+  names don't follow a pattern that allows a bookmark's "owner" to be identified
+  (e.g. `alice/*`), you can use `auto-track-created-bookmarks` instead:
+
+  ```toml
+  [remotes.origin]
+  auto-track-created-bookmarks = "*"
+  ```
+
+  This pattern will only apply to bookmarks you create with `jj bookmark create`
+  and `jj bookmark set`. The disadvantage of this option is the fact that you
+  will have to track your own bookmarks manually if you fetch them from the
+  remote. This may happen regularly if you use multiple computers to work on the
+  same project.
 
 - Lastly, you may be working on various projects with different conventions for
   bookmark names. In that case, it can be handy to apply different configuration
@@ -1718,6 +1944,16 @@ executable on your system](https://facebook.github.io/watchman/docs/install).
 You can configure `jj` to use watchman triggers to automatically create
 snapshots on filesystem changes by setting
 `fsmonitor.watchman.register-snapshot-trigger = true`.
+
+A full configuration for watchman can look like this:
+
+```toml
+[fsmonitor]
+backend = "watchman"
+
+[fsmonitor.watchman]
+register-snapshot-trigger = true
+```
 
 You can check whether Watchman is enabled and whether it is installed correctly
 using `jj debug watchman status`.
@@ -1881,28 +2117,32 @@ and `<PLATFORM_SPECIFIC>` represents the platform-specific configuration
 directory shown in the table below. The platform-specific location is
 recommended for better integration with platform services.
 
-The files in the `conf.d` directory are loaded in lexicographic order. This allows
-configs to be split across multiple files and combines well
-with [Conditional Variables](#conditional-variables).
+The files in the `conf.d` directory are loaded in lexicographic order. This
+allows configs to be split across multiple files and combines well with
+[Conditional Variables](#conditional-variables).
 
 | Platform        | Location of `<PLATFORM_SPECIFIC>` dir | Example config file location                              |
 | :-------------- | :------------------------------------ | :-------------------------------------------------------- |
 | Linux and macOS | `$XDG_CONFIG_HOME` or `$HOME/.config` | `/home/alice/.config/jj/config.toml`                      |
 | Windows         | `{FOLDERID_RoamingAppData}`           | `C:\Users\Alice\AppData\Roaming\jj\config.toml`           |
 
-The location of the `jj` user config files/directories can also be overridden with the
-`JJ_CONFIG` environment variable. If it is not empty, it will be used instead
-of any configuration files in the default locations. If it is a path to a TOML
-file, then that file will be loaded instead. If it is a path to a directory,
-then all the TOML files in that directory will be loaded in lexicographic order
-and merged. Multiple paths can be specified by separating them with a
-platform-specific path separator (`:` on Unix-like systems, `;` on Windows).
+The location of the `jj` user config files/directories can also be overridden
+with the `JJ_CONFIG` environment variable. If the environment variable is set
+(even to an empty string), it will be used instead of any configuration files in
+the default locations. It can be a path to a TOML file or a directory of TOML
+files, which will be loaded in lexicographic order and merged. Multiple paths
+can be specified by separating them with a platform-specific path separator (`:`
+on Unix-like systems, `;` on Windows).
 
-For example, the following could be used to run `jj` without loading any user configs:
+For example, the following could be used to run `jj` without loading any user
+configs:
 
 ```bash
-JJ_CONFIG= jj log       # Ignores any settings specified in the config file.
+JJ_CONFIG= jj log       # Ignores any settings specified in any config files.
 ```
+
+There are also the `--config-file <PATH>` and `--config <NAME=VALUE>`
+[global options](./cli-reference.md#options) which work with any `jj` command.
 
 ### JSON Schema Support
 
@@ -2084,4 +2324,15 @@ wip = ["log", "-r", "work"]
   --when.platforms = ["windows"]            # matches only Windows
   --when.platforms = ["linux", "freebsd"]   # matches Linux or and FreeBSD, but not macOS
   --when.platforms = ["unix"]               # matches anything in the Unix family (Linux, FreeBSD, macOS, etc.)
+  ```
+
+* `--when.environments`: List of environment variable conditions in
+  `"NAME=VALUE"` format (check if the variable has the value), or `NAME` to
+  check if the variable is set.
+
+  ```toml
+  --when.environments = ["CI=true"]                     # matches when CI is set to "true"
+  --when.environments = ["CI"]                          # matches when CI is set to anything
+  --when.environments = ["CI=true", "CI=1"]             # matches when CI is "true" or "1"
+  --when.environments = ["CI=true", "GITHUB_ACTIONS=1"] # matches when EITHER condition holds
   ```

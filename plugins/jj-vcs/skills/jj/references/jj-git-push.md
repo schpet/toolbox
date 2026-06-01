@@ -4,7 +4,7 @@ jj-git-push - Push to a Git remote
 
 # SYNOPSIS
 
-**jj git push** \[**\--remote**\] \[**-b**\|**\--bookmark**\] \[**\--all**\] \[**\--tracked**\] \[**\--deleted**\] \[**\--allow-empty-description**\] \[**\--allow-private**\] \[**-r**\|**\--revisions**\] \[**-c**\|**\--change**\] \[**\--named**\] \[**\--dry-run**\] \[**-R**\|**\--repository**\] \[**\--ignore-working-copy**\] \[**\--ignore-immutable**\] \[**\--at-operation**\] \[**\--debug**\] \[**\--color**\] \[**\--quiet**\] \[**\--no-pager**\] \[**\--config**\] \[**\--config-file**\] \[**-h**\|**\--help**\]
+**jj git push** \[**-R**\|**\--repository**\] \[**\--remote**\] \[**-b**\|**\--bookmark**\] \[**\--ignore-working-copy**\] \[**\--no-integrate-operation**\] \[**\--all**\] \[**\--ignore-immutable**\] \[**\--at-operation**\] \[**\--tracked**\] \[**\--debug**\] \[**\--deleted**\] \[**\--color**\] \[**\--allow-empty-description**\] \[**\--quiet**\] \[**\--allow-private**\] \[**\--no-pager**\] \[**\--config**\] \[**-r**\|**\--revision**\] \[**-c**\|**\--change**\] \[**\--config-file**\] \[**\--named**\] \[**\--dry-run**\] \[**-o**\|**\--option**\] \[**-h**\|**\--help**\]
 
 # DESCRIPTION
 
@@ -35,6 +35,8 @@ Before the command actually moves, creates, or deletes a remote bookmark, it mak
 **-b**, **\--bookmark** *\<BOOKMARK\>*
 
 :   Push only this bookmark, or bookmarks matching a pattern (can be repeated)
+
+    If a bookmark isnt tracking anything yet, the remote bookmark will be tracked automatically.
 
     By default, the specified pattern matches bookmark names with glob syntax. You can also use other \[string pattern syntax\].
 
@@ -68,7 +70,7 @@ Before the command actually moves, creates, or deletes a remote bookmark, it mak
 
     The set of private commits can be configured by the \`git.private-commits\` setting. The default is \`none()\`, meaning all commits are eligible to be pushed.
 
-**-r**, **\--revisions** *\<REVSETS\>*
+**-r**, **\--revision** *\<REVSETS\>*
 
 :   Push bookmarks pointing to these commits (can be repeated)
 
@@ -87,6 +89,10 @@ Before the command actually moves, creates, or deletes a remote bookmark, it mak
 **\--dry-run**
 
 :   Only display what will change on the remote
+
+**-o**, **\--option** *\<OPTION\>*
+
+:   Git push options
 
 **-h**, **\--help**
 
@@ -107,6 +113,16 @@ Before the command actually moves, creates, or deletes a remote bookmark, it mak
     By default, Jujutsu snapshots the working copy at the beginning of every command. The working copy is also updated at the end of the command, if the command modified the working-copy commit (\`@\`). If you want to avoid snapshotting the working copy and instead see a possibly stale working-copy commit, you can use \`\--ignore-working-copy\`. This may be useful e.g. in a command prompt, especially if you have another process that commits the working copy.
 
     Loading the repository at a specific operation with \`\--at-operation\` implies \`\--ignore-working-copy\`.
+
+**\--no-integrate-operation**
+
+:   Run the command as usual but dont integrate any operations
+
+    When this option is given, the operations will still be created as usual but they will not be integrated to the operation log. The working copy will also not be updated.
+
+    The command will print the resulting operation ID. You can pass that to e.g. \`jj \--at-op\` to inspect the resulting repo state, or you can pass it to \`jj op restore\` to restore the repo to that state. You can also pass the ID to \`jj op integrate\` to integrate the operation.
+
+    Note that this does \*not\* prevent side effects outside the repo. For example, \`jj git push \--no-integrate-operation\` will still perform the push.
 
 **\--ignore-immutable**
 
@@ -139,7 +155,15 @@ Before the command actually moves, creates, or deletes a remote bookmark, it mak
 :   When to colorize output\
 
     \
-    \[*possible values:* always, never, debug, auto\]
+    *Possible values:*
+
+    - always
+
+    - never
+
+    - debug
+
+    - auto
 
 **\--quiet**
 

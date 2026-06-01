@@ -1,50 +1,26 @@
 # NAME
 
-jj-prev - Change the working copy revision relative to the parent revision
+jj-arrange - Interactively arrange the commit graph
 
 # SYNOPSIS
 
-**jj prev** \[**-e**\|**\--edit**\] \[**-R**\|**\--repository**\] \[**\--ignore-working-copy**\] \[**-n**\|**\--no-edit**\] \[**\--conflict**\] \[**\--no-integrate-operation**\] \[**\--ignore-immutable**\] \[**\--at-operation**\] \[**\--debug**\] \[**\--color**\] \[**\--quiet**\] \[**\--no-pager**\] \[**\--config**\] \[**\--config-file**\] \[**-h**\|**\--help**\] \[*OFFSET*\]
+**jj arrange** \[**-R**\|**\--repository**\] \[**\--ignore-working-copy**\] \[**\--no-integrate-operation**\] \[**\--ignore-immutable**\] \[**\--at-operation**\] \[**\--debug**\] \[**\--color**\] \[**\--quiet**\] \[**\--no-pager**\] \[**\--config**\] \[**\--config-file**\] \[**-h**\|**\--help**\] \[*REVSETS*\]
 
 # DESCRIPTION
 
-Change the working copy revision relative to the parent revision
-
-The command creates a new empty working copy revision that is the child of an ancestor \`offset\` revisions behind the parent of the current working copy.
-
-For example, when the offset is 1:
-
-\`\`\`text D @ D \|/ \| A =\> A @ \| \|/ B B \`\`\`
-
-If \`\--edit\` is passed, the working copy revision is changed to the parent of the current working copy revision.
-
-\`\`\`text D @ D \|/ \| C =\> @ \| \| B B \| \| A A \`\`\`
+Interactively arrange the commit graph
 
 # OPTIONS
-
-**-e**, **\--edit**
-
-:   Edit the parent directly, instead of moving the working-copy commit
-
-    Takes precedence over config in \`ui.movement.edit\`; i.e. will negate \`ui.movement.edit = false\`
-
-**-n**, **\--no-edit**
-
-:   The inverse of \`\--edit\`
-
-    Takes precedence over config in \`ui.movement.edit\`; i.e. will negate \`ui.movement.edit = true\`
-
-**\--conflict**
-
-:   Jump to the previous conflicted ancestor
 
 **-h**, **\--help**
 
 :   Print help (see a summary with -h)
 
-\[*OFFSET*\] \[default: 1\]
+\[*REVSETS*\]
 
-:   How many revisions to move backward. Moves to the parent by default
+:   The revisions to arrange \[aliases: -r\]
+
+    If no revisions are specified, this defaults to the \`revsets.arrange\` setting.
 
 # GLOBAL OPTIONS
 

@@ -1,50 +1,46 @@
 # NAME
 
-jj-prev - Change the working copy revision relative to the parent revision
+jj-bookmark-advance - Advance the closest bookmarks to a target revision
 
 # SYNOPSIS
 
-**jj prev** \[**-e**\|**\--edit**\] \[**-R**\|**\--repository**\] \[**\--ignore-working-copy**\] \[**-n**\|**\--no-edit**\] \[**\--conflict**\] \[**\--no-integrate-operation**\] \[**\--ignore-immutable**\] \[**\--at-operation**\] \[**\--debug**\] \[**\--color**\] \[**\--quiet**\] \[**\--no-pager**\] \[**\--config**\] \[**\--config-file**\] \[**-h**\|**\--help**\] \[*OFFSET*\]
+**jj bookmark advance** \[**-R**\|**\--repository**\] \[**-t**\|**\--to**\] \[**\--ignore-working-copy**\] \[**\--no-integrate-operation**\] \[**\--ignore-immutable**\] \[**\--at-operation**\] \[**\--debug**\] \[**\--color**\] \[**\--quiet**\] \[**\--no-pager**\] \[**\--config**\] \[**\--config-file**\] \[**-h**\|**\--help**\] \[*NAMES*\]
 
 # DESCRIPTION
 
-Change the working copy revision relative to the parent revision
+Advance the closest bookmarks to a target revision
 
-The command creates a new empty working copy revision that is the child of an ancestor \`offset\` revisions behind the parent of the current working copy.
+The target \`\--to\` defaults to \`revsets.bookmark-advance-to\` (which defaults to \`@\`).
 
-For example, when the offset is 1:
+The bookmarks to advance are determined by \`revsets.bookmark-advance-from\` (which defaults to \`heads(::to & bookmarks())\`).
 
-\`\`\`text D @ D \|/ \| A =\> A @ \| \|/ B B \`\`\`
+Note that the from revset has access to \`to\`.
 
-If \`\--edit\` is passed, the working copy revision is changed to the parent of the current working copy revision.
+Positional bookmark name arguments can target specific bookmarks to advance to the target, in this case the default from revset is ignored.
 
-\`\`\`text D @ D \|/ \| C =\> @ \| \| B B \| \| A A \`\`\`
+Example:
+
+\`jj bookmark advance \--to x\` - Does the equivalent of \`jj bookmark move \--from heads(::x & bookmarks()) \--to x\`.
 
 # OPTIONS
 
-**-e**, **\--edit**
+**-t**, **\--to** *\<REVSET\>*
 
-:   Edit the parent directly, instead of moving the working-copy commit
+:   Move bookmarks to this revision
 
-    Takes precedence over config in \`ui.movement.edit\`; i.e. will negate \`ui.movement.edit = false\`
-
-**-n**, **\--no-edit**
-
-:   The inverse of \`\--edit\`
-
-    Takes precedence over config in \`ui.movement.edit\`; i.e. will negate \`ui.movement.edit = true\`
-
-**\--conflict**
-
-:   Jump to the previous conflicted ancestor
+    Defaults to \`revsets.bookmark-advance-to\`.
 
 **-h**, **\--help**
 
 :   Print help (see a summary with -h)
 
-\[*OFFSET*\] \[default: 1\]
+\[*NAMES*\]
 
-:   How many revisions to move backward. Moves to the parent by default
+:   Move bookmarks matching the given name patterns
+
+    By default, the specified pattern matches bookmark names with glob syntax. You can also use other \[string pattern syntax\].
+
+    \[string pattern syntax\]: https://docs.jj-vcs.dev/latest/revsets/#string-patterns
 
 # GLOBAL OPTIONS
 

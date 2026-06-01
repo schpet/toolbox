@@ -4,7 +4,7 @@ jj-show - Show commit description and changes in a revision
 
 # SYNOPSIS
 
-**jj show** \[**-T**\|**\--template**\] \[**-s**\|**\--summary**\] \[**\--stat**\] \[**\--types**\] \[**\--name-only**\] \[**\--git**\] \[**\--color-words**\] \[**\--tool**\] \[**\--context**\] \[**\--no-patch**\] \[**-w**\|**\--ignore-all-space**\] \[**-b**\|**\--ignore-space-change**\] \[**-R**\|**\--repository**\] \[**\--ignore-working-copy**\] \[**\--ignore-immutable**\] \[**\--at-operation**\] \[**\--debug**\] \[**\--color**\] \[**\--quiet**\] \[**\--no-pager**\] \[**\--config**\] \[**\--config-file**\] \[**-h**\|**\--help**\] \[*REVSET*\]
+**jj show** \[**-R**\|**\--repository**\] \[**\--ignore-working-copy**\] \[**-T**\|**\--template**\] \[**\--no-integrate-operation**\] \[**-s**\|**\--summary**\] \[**\--ignore-immutable**\] \[**\--stat**\] \[**\--at-operation**\] \[**\--types**\] \[**\--debug**\] \[**\--name-only**\] \[**\--color**\] \[**\--git**\] \[**\--color-words**\] \[**\--quiet**\] \[**\--no-pager**\] \[**\--tool**\] \[**\--config**\] \[**\--context**\] \[**\--config-file**\] \[**-w**\|**\--ignore-all-space**\] \[**-b**\|**\--ignore-space-change**\] \[**\--no-patch**\] \[**-h**\|**\--help**\] \[*REVSET*\]
 
 # DESCRIPTION
 
@@ -70,10 +70,6 @@ Show commit description and changes in a revision
 
 :   Number of lines of context to show
 
-**\--no-patch**
-
-:   Do not show the patch
-
 **-w**, **\--ignore-all-space**
 
 :   Ignore whitespace when comparing lines
@@ -81,6 +77,10 @@ Show commit description and changes in a revision
 **-b**, **\--ignore-space-change**
 
 :   Ignore changes in amount of whitespace when comparing lines
+
+**\--no-patch**
+
+:   Do not show the patch
 
 # GLOBAL OPTIONS
 
@@ -97,6 +97,16 @@ Show commit description and changes in a revision
     By default, Jujutsu snapshots the working copy at the beginning of every command. The working copy is also updated at the end of the command, if the command modified the working-copy commit (\`@\`). If you want to avoid snapshotting the working copy and instead see a possibly stale working-copy commit, you can use \`\--ignore-working-copy\`. This may be useful e.g. in a command prompt, especially if you have another process that commits the working copy.
 
     Loading the repository at a specific operation with \`\--at-operation\` implies \`\--ignore-working-copy\`.
+
+**\--no-integrate-operation**
+
+:   Run the command as usual but dont integrate any operations
+
+    When this option is given, the operations will still be created as usual but they will not be integrated to the operation log. The working copy will also not be updated.
+
+    The command will print the resulting operation ID. You can pass that to e.g. \`jj \--at-op\` to inspect the resulting repo state, or you can pass it to \`jj op restore\` to restore the repo to that state. You can also pass the ID to \`jj op integrate\` to integrate the operation.
+
+    Note that this does \*not\* prevent side effects outside the repo. For example, \`jj git push \--no-integrate-operation\` will still perform the push.
 
 **\--ignore-immutable**
 
@@ -129,7 +139,15 @@ Show commit description and changes in a revision
 :   When to colorize output\
 
     \
-    \[*possible values:* always, never, debug, auto\]
+    *Possible values:*
+
+    - always
+
+    - never
+
+    - debug
+
+    - auto
 
 **\--quiet**
 

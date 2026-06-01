@@ -4,7 +4,7 @@ jj-workspace-list - List workspaces
 
 # SYNOPSIS
 
-**jj workspace list** \[**-T**\|**\--template**\] \[**-R**\|**\--repository**\] \[**\--ignore-working-copy**\] \[**\--ignore-immutable**\] \[**\--at-operation**\] \[**\--debug**\] \[**\--color**\] \[**\--quiet**\] \[**\--no-pager**\] \[**\--config**\] \[**\--config-file**\] \[**-h**\|**\--help**\]
+**jj workspace list** \[**-R**\|**\--repository**\] \[**-T**\|**\--template**\] \[**\--ignore-working-copy**\] \[**\--no-integrate-operation**\] \[**\--ignore-immutable**\] \[**\--at-operation**\] \[**\--debug**\] \[**\--color**\] \[**\--quiet**\] \[**\--no-pager**\] \[**\--config**\] \[**\--config-file**\] \[**-h**\|**\--help**\]
 
 # DESCRIPTION
 
@@ -42,6 +42,16 @@ List workspaces
 
     Loading the repository at a specific operation with \`\--at-operation\` implies \`\--ignore-working-copy\`.
 
+**\--no-integrate-operation**
+
+:   Run the command as usual but dont integrate any operations
+
+    When this option is given, the operations will still be created as usual but they will not be integrated to the operation log. The working copy will also not be updated.
+
+    The command will print the resulting operation ID. You can pass that to e.g. \`jj \--at-op\` to inspect the resulting repo state, or you can pass it to \`jj op restore\` to restore the repo to that state. You can also pass the ID to \`jj op integrate\` to integrate the operation.
+
+    Note that this does \*not\* prevent side effects outside the repo. For example, \`jj git push \--no-integrate-operation\` will still perform the push.
+
 **\--ignore-immutable**
 
 :   Allow rewriting immutable commits
@@ -73,7 +83,15 @@ List workspaces
 :   When to colorize output\
 
     \
-    \[*possible values:* always, never, debug, auto\]
+    *Possible values:*
+
+    - always
+
+    - never
+
+    - debug
+
+    - auto
 
 **\--quiet**
 

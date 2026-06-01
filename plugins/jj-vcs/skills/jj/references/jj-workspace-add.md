@@ -4,7 +4,7 @@ jj-workspace-add - Add a workspace
 
 # SYNOPSIS
 
-**jj workspace add** \[**\--name**\] \[**-r**\|**\--revision**\] \[**\--sparse-patterns**\] \[**-R**\|**\--repository**\] \[**\--ignore-working-copy**\] \[**\--ignore-immutable**\] \[**\--at-operation**\] \[**\--debug**\] \[**\--color**\] \[**\--quiet**\] \[**\--no-pager**\] \[**\--config**\] \[**\--config-file**\] \[**-h**\|**\--help**\] \<*DESTINATION*\>
+**jj workspace add** \[**\--name**\] \[**-R**\|**\--repository**\] \[**\--ignore-working-copy**\] \[**-r**\|**\--revision**\] \[**-m**\|**\--message**\] \[**\--no-integrate-operation**\] \[**\--ignore-immutable**\] \[**\--sparse-patterns**\] \[**\--at-operation**\] \[**\--debug**\] \[**\--color**\] \[**\--quiet**\] \[**\--no-pager**\] \[**\--config**\] \[**\--config-file**\] \[**-h**\|**\--help**\] \<*DESTINATION*\>
 
 # DESCRIPTION
 
@@ -27,6 +27,10 @@ By default, the new workspace inherits the sparse patterns of the current worksp
     If no revisions are specified, the new workspace will be created, and its working-copy commit will exist on top of the parent(s) of the working-copy commit in the current workspace, i.e. they will share the same parent(s).
 
     If any revisions are specified, the new workspace will be created, and the new working-copy commit will be created with all these revisions as parents, i.e. the working-copy commit will exist as if you had run \`jj new r1 r2 r3 \...\`.
+
+**-m**, **\--message** *\<MESSAGE\>*
+
+:   The change description to use
 
 **\--sparse-patterns** *\<SPARSE_PATTERNS\>* \[default: copy\]
 
@@ -65,6 +69,16 @@ By default, the new workspace inherits the sparse patterns of the current worksp
 
     Loading the repository at a specific operation with \`\--at-operation\` implies \`\--ignore-working-copy\`.
 
+**\--no-integrate-operation**
+
+:   Run the command as usual but dont integrate any operations
+
+    When this option is given, the operations will still be created as usual but they will not be integrated to the operation log. The working copy will also not be updated.
+
+    The command will print the resulting operation ID. You can pass that to e.g. \`jj \--at-op\` to inspect the resulting repo state, or you can pass it to \`jj op restore\` to restore the repo to that state. You can also pass the ID to \`jj op integrate\` to integrate the operation.
+
+    Note that this does \*not\* prevent side effects outside the repo. For example, \`jj git push \--no-integrate-operation\` will still perform the push.
+
 **\--ignore-immutable**
 
 :   Allow rewriting immutable commits
@@ -96,7 +110,15 @@ By default, the new workspace inherits the sparse patterns of the current worksp
 :   When to colorize output\
 
     \
-    \[*possible values:* always, never, debug, auto\]
+    *Possible values:*
+
+    - always
+
+    - never
+
+    - debug
+
+    - auto
 
 **\--quiet**
 

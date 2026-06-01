@@ -4,7 +4,7 @@ jj-metaedit - Modify the metadata of a revision without changing its content
 
 # SYNOPSIS
 
-**jj metaedit** \[**\--update-change-id**\] \[**-m**\|**\--message**\] \[**\--update-author-timestamp**\] \[**\--update-author**\] \[**\--author**\] \[**\--author-timestamp**\] \[**\--force-rewrite**\] \[**-R**\|**\--repository**\] \[**\--ignore-working-copy**\] \[**\--ignore-immutable**\] \[**\--at-operation**\] \[**\--debug**\] \[**\--color**\] \[**\--quiet**\] \[**\--no-pager**\] \[**\--config**\] \[**\--config-file**\] \[**-h**\|**\--help**\] \[*REVSETS*\]
+**jj metaedit** \[**-R**\|**\--repository**\] \[**\--ignore-working-copy**\] \[**\--update-change-id**\] \[**-m**\|**\--message**\] \[**\--no-integrate-operation**\] \[**\--ignore-immutable**\] \[**\--update-author-timestamp**\] \[**\--at-operation**\] \[**\--update-author**\] \[**\--author**\] \[**\--debug**\] \[**\--author-timestamp**\] \[**\--color**\] \[**\--force-rewrite**\] \[**\--quiet**\] \[**\--no-pager**\] \[**\--config**\] \[**\--config-file**\] \[**-h**\|**\--help**\] \[*REVSETS*\]
 
 # DESCRIPTION
 
@@ -49,6 +49,8 @@ Whenever any metadata is updated, the committer name, email, and timestamp are a
 :   Set author to the provided string
 
     This changes author name and email while retaining author timestamp for non-discardable commits.
+
+    \`\`\`shell \$ jj metaedit \--author \"Foo Bar \<foo@bar.com\>\" \`\`\`
 
 **\--author-timestamp** *\<AUTHOR_TIMESTAMP\>*
 
@@ -96,6 +98,16 @@ Whenever any metadata is updated, the committer name, email, and timestamp are a
 
     Loading the repository at a specific operation with \`\--at-operation\` implies \`\--ignore-working-copy\`.
 
+**\--no-integrate-operation**
+
+:   Run the command as usual but dont integrate any operations
+
+    When this option is given, the operations will still be created as usual but they will not be integrated to the operation log. The working copy will also not be updated.
+
+    The command will print the resulting operation ID. You can pass that to e.g. \`jj \--at-op\` to inspect the resulting repo state, or you can pass it to \`jj op restore\` to restore the repo to that state. You can also pass the ID to \`jj op integrate\` to integrate the operation.
+
+    Note that this does \*not\* prevent side effects outside the repo. For example, \`jj git push \--no-integrate-operation\` will still perform the push.
+
 **\--ignore-immutable**
 
 :   Allow rewriting immutable commits
@@ -127,7 +139,15 @@ Whenever any metadata is updated, the committer name, email, and timestamp are a
 :   When to colorize output\
 
     \
-    \[*possible values:* always, never, debug, auto\]
+    *Possible values:*
+
+    - always
+
+    - never
+
+    - debug
+
+    - auto
 
 **\--quiet**
 

@@ -27,7 +27,7 @@ search space. They are included in `all()`, `x..`, `~x`, etc., but not in
 
 The `@` expression refers to the working copy commit in the current workspace.
 Use `<workspace name>@` to refer to the working-copy commit in another
-workspace. Use `<name>@<remote>` to refer to a remote-tracking bookmark.
+workspace. Use `<name>@<remote>` to refer to a remote-tracking tag / bookmark.
 
 A full commit ID refers to a single commit. A unique prefix of the full commit
 ID can also be used. It is an error to use a non-unique prefix.
@@ -65,34 +65,57 @@ by the same name, use `commit_id(abc)`. This is particularly useful in scripts.
 The following operators are supported. `x` and `y` below can be any revset, not
 only symbols.
 
-* `x-`: Parents of `x`, can be empty.
-* `x+`: Children of `x`, can be empty.
-* `x::`: Descendants of `x`, including the commits in `x` itself. Equivalent to
-  `x::visible_heads()` if no hidden revisions are mentioned.
-* `x..`: Revisions that are not ancestors of `x`. Equivalent to `~::x`, and
-  `x..visible_heads()` if no hidden revisions are mentioned.
-* `::x`: Ancestors of `x`, including the commits in `x` itself. Shorthand for
-  `root()::x`.
-* `..x`: Ancestors of `x`, including the commits in `x` itself, but excluding
-  the root commit. Shorthand for `root()..x`. Equivalent to `::x ~ root()`.
-* `x::y`: Descendants of `x` that are also ancestors of `y`. Equivalent
-   to `x:: & ::y`. This is what `git log` calls `--ancestry-path x..y`.
-* `x..y`: Ancestors of `y` that are not also ancestors of `x`. Equivalent to
-  `::y ~ ::x`. This is what `git log` calls `x..y` (i.e. the same as we call it).
-* `::`: All visible commits in the repo. Equivalent to `all()`, and
-  `root()::visible_heads()` if no hidden revisions are mentioned.
-* `..`: All visible commits in the repo, but excluding the root commit.
-  Equivalent to `~root()`, and `root()..visible_heads()` if no hidden revisions
-  are mentioned.
-* `~x`: Revisions that are not in `x`.
-* `x & y`: Revisions that are in both `x` and `y`.
-* `x ~ y`: Revisions that are in `x` but not in `y`.
-* `x | y`: Revisions that are in either `x` or `y` (or both).
+Operators are listed in order of binding power from strongest to weakest, e.g.
+`x | y & z` is interpreted as `x | (y & z)` since `&` has stronger binding power
+than `|`. Infix operators of the same binding power are parsed from left to
+right, e.g. `x ~ y & z` is interpreted as `(x ~ y) & z` rather than `x ~ (y &
+z)`.
 
-(listed in order of binding strengths)
+As seen above, parentheses can be used to control evaluation order, e.g. `(x &
+y) | z` or `x & (y | z)`.
 
-You can use parentheses to control evaluation order, such as `(x & y) | z` or
-`x & (y | z)`.
+<!-- The following list is based on `PRATT` in `revset_parser.rs`. -->
+
+1. * `f(x)`: Function call.
+
+2. * `x-`: Parents of `x`, can be empty.
+   * `x+`: Children of `x`, can be empty.
+
+3. * `p:x`: String/date pattern or pattern alias named `p`.
+
+4. * `x::`: Descendants of `x`, including the commits in `x` itself. Equivalent to
+     `x::visible_heads()` if no hidden revisions are mentioned.
+   * `x..`: Revisions that are not ancestors of `x`. Equivalent to `~::x`, and
+     `x..visible_heads()` if no hidden revisions are mentioned.
+   * `::x`: Ancestors of `x`, including the commits in `x` itself. Shorthand for
+     `root()::x`.
+   * `..x`: Ancestors of `x`, including the commits in `x` itself, but excluding
+     the root commit. Shorthand for `root()..x`. Equivalent to `::x ~ root()`.
+   * `x::y`: Descendants of `x` that are also ancestors of `y`. Equivalent
+      to `x:: & ::y`. This is what `git log` calls `--ancestry-path x..y`.
+   * `x..y`: Ancestors of `y` that are not also ancestors of `x`. Equivalent to
+     `::y ~ ::x`. This is what `git log` calls `x..y` (i.e. the same as we call it).
+     Note that this is *not* a "path" between `x` and `y` in the commit graph -- `x`
+     and `y` do not need to be related by ancestry.
+   * `::`: All visible commits in the repo. Equivalent to `all()`, and
+     `root()::visible_heads()` if no hidden revisions are mentioned.
+   * `..`: All visible commits in the repo, but excluding the root commit.
+     Equivalent to `~root()`, and `root()..visible_heads()` if no hidden revisions
+     are mentioned.
+
+5. * `~x`: Revisions that are not in `x`.
+
+6. * `x & y`: Revisions that are in both `x` and `y`.
+   * `x ~ y`: Revisions that are in `x` but not in `y`.
+
+7. * `x | y`: Revisions that are in either `x` or `y` (or both).
+
+**Note:** The `..` operator does not distribute over union (`|`) on its left
+side. For example, `(A | B)..` is **not** equivalent to `A.. | B..`. The
+expression `(A | B)..` means "commits that are not ancestors of A *and* not
+ancestors of B", while `A.. | B..` means "commits that are not ancestors of A
+*or* not ancestors of B". In fact, `(A | B).. = A.. & B..`. See the examples
+below for concrete illustrations.
 
 <!-- The following format will be understood by the web site generator, and will
  generate a folded section that can be unfolded at will. -->
@@ -101,15 +124,13 @@ You can use parentheses to control evaluation order, such as `(x & y) | z` or
 
     Given this history:
     ```
-    o D
+    D
     |\
-    | o C
-    | |
-    o | B
+    B C
     |/
-    o A
+    A
     |
-    o root()
+    root()
     ```
 
     **Operator** `x-`
@@ -190,6 +211,17 @@ You can use parentheses to control evaluation order, such as `(x & y) | z` or
     * `D..B` ⇒ `{}` (empty set)
     * `(C|B)..(C|B)` ⇒ `{}` (empty set)
 
+    **Non-distributivity of `..` over union (left side)**
+
+    Using the same graph, observe that `(C|B)..` ⇒ `{D}`, but:
+    * `C..` ⇒ `{D,B}`
+    * `B..` ⇒ `{D,C}`
+    * `C.. | B..` ⇒ `{D,C,B}`
+    * `C.. & B..` ⇒ `{D}`
+
+    So `(C|B)..` ≠ `C.. | B..`, but `(C|B).. = C.. & B..`. The `..` operator
+    converts union to intersection on its left side.
+
 ## Functions
 
 You can also specify revisions by using functions. Some functions take other
@@ -201,7 +233,7 @@ revsets (expressions) as arguments.
     brackets like `[arg]`. Some arguments also have an optional label which can
     be used to specify that argument without specifying all previous arguments.
 
-    For instance, `remote_bookmarks([bookmark_pattern], [[remote=]remote_pattern])`
+    For instance, `remote_bookmarks([name_pattern], [[remote=]remote_pattern])`
     indicates that all of the following usages are valid:
 
     * `remote_bookmarks()`
@@ -240,6 +272,10 @@ revsets (expressions) as arguments.
   `domain`, traversing all parent and child edges. `srcs` outside `domain` are
   not considered even if a parent or child edge would reach into `domain`.
 
+  This is useful for finding all related commits in a branch or feature without
+  traversing outside a defined scope. For example, `reachable(@, mutable())`
+  returns the stack of commits you are working on.
+
 * `connected(x)`: Same as `x::x`. Useful when `x` includes several commits.
 
 * `all()`: All visible commits and ancestors of commits explicitly mentioned.
@@ -256,18 +292,18 @@ revsets (expressions) as arguments.
 
 * `bookmarks([pattern])`: All local bookmark targets. If `pattern` is specified,
   this selects the bookmarks whose name match the given [string
-  pattern](#string-patterns). For example, `bookmarks(push)` would match the
-  bookmarks `push-123` and `repushed` but not the bookmark `main`. If a bookmark is
-  in a conflicted state, all its possible targets are included.
+  pattern](#string-patterns). For example, `bookmarks(*push*)` would match the
+  bookmarks `push-123` and `repushed` but not the bookmark `main`. If a bookmark
+  is in a conflicted state, all its possible targets are included.
 
-* `remote_bookmarks([bookmark_pattern], [[remote=]remote_pattern])`: All remote
-  bookmarks targets across all remotes. If just the `bookmark_pattern` is
-  specified, the bookmarks whose names match the given [string
-  pattern](#string-patterns) across all remotes are selected. If both
-  `bookmark_pattern` and `remote_pattern` are specified, the selection is
-  further restricted to just the remotes whose names match `remote_pattern`.
+* `remote_bookmarks([name_pattern], [[remote=]remote_pattern])`: All remote
+  bookmarks targets across all remotes. If just the `name_pattern` is specified,
+  the bookmarks whose names match the given [string pattern](#string-patterns)
+  across all remotes are selected. If both `name_pattern` and `remote_pattern`
+  are specified, the selection is further restricted to just the remotes whose
+  names match `remote_pattern`.
 
-  For example, `remote_bookmarks(push, ri)` would match the bookmarks
+  For example, `remote_bookmarks(*push*, *ri*)` would match the bookmarks
   `push-123@origin` and `repushed@private` but not `push-123@upstream` or
   `main@origin` or `main@upstream`. If a bookmark is in a conflicted state, all
   its possible targets are included.
@@ -275,19 +311,22 @@ revsets (expressions) as arguments.
   Git-tracking bookmarks are excluded by default. Use `remote="git"` or
   `remote="*"` to select bookmarks including `@git` ones.
 
-* `tracked_remote_bookmarks([bookmark_pattern], [[remote=]remote_pattern])`: All
+* `tracked_remote_bookmarks([name_pattern], [[remote=]remote_pattern])`: All
   targets of tracked remote bookmarks. Supports the same optional arguments as
   `remote_bookmarks()`.
 
-* `untracked_remote_bookmarks([bookmark_pattern], [[remote=]remote_pattern])`:
-  All targets of untracked remote bookmarks. Supports the same optional arguments
-  as `remote_bookmarks()`.
+* `untracked_remote_bookmarks([name_pattern], [[remote=]remote_pattern])`: All
+  targets of untracked remote bookmarks. Supports the same optional arguments as
+  `remote_bookmarks()`.
 
-* `tags([pattern])`: All tag targets. If `pattern` is specified,
-  this selects the tags whose name match the given [string
-  pattern](#string-patterns). For example, `tags(v1)` would match the
-  tags `v123` and `rev1` but not the tag `v2`. If a tag is
-  in a conflicted state, all its possible targets are included.
+* `tags([pattern])`: All tag targets. If `pattern` is specified, this selects
+  the tags whose name match the given [string pattern](#string-patterns). For
+  example, `tags(*v1*)` would match the tags `v123` and `rev1` but not the tag
+  `v2`. If a tag is in a conflicted state, all its possible targets are
+  included.
+
+* `remote_tags([name_pattern], [[remote=]remote_pattern])`: All remote tags
+  targets across all remotes. See `remote_bookmarks()` for arguments.
 
 * `visible_heads()`: All visible heads (same as `heads(all())` if no hidden
   revisions are mentioned).
@@ -380,17 +419,25 @@ revsets (expressions) as arguments.
   Some file patterns might need quoting because the `expression` must also be
   parsable as a revset. For example, `.` has to be quoted in `files(".")`.
 
-* `diff_contains(text, [files])`: Commits containing diffs matching the given
+* `diff_lines(text, [files])`: Commits containing diffs matching the given
   `text` pattern line by line.
 
   The search paths can be narrowed by the `files` expression. All modified files
   are scanned by default, but it is likely to change in future version to
   respect the command line path arguments.
 
-  For example, `diff_contains("*TODO*", "src")` will search revisions where "TODO"
+  For example, `diff_lines("*TODO*", "src")` will search revisions where "TODO"
   is added to or removed from files under "src".
 
-* `conflicts()`: Commits with conflicts.
+* `diff_lines_added(text, [files])`: like `diff_lines()` above, but matches only
+  the "added" side of the diff.
+
+* `diff_lines_removed(text, [files])`: like `diff_lines()` above, but matches
+  only the "removed" side of the diff.
+
+* `conflicts()`: Commits that have files in a conflicted state.
+
+* `divergent()`: Commits that are [divergent](glossary.md#divergent-change).
 
 * `present(x)`: Same as `x`, but evaluated to `none()` if any of the commits
   in `x` doesn't exist (e.g. is an unknown bookmark name.)
@@ -416,26 +463,26 @@ revsets (expressions) as arguments.
 
     Given this history:
     ```
-    o E
-    |
-    | o D
+    E
+    | D
     |/|
-    | o C
-    | |
-    o | B
+    B C
     |/
-    o A
+    A
     |
-    o root()
+    root()
     ```
 
     **function** `reachable()`
 
-    * `reachable(E, A..)` ⇒ `{E,D,C,B}`
-    * `reachable(D, A..)` ⇒ `{E,D,C,B}`
-    * `reachable(C, A..)` ⇒ `{E,D,C,B}`
-    * `reachable(B, A..)` ⇒ `{E,D,C,B}`
-    * `reachable(A, A..)` ⇒ `{}` (empty set)
+    `reachable(srcs, domain)` finds all commits reachable from `srcs` by
+    following parent or child edges, but limited to commits within `domain`.
+
+    * `reachable(E, A..)` ⇒ `{E,D,C,B}` — All commits after A are reachable
+    * `reachable(E, B..)` ⇒ `{E}` — E is isolated: its only edge (to B) leaves the domain
+    * `reachable(C, B..)` ⇒ `{D,C}` — C and D are connected; the C→A edge leaves the domain
+    * `reachable(D, B..)` ⇒ `{D,C}` — Same result: D reaches C, but D→B leaves the domain
+    * `reachable(A, A..)` ⇒ `{}` (empty set) — A is not in domain `A..`, so it's ignored
 
     **function** `connected()`
 
@@ -518,8 +565,9 @@ Date strings can be specified in several forms, including:
 
 ## Aliases
 
-New symbols and functions can be defined in the config file, by using any
-combination of the predefined symbols/functions and other aliases.
+New symbols, functions, and `<name>:<value>` patterns can be defined in the
+config file, by using any combination of the predefined symbols/functions and
+other aliases.
 
 Alias functions can be overloaded by the number of parameters. However, builtin
 function will be shadowed by name, and can't co-exist with aliases.
@@ -531,6 +579,7 @@ For example:
 'HEAD' = '@-'
 'user()' = 'user("me@example.org")'
 'user(x)' = 'author(x) | committer(x)'
+'grep:x' = 'description(regex:x)'
 ```
 
 ### Built-in Aliases
@@ -558,15 +607,17 @@ for a comprehensive list.
   'trunk()' = 'your-bookmark@your-remote'
   ```
 
-* `builtin_immutable_heads()`: Resolves to
-  `present(trunk()) | tags() | untracked_remote_bookmarks()`. It is used as the
-   default definition for `immutable_heads()` below. It is not recommended to
-   redefine this alias. Prefer to redefine `immutable_heads()` instead.
+* `builtin_immutable_heads()`: Resolves to `trunk() | tags() |
+  untracked_remote_bookmarks()`. It is used as the default definition for
+  `immutable_heads()` below. It is not recommended to redefine this
+  alias. Prefer to redefine `immutable_heads()` instead.
 
-* `immutable_heads()`: Resolves to
-  `present(trunk()) | tags() | untracked_remote_bookmarks()` by default. It is
-  actually defined as `builtin_immutable_heads()`, and can be overridden as
-  required. See [here](config.md#set-of-immutable-commits) for details.
+* `immutable_heads()`: The heads of the set of immutable commits (not "heads
+  that are immutable"). Resolves to `trunk() | tags() |
+  untracked_remote_bookmarks()` by default. It is actually defined as
+  `builtin_immutable_heads()`, and can be overridden as required. The full set
+  of immutable commits is `::immutable_heads()` (i.e., `immutable()`). See
+  [here](config.md#set-of-immutable-commits) for details.
 
 * `immutable()`: The set of commits that `jj` treats as immutable. This is
   equivalent to `::(immutable_heads() | root())`. It is not recommended to redefine
@@ -574,7 +625,7 @@ for a comprehensive list.
   To do that, edit `immutable_heads()`.
 
 * `mutable()`: The set of commits that `jj` treats as mutable. This is
-  equivalent to `~immutable()`. It is not recommended to redefined this alias.
+  equivalent to `~immutable()`. It is not recommended to redefine this alias.
   Note that modifying this will *not* change whether a commit is immutable.
   To do that, edit `immutable_heads()`.
 

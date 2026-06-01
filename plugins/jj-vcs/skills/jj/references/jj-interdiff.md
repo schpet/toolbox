@@ -4,7 +4,7 @@ jj-interdiff - Show differences between the diffs of two revisions
 
 # SYNOPSIS
 
-**jj interdiff** \[**-f**\|**\--from**\] \[**-t**\|**\--to**\] \[**-s**\|**\--summary**\] \[**\--stat**\] \[**\--types**\] \[**\--name-only**\] \[**\--git**\] \[**\--color-words**\] \[**\--tool**\] \[**\--context**\] \[**-w**\|**\--ignore-all-space**\] \[**-b**\|**\--ignore-space-change**\] \[**-R**\|**\--repository**\] \[**\--ignore-working-copy**\] \[**\--ignore-immutable**\] \[**\--at-operation**\] \[**\--debug**\] \[**\--color**\] \[**\--quiet**\] \[**\--no-pager**\] \[**\--config**\] \[**\--config-file**\] \[**-h**\|**\--help**\] \[*FILESETS*\]
+**jj interdiff** \[**-f**\|**\--from**\] \[**-R**\|**\--repository**\] \[**\--ignore-working-copy**\] \[**-t**\|**\--to**\] \[**\--no-integrate-operation**\] \[**-s**\|**\--summary**\] \[**\--ignore-immutable**\] \[**\--stat**\] \[**\--at-operation**\] \[**\--types**\] \[**\--debug**\] \[**\--name-only**\] \[**\--color**\] \[**\--git**\] \[**\--color-words**\] \[**\--quiet**\] \[**\--no-pager**\] \[**\--tool**\] \[**\--config**\] \[**\--context**\] \[**\--config-file**\] \[**-w**\|**\--ignore-all-space**\] \[**-b**\|**\--ignore-space-change**\] \[**-h**\|**\--help**\] \[*FILESETS*\]
 
 # DESCRIPTION
 
@@ -22,7 +22,7 @@ This command is different from \`jj diff \--from A \--to B\`, which compares fil
 
 Technically, this works by rebasing \`\--from\` onto \`\--to\`s parents and comparing the result to \`\--to\`.
 
-To see the changes throughout the whole evolution of a change instead of between just two revisions, use \`jj evolog -p instead\`.
+To see the changes throughout the whole evolution of a change instead of between just two revisions, use \`jj evolog -p\` instead.
 
 # OPTIONS
 
@@ -106,6 +106,16 @@ To see the changes throughout the whole evolution of a change instead of between
 
     Loading the repository at a specific operation with \`\--at-operation\` implies \`\--ignore-working-copy\`.
 
+**\--no-integrate-operation**
+
+:   Run the command as usual but dont integrate any operations
+
+    When this option is given, the operations will still be created as usual but they will not be integrated to the operation log. The working copy will also not be updated.
+
+    The command will print the resulting operation ID. You can pass that to e.g. \`jj \--at-op\` to inspect the resulting repo state, or you can pass it to \`jj op restore\` to restore the repo to that state. You can also pass the ID to \`jj op integrate\` to integrate the operation.
+
+    Note that this does \*not\* prevent side effects outside the repo. For example, \`jj git push \--no-integrate-operation\` will still perform the push.
+
 **\--ignore-immutable**
 
 :   Allow rewriting immutable commits
@@ -137,7 +147,15 @@ To see the changes throughout the whole evolution of a change instead of between
 :   When to colorize output\
 
     \
-    \[*possible values:* always, never, debug, auto\]
+    *Possible values:*
+
+    - always
+
+    - never
+
+    - debug
+
+    - auto
 
 **\--quiet**
 

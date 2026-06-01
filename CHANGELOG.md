@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [0.1.11] - 2026-06-01
+
+### Changed
+
+- Update jj-vcs documentation to jj 0.41.0
+
 ## [0.1.7] - 2026-01-12
 
 ### Changed

@@ -4,7 +4,7 @@ jj-git-clone - Create a new repo backed by a clone of a Git repo
 
 # SYNOPSIS
 
-**jj git clone** \[**\--remote**\] \[**\--colocate**\] \[**\--no-colocate**\] \[**\--depth**\] \[**\--fetch-tags**\] \[**-b**\|**\--branch**\] \[**-R**\|**\--repository**\] \[**\--ignore-working-copy**\] \[**\--ignore-immutable**\] \[**\--at-operation**\] \[**\--debug**\] \[**\--color**\] \[**\--quiet**\] \[**\--no-pager**\] \[**\--config**\] \[**\--config-file**\] \[**-h**\|**\--help**\] \<*SOURCE*\> \[*DESTINATION*\]
+**jj git clone** \[**-R**\|**\--repository**\] \[**\--remote**\] \[**\--colocate**\] \[**\--ignore-working-copy**\] \[**\--no-colocate**\] \[**\--no-integrate-operation**\] \[**\--depth**\] \[**\--ignore-immutable**\] \[**\--at-operation**\] \[**\--fetch-tags**\] \[**-b**\|**\--branch**\] \[**\--debug**\] \[**\--color**\] \[**\--quiet**\] \[**\--no-pager**\] \[**\--config**\] \[**\--config-file**\] \[**-h**\|**\--help**\] \<*SOURCE*\> \[*DESTINATION*\]
 
 # DESCRIPTION
 
@@ -59,7 +59,7 @@ Create a new repo backed by a clone of a Git repo
 
 **-b**, **\--branch** *\<BRANCH\>*
 
-:   Name of the branch to fetch and use as the parent of the working-copy change
+:   Name of the branch to fetch and use as the parent of the working-copy change (can be repeated)
 
     If not present, all branches are fetched and the repositorys default branch is used as parent of the working-copy change.
 
@@ -99,6 +99,16 @@ Create a new repo backed by a clone of a Git repo
 
     Loading the repository at a specific operation with \`\--at-operation\` implies \`\--ignore-working-copy\`.
 
+**\--no-integrate-operation**
+
+:   Run the command as usual but dont integrate any operations
+
+    When this option is given, the operations will still be created as usual but they will not be integrated to the operation log. The working copy will also not be updated.
+
+    The command will print the resulting operation ID. You can pass that to e.g. \`jj \--at-op\` to inspect the resulting repo state, or you can pass it to \`jj op restore\` to restore the repo to that state. You can also pass the ID to \`jj op integrate\` to integrate the operation.
+
+    Note that this does \*not\* prevent side effects outside the repo. For example, \`jj git push \--no-integrate-operation\` will still perform the push.
+
 **\--ignore-immutable**
 
 :   Allow rewriting immutable commits
@@ -130,7 +140,15 @@ Create a new repo backed by a clone of a Git repo
 :   When to colorize output\
 
     \
-    \[*possible values:* always, never, debug, auto\]
+    *Possible values:*
+
+    - always
+
+    - never
+
+    - debug
+
+    - auto
 
 **\--quiet**
 

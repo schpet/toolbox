@@ -1,50 +1,24 @@
 # NAME
 
-jj-prev - Change the working copy revision relative to the parent revision
+jj-util-snapshot - Snapshot the working copy if needed
 
 # SYNOPSIS
 
-**jj prev** \[**-e**\|**\--edit**\] \[**-R**\|**\--repository**\] \[**\--ignore-working-copy**\] \[**-n**\|**\--no-edit**\] \[**\--conflict**\] \[**\--no-integrate-operation**\] \[**\--ignore-immutable**\] \[**\--at-operation**\] \[**\--debug**\] \[**\--color**\] \[**\--quiet**\] \[**\--no-pager**\] \[**\--config**\] \[**\--config-file**\] \[**-h**\|**\--help**\] \[*OFFSET*\]
+**jj util snapshot** \[**-R**\|**\--repository**\] \[**\--ignore-working-copy**\] \[**\--no-integrate-operation**\] \[**\--ignore-immutable**\] \[**\--at-operation**\] \[**\--debug**\] \[**\--color**\] \[**\--quiet**\] \[**\--no-pager**\] \[**\--config**\] \[**\--config-file**\] \[**-h**\|**\--help**\]
 
 # DESCRIPTION
 
-Change the working copy revision relative to the parent revision
+Snapshot the working copy if needed
 
-The command creates a new empty working copy revision that is the child of an ancestor \`offset\` revisions behind the parent of the current working copy.
+Snapshots the working copy and updates the working-copy commit if the working copy has changed since the last snapshot. Since almost every command snapshots the working copy, there is very little reason to run this command as a human; it is mostly meant for scripts.
 
-For example, when the offset is 1:
-
-\`\`\`text D @ D \|/ \| A =\> A @ \| \|/ B B \`\`\`
-
-If \`\--edit\` is passed, the working copy revision is changed to the parent of the current working copy revision.
-
-\`\`\`text D @ D \|/ \| C =\> @ \| \| B B \| \| A A \`\`\`
+If you want to see the ID of the current operation after this command, run \`jj operation log \--limit 1\`. However, since that command also snapshots the working copy, there would be no need to run \`jj util snapshot\` first.
 
 # OPTIONS
-
-**-e**, **\--edit**
-
-:   Edit the parent directly, instead of moving the working-copy commit
-
-    Takes precedence over config in \`ui.movement.edit\`; i.e. will negate \`ui.movement.edit = false\`
-
-**-n**, **\--no-edit**
-
-:   The inverse of \`\--edit\`
-
-    Takes precedence over config in \`ui.movement.edit\`; i.e. will negate \`ui.movement.edit = true\`
-
-**\--conflict**
-
-:   Jump to the previous conflicted ancestor
 
 **-h**, **\--help**
 
 :   Print help (see a summary with -h)
-
-\[*OFFSET*\] \[default: 1\]
-
-:   How many revisions to move backward. Moves to the parent by default
 
 # GLOBAL OPTIONS
 

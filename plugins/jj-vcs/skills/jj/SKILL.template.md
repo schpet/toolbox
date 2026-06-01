@@ -21,10 +21,13 @@ Many jj commands spawn `$EDITOR` or interactive diff tools by default. **These w
 | `jj squash` | May open editor for combined description | Use `-m "message"` or `-u` (use destination message) |
 
 **Commands to avoid entirely** (no non-interactive mode):
+- `jj arrange` — opens an interactive TUI to rearrange the commit graph; use `jj rebase`, `jj parallelize`, or `jj squash` directly instead
 - `jj diffedit` — use `jj restore` or edit files directly instead
 - `jj config edit` — use `jj config set <key> <value>` instead
 - `jj sparse edit` — use `jj sparse set --add <path>` or `--remove <path>` instead
 - `jj resolve` — edit conflict markers directly in files, or use `--tool :ours` / `--tool :theirs`
+
+`jj bisect run --range <revset> -- <command>` is non-interactive (it evaluates each revision by running `<command>`). Don't pass a shell as the command — that drops into an interactive prompt and will hang.
 
 ### Agent-Friendly Output Formats
 

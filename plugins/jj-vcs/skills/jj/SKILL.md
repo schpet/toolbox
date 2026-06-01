@@ -21,10 +21,13 @@ Many jj commands spawn `$EDITOR` or interactive diff tools by default. **These w
 | `jj squash` | May open editor for combined description | Use `-m "message"` or `-u` (use destination message) |
 
 **Commands to avoid entirely** (no non-interactive mode):
+- `jj arrange` — opens an interactive TUI to rearrange the commit graph; use `jj rebase`, `jj parallelize`, or `jj squash` directly instead
 - `jj diffedit` — use `jj restore` or edit files directly instead
 - `jj config edit` — use `jj config set <key> <value>` instead
 - `jj sparse edit` — use `jj sparse set --add <path>` or `--remove <path>` instead
 - `jj resolve` — edit conflict markers directly in files, or use `--tool :ours` / `--tool :theirs`
+
+`jj bisect run --range <revset> -- <command>` is non-interactive (it evaluates each revision by running `<command>`). Don't pass a shell as the command — that drops into an interactive prompt and will hang.
 
 ### Agent-Friendly Output Formats
 
@@ -87,6 +90,7 @@ Documentation generated from jj manpages. For details on any command, read the c
 
 ### Bookmark
 
+- [jj-bookmark-advance](references/jj-bookmark-advance.md)
 - [jj-bookmark-create](references/jj-bookmark-create.md)
 - [jj-bookmark-delete](references/jj-bookmark-delete.md)
 - [jj-bookmark-forget](references/jj-bookmark-forget.md)
@@ -121,6 +125,7 @@ Documentation generated from jj manpages. For details on any command, read the c
 - [jj](references/jj.md)
 - [jj-abandon](references/jj-abandon.md)
 - [jj-absorb](references/jj-absorb.md)
+- [jj-arrange](references/jj-arrange.md)
 - [jj-bisect](references/jj-bisect.md)
 - [jj-bookmark](references/jj-bookmark.md)
 - [jj-commit](references/jj-commit.md)
@@ -191,6 +196,7 @@ Documentation generated from jj manpages. For details on any command, read the c
 
 - [jj-operation-abandon](references/jj-operation-abandon.md)
 - [jj-operation-diff](references/jj-operation-diff.md)
+- [jj-operation-integrate](references/jj-operation-integrate.md)
 - [jj-operation-log](references/jj-operation-log.md)
 - [jj-operation-restore](references/jj-operation-restore.md)
 - [jj-operation-revert](references/jj-operation-revert.md)
@@ -221,6 +227,7 @@ Documentation generated from jj manpages. For details on any command, read the c
 - [jj-util-gc](references/jj-util-gc.md)
 - [jj-util-install-man-pages](references/jj-util-install-man-pages.md)
 - [jj-util-markdown-help](references/jj-util-markdown-help.md)
+- [jj-util-snapshot](references/jj-util-snapshot.md)
 
 ### Workspace
 
@@ -233,7 +240,7 @@ Documentation generated from jj manpages. For details on any command, read the c
 
 
 ---
-*Generated from jj manpages (jj 0.37.0)*
+*Generated from jj manpages (jj 0.41.0)*
 
 ## License
 

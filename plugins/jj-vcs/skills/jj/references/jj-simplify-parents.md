@@ -4,7 +4,7 @@ jj-simplify-parents - Simplify parent edges for the specified revision(s)
 
 # SYNOPSIS
 
-**jj simplify-parents** \[**-s**\|**\--source**\] \[**-r**\|**\--revisions**\] \[**-R**\|**\--repository**\] \[**\--ignore-working-copy**\] \[**\--ignore-immutable**\] \[**\--at-operation**\] \[**\--debug**\] \[**\--color**\] \[**\--quiet**\] \[**\--no-pager**\] \[**\--config**\] \[**\--config-file**\] \[**-h**\|**\--help**\]
+**jj simplify-parents** \[**-R**\|**\--repository**\] \[**-s**\|**\--source**\] \[**\--ignore-working-copy**\] \[**-r**\|**\--revision**\] \[**\--no-integrate-operation**\] \[**\--ignore-immutable**\] \[**\--at-operation**\] \[**\--debug**\] \[**\--color**\] \[**\--quiet**\] \[**\--no-pager**\] \[**\--config**\] \[**\--config-file**\] \[**-h**\|**\--help**\]
 
 # DESCRIPTION
 
@@ -20,7 +20,7 @@ In other words, for all (A, B, C) where A has (B, C) as parents and C is an ance
 
 :   Simplify specified revision(s) together with their trees of descendants (can be repeated)
 
-**-r**, **\--revisions** *\<REVSETS\>*
+**-r**, **\--revision** *\<REVSETS\>*
 
 :   Simplify specified revision(s) (can be repeated)
 
@@ -45,6 +45,16 @@ In other words, for all (A, B, C) where A has (B, C) as parents and C is an ance
     By default, Jujutsu snapshots the working copy at the beginning of every command. The working copy is also updated at the end of the command, if the command modified the working-copy commit (\`@\`). If you want to avoid snapshotting the working copy and instead see a possibly stale working-copy commit, you can use \`\--ignore-working-copy\`. This may be useful e.g. in a command prompt, especially if you have another process that commits the working copy.
 
     Loading the repository at a specific operation with \`\--at-operation\` implies \`\--ignore-working-copy\`.
+
+**\--no-integrate-operation**
+
+:   Run the command as usual but dont integrate any operations
+
+    When this option is given, the operations will still be created as usual but they will not be integrated to the operation log. The working copy will also not be updated.
+
+    The command will print the resulting operation ID. You can pass that to e.g. \`jj \--at-op\` to inspect the resulting repo state, or you can pass it to \`jj op restore\` to restore the repo to that state. You can also pass the ID to \`jj op integrate\` to integrate the operation.
+
+    Note that this does \*not\* prevent side effects outside the repo. For example, \`jj git push \--no-integrate-operation\` will still perform the push.
 
 **\--ignore-immutable**
 
@@ -77,7 +87,15 @@ In other words, for all (A, B, C) where A has (B, C) as parents and C is an ance
 :   When to colorize output\
 
     \
-    \[*possible values:* always, never, debug, auto\]
+    *Possible values:*
+
+    - always
+
+    - never
+
+    - debug
+
+    - auto
 
 **\--quiet**
 

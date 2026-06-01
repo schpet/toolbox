@@ -4,7 +4,7 @@ jj-fix - Update files with formatting fixes or other changes
 
 # SYNOPSIS
 
-**jj fix** \[**-s**\|**\--source**\] \[**\--include-unchanged-files**\] \[**-R**\|**\--repository**\] \[**\--ignore-working-copy**\] \[**\--ignore-immutable**\] \[**\--at-operation**\] \[**\--debug**\] \[**\--color**\] \[**\--quiet**\] \[**\--no-pager**\] \[**\--config**\] \[**\--config-file**\] \[**-h**\|**\--help**\] \[*FILESETS*\]
+**jj fix** \[**-R**\|**\--repository**\] \[**-s**\|**\--source**\] \[**\--ignore-working-copy**\] \[**\--include-unchanged-files**\] \[**-a**\|**\--all-lines**\] \[**\--no-integrate-operation**\] \[**\--ignore-immutable**\] \[**\--at-operation**\] \[**\--debug**\] \[**\--color**\] \[**\--quiet**\] \[**\--no-pager**\] \[**\--config**\] \[**\--config-file**\] \[**-h**\|**\--help**\] \[*FILESETS*\]
 
 # DESCRIPTION
 
@@ -17,6 +17,10 @@ The modification made by \`jj fix\` can be reviewed by \`jj op show -p\`.
 \### How it works
 
 The changed files in the given revisions will be updated with any fixes determined by passing their file content through any external tools the user has configured for those files. Descendants will also be updated by passing their versions of the same files through the same tools, which will ensure that the fixes are not lost. This will never result in new conflicts. Files with existing conflicts will be updated on all sides of the conflict, which can potentially increase or decrease the number of conflict markers.
+
+\### Deduplication
+
+When fixing multiple commits, if the same file content appears at the same path in different commits, the tool is run only once and the result is reused. This means that tools used with \`jj fix\` must produce deterministic output.
 
 \### Configuration
 
@@ -54,6 +58,12 @@ The revisions are now all correctly formatted according to the configuration.
 
 :   Fix unchanged files in addition to changed ones. If no paths are specified, all files in the repo will be fixed
 
+**-a**, **\--all-lines**
+
+:   Format all lines instead of only modified lines.
+
+    If the formatter doesnt support formatting only modified lines, then this option has no effect since the formatter always formats all lines.
+
 **-h**, **\--help**
 
 :   Print help (see a summary with -h)
@@ -77,6 +87,16 @@ The revisions are now all correctly formatted according to the configuration.
     By default, Jujutsu snapshots the working copy at the beginning of every command. The working copy is also updated at the end of the command, if the command modified the working-copy commit (\`@\`). If you want to avoid snapshotting the working copy and instead see a possibly stale working-copy commit, you can use \`\--ignore-working-copy\`. This may be useful e.g. in a command prompt, especially if you have another process that commits the working copy.
 
     Loading the repository at a specific operation with \`\--at-operation\` implies \`\--ignore-working-copy\`.
+
+**\--no-integrate-operation**
+
+:   Run the command as usual but dont integrate any operations
+
+    When this option is given, the operations will still be created as usual but they will not be integrated to the operation log. The working copy will also not be updated.
+
+    The command will print the resulting operation ID. You can pass that to e.g. \`jj \--at-op\` to inspect the resulting repo state, or you can pass it to \`jj op restore\` to restore the repo to that state. You can also pass the ID to \`jj op integrate\` to integrate the operation.
+
+    Note that this does \*not\* prevent side effects outside the repo. For example, \`jj git push \--no-integrate-operation\` will still perform the push.
 
 **\--ignore-immutable**
 
@@ -109,7 +129,15 @@ The revisions are now all correctly formatted according to the configuration.
 :   When to colorize output\
 
     \
-    \[*possible values:* always, never, debug, auto\]
+    *Possible values:*
+
+    - always
+
+    - never
+
+    - debug
+
+    - auto
 
 **\--quiet**
 
